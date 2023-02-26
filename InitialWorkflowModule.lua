@@ -1474,8 +1474,8 @@ table.insert(WorkflowButtons, ButtonFilmicAutoTune)
 -- TEST button: Special button, used to perform module tests
 -- this button should be disabled for general use of the script
 
-dofile "InitialWorkflowModuleTest.lua"
-table.insert(WorkflowButtons, ButtonModuleTest)
+-- dofile "InitialWorkflowModuleTest.lua"
+-- table.insert(WorkflowButtons, ButtonModuleTest)
 
 ---------------------------------------------------------------
 
