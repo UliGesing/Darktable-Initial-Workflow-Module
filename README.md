@@ -12,19 +12,15 @@ require "examples/InitialWorkflowModule"
 Execute "darktable -d lua" to get some loggings.
 
 # Workflow Steps
-This script executes some automatic functions that can also be accessed via the GUI (magic wand). It provides several workflow steps like "lens correction" or "adapt exposure". If you use it from lighttable view, you can select one or more images and configure offered settings. Clicking the run button, selected image(s) are opened in darkroom and all steps are performed as configured.
+This script executes some automatic functions that can also be accessed via the GUI (e.g. magic wand controls). It provides several workflow steps like "lens correction" or "adapt exposure". If you use it from lighttable view, you can select one or more images. Clicking the run button, selected image(s) are opened in darkroom and all steps are performed as configured.
 
 If you use it from darkroom view, the currently opened image is processed.
 
-Several steps are offered. See the tooltip within the module for more information.
-
-Your settings are saved in Darktable preferences and restored after the next start of the application.
-
-You can easily customize steps or add new ones. See "IMPLEMENTATION OF WORKFLOW STEPS".
- 
-There is one step to adjust the white balance by altering the temperature. This step is "unchanged" by default for the legacy workflow. The white balance is only adjusted by default for the modern workflow of Darktable. See Darktable preferences chapter "processing", setting auto-apply chromatic adaptation defaults.
+Several steps are offered. See the tooltips within the module for more information. Your settings are saved in darktable preferences and restored after the next start of the application. There is one step to adjust the white balance by altering the temperature. This step is "unchanged" by default for the legacy workflow. The white balance is only adjusted by default for the modern workflow of Darktable. See Darktable preferences chapter "processing", setting auto-apply chromatic adaptation defaults.
 
 # Add new or modify workflow steps
+
+You can easily customize steps or add new ones. See "IMPLEMENTATION OF WORKFLOW STEPS" within the module file.
 
 All steps are derived from a base class to offer common methods. You can easily customize steps or add new ones: Just copy an existing class and adapt the label, tooltip and function accordingly. Copy and adapt Constructor, Init and Run functions. Don't forget to customize the name of the class as well. Use the new class name for Constructor, Init and Run functions.
 
