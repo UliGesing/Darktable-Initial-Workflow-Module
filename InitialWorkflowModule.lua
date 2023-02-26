@@ -115,7 +115,7 @@ end
 
 local function WaitForEventEmbeddedFunction(embeddedFunction, eventType, min, max)
   -- execute embedded function and wait for given event
-  dt.control.sleep(100)
+  dt.control.sleep(200)
 
   -- register event
   env.WaitForEventReceivedFlag = nil
@@ -147,7 +147,7 @@ local function WaitForEventEmbeddedFunction(embeddedFunction, eventType, min, ma
     dt.destroy_event("WorkflowModule", eventType)
   end
 
-  dt.control.sleep(100)
+  dt.control.sleep(200)
 end
 
 local function WaitForPixelPipe(embeddedFunction)
@@ -178,7 +178,7 @@ local function GuiActionDo(path, element)
   -- perform the specified action
   -- wait a bit...
   dt.gui.action(path, 0, element, "", 1.0)
-  dt.control.sleep(100)
+  dt.control.sleep(200)
 end
 
 local function GuiActionGetValue(path, element)
@@ -1242,7 +1242,7 @@ local function ProcessWorkflowSteps()
   LogInfo("==============================")
   LogInfo("process workflow steps")
 
-  dt.control.sleep(500)
+  dt.control.sleep(1000)
 
   -- execute all workflow steps
   -- the order is from bottom to top, along the pixel pipeline.
@@ -1251,7 +1251,7 @@ local function ProcessWorkflowSteps()
     step:Run()
   end
 
-  dt.control.sleep(500)
+  dt.control.sleep(1000)
 
   LogScreen("initial workflow - done")
   LogInfo("initial workflow - done")
@@ -1290,7 +1290,7 @@ local function ProcessSelectedImagesInLighttableView()
     dt.gui.current_view(dt.gui.views.darkroom)
   end)
 
-  dt.control.sleep(500)
+  dt.control.sleep(1000)
 
   -- process selected images
   LogMajorMax = #images
