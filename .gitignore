@@ -1,6 +1,9 @@
 # Compiled Lua sources
 luac.out
 
+# Flag to enable module tests
+TEST.txt
+
 # luarocks build files
 *.src.rock
 *.zip

@@ -1472,10 +1472,25 @@ table.insert(WorkflowButtons, ButtonFilmicAutoTune)
 ---------------------------------------------------------------
 
 -- TEST button: Special button, used to perform module tests
--- this button should be disabled for general use of the script
+-- This button should be disabled for general use of the script.
+-- To enable it, create a file named "TEST.txt" in the same
+-- directory as this script file.
 
--- dofile "InitialWorkflowModuleTest.lua"
--- table.insert(WorkflowButtons, ButtonModuleTest)
+function FileExists(filename)
+  local f = io.open(filename, "r")
+  if f ~= nil then
+    io.close(f)
+    return true
+  end
+  return false
+end
+
+if (FileExists("TEST.txt")) then
+  if (FileExists("InitialWorkflowModuleTest.lua")) then
+    dofile "InitialWorkflowModuleTest.lua"
+    table.insert(WorkflowButtons, ButtonModuleTest)
+  end
+end
 
 ---------------------------------------------------------------
 
@@ -1526,7 +1541,7 @@ local function GetWidgets()
   -- TEST button: Special button, used to perform module tests
   if (ButtonModuleTest) then
     LogInfo("INSERT TEST BUTTON WIDGET")
-    table.insert(widgets,ButtonModuleTest.Widget)
+    table.insert(widgets, ButtonModuleTest.Widget)
   end
 
   return widgets
