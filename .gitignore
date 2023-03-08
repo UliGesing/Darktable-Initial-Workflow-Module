@@ -1,9 +1,6 @@
 # Compiled Lua sources
 luac.out
 
-# Flag to enable module tests
-TEST.txt
-
 # luarocks build files
 *.src.rock
 *.zip
@@ -42,3 +39,4 @@ TEST.txt
 *.x86_64
 *.hex
 
+TestFlag.txt

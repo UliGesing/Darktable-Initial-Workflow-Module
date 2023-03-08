@@ -36,6 +36,6 @@ Every workflow step contains of constructor, init and run functions. Example:
 
 # Module Tests
 
-There is an additional file "InitialWorkflowModuleTest.lua". This implements the "TEST" button. This special button, used to perform module tests, should be disabled for general use of the script. It is used during module development and deployment. To enable it, create a file named "TEST.txt" in the same directory as the script file and restart darktable.
+There is an additional file "InitialWorkflowModuleTest.lua". This implements the "TEST" button. This special button, used to perform module tests, should be disabled for general use of the script. It is used during module development and deployment. To enable it, create a file named "TestFlag.txt" in the same directory as the script file and restart darktable.
 
 Up to now, there is a simple module test that iterates over workflow steps and combobox value settings and sets different combinations of module settings. Resulting xmp files are copied to a test result folder. You can compare these files with previously generated reference files.
