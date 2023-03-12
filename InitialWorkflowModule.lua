@@ -22,20 +22,29 @@
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
+  
   This script is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
+  
   See the GNU General Public License for more details
   at <http://www.gnu.org/licenses/>.
-]]
-local dt = require "darktable"
-local du = require "lib/dtutils"
+  ]]
+  local dt = require "darktable"
+  local du = require "lib/dtutils"
 local log = require "lib/dtutils.log"
 local debug = require "darktable.debug"
 
 local ModuleName = "InitialWorkflowModule"
+
+-- declare some variables to install the module
+
+local Env =
+{
+  InstallModuleEventRegistered = false,
+  InstallModuleDone = false,
+  DefaultSleepDuration = 1000
+}
 
 ---------------------------------------------------------------
 
@@ -114,12 +123,6 @@ local function DumpPreferenceKeys()
   end
 end
 
--- declare some variables to install the module
-local env =
-{
-  InstallModuleEventRegistered = false,
-  InstallModuleDone = false,
-}
 
 -- check Darktable API version
 -- new API of DT 4.2 is needed to use "pixelpipe-processing-complete" event
@@ -196,7 +199,7 @@ function WaitForEventBase:Do(embeddedFunction)
 
   -- wait for registered event
   local duration = 0
-  local period = 100
+  local period = Env.DefaultSleepDuration / 10
   local output = ".."
 
   while (not self.EventReceivedFlag) or (duration < self.WaitMin) do
@@ -249,7 +252,7 @@ function WaitForImageLoaded:EventReceivedFunction(event, clean, image)
     LogInfo(message)
     LogSummaryMessage(message)
 
-    dt.control.sleep(1000)
+    dt.control.sleep(Env.DefaultSleepDuration)
     dt.gui.views.darkroom.display_image(image)
   else
     WaitForImageLoaded:EventReceivedFlagSet()
@@ -310,7 +313,7 @@ local function GuiActionInternal(path, instance, element, effect, speed, waitFor
   else
     result = dt.gui.action(path, instance, element, effect, speed)
     -- wait a bit...
-    dt.control.sleep(500)
+    dt.control.sleep(Env.DefaultSleepDuration)
   end
 
   return result
@@ -1599,7 +1602,7 @@ local function ProcessWorkflowSteps()
   LogInfo("==============================")
   LogInfo("process workflow steps")
 
-  dt.control.sleep(500)
+  dt.control.sleep(Env.DefaultSleepDuration)
 
   -- execute all workflow steps
   -- the order is from bottom to top, along the pixel pipeline.
@@ -1609,7 +1612,7 @@ local function ProcessWorkflowSteps()
     step:Run()
   end
 
-  dt.control.sleep(500)
+  dt.control.sleep(Env.DefaultSleepDuration)
 
   LogCurrentStep = ""
 end
@@ -1853,7 +1856,7 @@ end
 
 local function CopyXmpFile(xmpFile, filePath, fileName, appendix, xmpModified)
   -- wait until xmp file was written
-  dt.control.sleep(2000)
+  dt.control.sleep(Env.DefaultSleepDuration)
   local xmpModifiedNew = WaitForFileModified(xmpFile, xmpModified)
 
   -- copy xmp file to test result folder
@@ -1934,8 +1937,6 @@ local function ModuleTest()
         end
       end
     end
-
-    dt.control.sleep(250)
 
     -- perform configured settings
     -- copy xmp file with current settings to test result folder
@@ -2055,7 +2056,7 @@ end
 
 -- register the module and create widget box in lighttable and darkroom
 local function InstallModuleRegisterLib()
-  if not env.InstallModuleDone then
+  if not Env.InstallModuleDone then
     LogInfo("install module - create widget")
 
     dt.register_lib(
@@ -2080,7 +2081,7 @@ local function InstallModuleRegisterLib()
       nil  -- view_leave
     )
 
-    env.InstallModuleDone = true
+    Env.InstallModuleDone = true
   end
 end
 
@@ -2096,9 +2097,9 @@ end
 local function InstallModuleRegisterEvent()
   LogInfo("install module - register event")
 
-  if not env.InstallModuleEventRegistered then
+  if not Env.InstallModuleEventRegistered then
     dt.register_event(ModuleName, "view-changed", viewChangedEvent)
-    env.InstallModuleEventRegistered = true
+    Env.InstallModuleEventRegistered = true
   end
 end
 
