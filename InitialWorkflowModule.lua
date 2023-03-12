@@ -1,8 +1,6 @@
 --[[
   Darktable Initial Workflow Module
 
-  Version 2023-02-26
-
   This script can be used together with darktable. See
   https://www.darktable.org/ for more information.
 
@@ -37,11 +35,11 @@ local du = require "lib/dtutils"
 local log = require "lib/dtutils.log"
 local debug = require "darktable.debug"
 
-local MOD = "InitialWorkflowModule"
+local ModuleName = "InitialWorkflowModule"
 
 ---------------------------------------------------------------
 
--- some helper methods...
+-- some helper methods to log information messages
 
 log.log_level(log.info) -- log.info or log.warn or log.debug
 
@@ -72,6 +70,9 @@ local function LogSummaryMessage(text)
   table.insert(LogSummaryMessages, GetLogInfoText(text))
 end
 
+-- The script may dump a lot of log messages.
+-- The summary collects some important (error) messages.
+-- This function is executed at the end of each script run.
 local function LogSummary()
   LogInfo("==============================")
 
@@ -82,7 +83,7 @@ local function LogSummary()
 
     for index, message in ipairs(LogSummaryMessages) do
       LogInfo(message)
-    end    
+    end
   end
 
   if (#LogSummaryMessages == 0) then
@@ -114,19 +115,19 @@ local function DumpPreferenceKeys()
 end
 
 -- declare some variables to install the module
-local env = {
+local env =
+{
   InstallModuleEventRegistered = false,
   InstallModuleDone = false,
-  WaitForEventReceivedFlag = nil,
 }
 
 -- check Darktable API version
 -- new API of DT 4.2 is needed to use "pixelpipe-processing-complete" event
-local apiCheck, err = pcall(function() du.check_min_api_version("9.0.0", "InitialWorkflowModule") end)
+local apiCheck, err = pcall(function() du.check_min_api_version("9.0.0", ModuleName) end)
 if (apiCheck) then
-  LogInfo("Darktable 4.2 API detected.")
+  LogInfo("Darktable " .. dt.configuration.version .. " with appropriate lua API detected.")
 else
-  LogInfo("This script needs Darktable 4.2 API to run.")
+  LogInfo("This script needs at least Darktable 4.2 API to run.")
   return
 end
 
@@ -140,25 +141,27 @@ local function contains(table, value)
   return false
 end
 
+-- check current darktable version
+-- used to handle different behavior of dt 4.2 and following versions
 local function CheckDarktable42()
   return contains({ "4.2", "4.2.0", "4.2.1" }, dt.configuration.version)
 end
 
 ---------------------------------------------------------------
 
--- Event handling helper functions
+-- Event handling helper functions used during dt.gui.action
 
 -- base class to handle events
 local WaitForEventBase =
 {
-  ModuleName = "InitialWorkflowModule",
+  ModuleName = ModuleName,
   EventType = nil,
   EventReceivedFlag = nil,
-  -- EventReceivedFunction = nil,
   WaitMin = 100,
   WaitMax = 5000
 }
 
+-- base class constructor
 function WaitForEventBase:new(obj)
   -- create object if user does not provide one
   obj = obj or {}
@@ -178,9 +181,8 @@ function WaitForEventBase:EventReceivedFlagSet()
   LogInfo(". received event " .. self.EventType)
 end
 
+-- execute embedded function and wait for given EventType
 function WaitForEventBase:Do(embeddedFunction)
-  -- execute embedded function and wait for given event
-
   -- register event
   self:EventReceivedFlagReset()
 
@@ -208,9 +210,7 @@ function WaitForEventBase:Do(embeddedFunction)
 
     if (duration >= self.WaitMax) then
       LogInfo("timeout waiting for event " .. self.EventType)
-
       LogSummaryMessage("timeout waiting for event " .. self.EventType)
-
       break
     end
   end
@@ -273,16 +273,15 @@ local function numberToString(number, nilReplacement, nanReplacement)
     return nilReplacement or "0/0"
   end
 
-  -- 3 digits with dot
+  -- some digits with dot
   local result = string.format("%.4f", number)
   result = string.gsub(result, ",", ".")
 
   return result
 end
 
+-- convert values to boolean, consider not a number and nil
 local function GuiActionValueToBoolean(value)
-  -- convert values to boolean, consider not a number and nil
-
   -- NaN
   if (value ~= value) then
     return false
@@ -296,10 +295,9 @@ local function GuiActionValueToBoolean(value)
   return value ~= 0
 end
 
+-- perform the specified effect on the path and element of an action
+-- see https://docs.darktable.org/lua/stable/lua.api.manual/darktable/gui/action/
 local function GuiActionInternal(path, instance, element, effect, speed, waitForPipeline)
-  -- perform the specified effect on the path and element of an action
-  -- see https://docs.darktable.org/lua/stable/lua.api.manual/darktable/gui/action/
-
   LogInfo('dt.gui.action("' ..
     path .. '",' .. instance .. ',"' .. element .. '","' .. effect .. '",' .. numberToString(speed) .. ')')
 
@@ -318,18 +316,18 @@ local function GuiActionInternal(path, instance, element, effect, speed, waitFor
   return result
 end
 
+-- wait for "pixelpipe-processing-complete"
 local function GuiAction(path, instance, element, effect, speed)
-  -- wait for "pixelpipe-processing-complete"
   return GuiActionInternal(path, instance, element, effect, speed, true)
 end
 
+-- "pixelpipe-processing-complete" is not expected
 local function GuiActionWithoutEvent(path, instance, element, effect, speed)
-  -- "pixelpipe-processing-complete" is not expected
   return GuiActionInternal(path, instance, element, effect, speed, false)
 end
 
+-- get current value
 local function GuiActionGetValue(path, element)
-  -- get current value
   -- use 0/0 == NaN as parameter to indicate this read-action
   local value = GuiActionWithoutEvent(path, 0, element, "", 0 / 0)
 
@@ -338,11 +336,10 @@ local function GuiActionGetValue(path, element)
   return value
 end
 
+-- Set given value, compare it with the current value to avoid
+-- unnecessary set commands. There is no “pixelpipe-processing-complete”,
+-- if the new value equals the current value.
 local function GuiActionSetValue(path, instance, element, effect, speed)
-  -- set given value
-  -- compare it with the current value, avoid unnecessary set commands
-  -- there is no “pixelpipe-processing-complete”, if the new value equals the current value
-
   -- get current value
   -- use 0/0 == NaN as parameter to indicate this read-action
   local value = GuiActionWithoutEvent(path, 0, element, "set", 0 / 0)
@@ -361,16 +358,17 @@ local function GuiActionSetValue(path, instance, element, effect, speed)
   end
 end
 
+-- Push the button  addressed by the path. Turn it off, if necessary.
 local function GuiActionButtonOffOn(path)
-  -- push the button  addressed by the path
-  -- turn it off, if necessary
   LogInfo('push button off and on: "' .. path .. '"')
+
   local buttonState = GuiActionGetValue(path, "button")
   if (GuiActionValueToBoolean(buttonState)) then
     GuiActionWithoutEvent(path, 0, "button", "off", 1.0)
   else
     LogInfo('. button already "off", nothing to do')
   end
+
   GuiAction(path, 0, "button", "on", 1.0)
 end
 
@@ -392,6 +390,7 @@ local WorkflowStep =
   Tooltip,
 }
 
+-- workflow step base class constructor
 function WorkflowStep:new(obj)
   -- create object if user does not provide one
   obj = obj or {}
@@ -402,13 +401,14 @@ function WorkflowStep:new(obj)
   return obj
 end
 
+-- message at the beginning of a step
 function WorkflowStep:LogStepMessage()
   LogInfo("==============================")
   LogInfo("Step setting = " .. self.Widget.value)
 end
 
+-- show given darkroom module
 function WorkflowStep:ShowDarkroomModule(moduleName)
-  -- show given darkroom module
   -- check if the module is already displayed
   LogInfo("show module " .. moduleName .. " (if not visible)")
   local visible = GuiActionGetValue(moduleName, "show")
@@ -419,8 +419,8 @@ function WorkflowStep:ShowDarkroomModule(moduleName)
   end
 end
 
+-- hide given darkroom module
 function WorkflowStep:HideDarkroomModule(moduleName)
-  -- hide given darkroom module
   -- check if the module is already hidden
   LogInfo("hide module " .. moduleName .. " (if visible)")
   local visible = GuiActionGetValue(moduleName, "show")
@@ -431,8 +431,8 @@ function WorkflowStep:HideDarkroomModule(moduleName)
   end
 end
 
+-- enable given darkroom module
 function WorkflowStep:EnableDarkroomModule(moduleName)
-  -- enable given darkroom module
   -- check if the module is already activated
   LogInfo("enable module " .. moduleName .. " (if disabled)")
   local status = GuiActionGetValue(moduleName, "enable")
@@ -447,8 +447,8 @@ function WorkflowStep:EnableDarkroomModule(moduleName)
   end
 end
 
+-- disable given darkroom module
 function WorkflowStep:DisableDarkroomModule(moduleName)
-  -- disable given darkroom module
   -- check if the module is already activated
   LogInfo("disable module " .. moduleName .. " (if enabled)")
   local status = GuiActionGetValue(moduleName, "enable")
@@ -459,22 +459,20 @@ function WorkflowStep:DisableDarkroomModule(moduleName)
   end
 end
 
+-- reset given darkroom module
 function WorkflowStep:ResetDarkroomModule(moduleName)
-  -- reset given darkroom module
   LogInfo("reset module " .. moduleName)
   GuiAction(moduleName, 0, "reset", "", 1.0)
 end
 
 ---------------------------------------------------------------
 -- base class of workflow steps with Button widget
-
 WorkflowStepButton = WorkflowStep:new():new
     {
     }
 
 ---------------------------------------------------------------
 -- base class of workflow steps with Combobox widget
-
 WorkflowStepCombobox = WorkflowStep:new():new
     {
       OperationNameInternal,
@@ -482,35 +480,44 @@ WorkflowStepCombobox = WorkflowStep:new():new
       DefaultValue
     }
 
+-- disable step, setting keeps unchanged during script execution
 function WorkflowStepCombobox:Disable()
   self.Widget.value = self.DisableValue
 end
 
+-- choose default step setting
 function WorkflowStepCombobox:Default()
   self.Widget.value = self.DefaultValue
 end
 
+-- returns internal operation name like "colorbalancergb" or "atrous"
 function WorkflowStepCombobox:OperationName()
   return self.OperationNameInternal
 end
 
+-- returns operation path like "iop/colorbalancergb"
 function WorkflowStepCombobox:OperationPath()
   return "iop/" .. self:OperationName()
 end
 
+-- save current selection of this workflow step
+-- used to restore settings after starting darktable
 function WorkflowStepCombobox:SavePreferenceValue()
-  local preferenceValue = dt.preferences.read(MOD, self.Widget.label, 'string')
+  -- check, if there are any changes
+  local preferenceValue = dt.preferences.read(ModuleName, self.Widget.label, 'string')
   local comboBoxValue = self.Widget.value
 
   -- save any changes
   if (preferenceValue ~= comboBoxValue) then
     -- LogInfo("preference write "..self.Widget.label.." = '"..comboBoxValue.."'")
-    dt.preferences.write(MOD, self.Widget.label, 'string', comboBoxValue)
+    dt.preferences.write(ModuleName, self.Widget.label, 'string', comboBoxValue)
   end
 end
 
+-- read saved selection value from darktable preferences
+-- used to restore settings after starting darktable
 function WorkflowStepCombobox:ReadPreferenceValue()
-  local preferenceValue = dt.preferences.read(MOD, self.Widget.label, 'string')
+  local preferenceValue = dt.preferences.read(ModuleName, self.Widget.label, 'string')
 
   -- get combo box index of saved preference value
   for i, comboBoxValue in ipairs(self.ComboBoxValues) do
@@ -526,9 +533,10 @@ function WorkflowStepCombobox:ReadPreferenceValue()
   self:Default()
 end
 
+-- use index to compare current value with newly selected value
+-- used to avoid unnecessary set commands
 function WorkflowStepCombobox:CreateComboBoxValuesIndex()
   -- dt.gui.action returns but c types (instead of string / combobox entry)
-  -- use index to compare current value with selected value  --
   self.ComboBoxValuesIndex = {}
   for k, v in pairs(self.ComboBoxValues) do
     -- ignore first additional combobox entry
@@ -551,14 +559,20 @@ function GetWorkflowItem(widget, table)
   return nil
 end
 
+-- called from callback function within a "foreign context"
+-- determine the button object
 function GetWorkflowButton(widget)
   return GetWorkflowItem(widget, WorkflowButtons)
 end
 
+-- called from callback function within a "foreign context"
+-- determine the step object
 function GetWorkflowStep(widget)
   return GetWorkflowItem(widget, WorkflowSteps)
 end
 
+-- called after selection was changed
+-- current settings are saved as darktable preferences
 function ComboBoxChangedCallback(widget)
   GetWorkflowStep(widget):SavePreferenceValue()
 end
@@ -579,7 +593,8 @@ StepCompressHistoryStack = WorkflowStepCombobox:new():new
       DisableValue = 1, -- item in ComboBoxValues
       DefaultValue = 2, -- item in ComboBoxValues
       Tooltip =
-      "Generate the shortest history stack that reproduces the current image. This removes your current history snapshots."
+      "Generate the shortest history stack that reproduces the current \z
+      image. This removes your current history snapshots."
     }
 
 table.insert(WorkflowSteps, StepCompressHistoryStack)
@@ -610,7 +625,7 @@ end
 StepDynamicRangeSceneToDisplay = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
-      -- distinguish between different modules...
+      -- this step refers to different modules
       OperationNameInternal = "Filmic or Sigmoid",
       DisableValue = 1,
       DefaultValue = 4,
@@ -992,9 +1007,8 @@ function StepToneEqualizerMask:Run()
 
   if (selection == "default mask blending") then
     -- nothing else to do...
-  end
-
-  if (selection == "default plus mask compensation") then
+    --
+  elseif (selection == "default plus mask compensation") then
     -- workaround: show this module, otherwise the buttons will not be pressed
     self:ShowDarkroomModule("iop/toneequal")
 
@@ -1004,13 +1018,11 @@ function StepToneEqualizerMask:Run()
 
     -- workaround: show this module, otherwise the buttons will not be pressed
     self:HideDarkroomModule("iop/toneequal")
-  end
-
-  if (selection == "compress high-low (eigf): medium") then
+    --
+  elseif (selection == "compress high-low (eigf): medium") then
     GuiActionButtonOffOn("iop/toneequal/preset/compress shadows-highlights (eigf): medium")
-  end
-
-  if (selection == "compress high-low (eigf): soft") then
+    --
+  elseif (selection == "compress high-low (eigf): soft") then
     -- workaround to deal with bug in dt 4.2.x
     -- dt 4.2 uses special characters
     if (CheckDarktable42()) then
@@ -1018,9 +1030,8 @@ function StepToneEqualizerMask:Run()
     else
       GuiActionButtonOffOn("iop/toneequal/preset/compress shadows-highlights (eigf): soft")
     end
-  end
-
-  if (selection == "compress high-low (eigf): strong") then
+    --
+  elseif (selection == "compress high-low (eigf): strong") then
     -- workaround to deal with bug in dt 4.2.x
     -- dt 4.2 uses special characters
     if (CheckDarktable42()) then
@@ -1028,6 +1039,7 @@ function StepToneEqualizerMask:Run()
     else
       GuiActionButtonOffOn("iop/toneequal/preset/compress shadows-highlights (eigf): strong")
     end
+    --
   end
 end
 
@@ -1038,7 +1050,7 @@ StepExposureCorrection = WorkflowStepCombobox:new():new
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = "exposure",
       DisableValue = 1,
-      DefaultValue = 3,
+      DefaultValue = 5,
       Tooltip = "Automatically adjust the exposure correction. Remove \z
       the camera exposure bias, useful if you exposed the image to the right."
     }
@@ -1050,7 +1062,9 @@ function StepExposureCorrection:Init()
   {
     "unchanged",
     "adjust exposure correction",
-    "adjust exp. & compensate camera bias"
+    "reset & adjust exposure correction",
+    "adjust exp. & compensate camera bias",
+    "reset & adjust exp. & comp. camera bias"
   }
 
   self.Widget = dt.new_widget("combobox")
@@ -1069,23 +1083,41 @@ function StepExposureCorrection:Run()
     return
   end
 
+  local adjustExposureCorrection = contains(
+    { "adjust exposure correction",
+      "adjust exp. & compensate camera bias"
+    }, selection)
+
+  local resetModule              = contains(
+    { "reset & adjust exposure correction",
+      "reset & adjust exp. & comp. camera bias"
+    }, selection)
+
+  local compensateBias           = contains(
+    {
+      "adjust exp. & compensate camera bias",
+      "reset & adjust exp. & comp. camera bias"
+    }, selection)
+
   self:LogStepMessage()
   self:EnableDarkroomModule("iop/exposure")
-  self:ResetDarkroomModule("iop/exposure")
 
-  if (selection == "adjust exposure correction") then
+  if (resetModule) then
+    self:ResetDarkroomModule("iop/exposure")
+  end
+
+  if (adjustExposureCorrection) then
     GuiActionButtonOffOn("iop/exposure/exposure")
   end
 
-  if (selection == "adjust exp. & compensate camera bias") then
-    GuiActionButtonOffOn("iop/exposure/exposure")
-
+  if (compensateBias) then
     local checkbox = GuiActionWithoutEvent("iop/exposure/compensate exposure bias", 0, "", 0 / 0)
     if (not checkbox) then
       GuiAction("iop/exposure/compensate exposure bias", 0, "", "on", 1.0)
     else
       LogInfo('. checkbox already selected, nothing to do')
     end
+    --
   end
 end
 
@@ -1096,7 +1128,7 @@ StepLensCorrection = WorkflowStepCombobox:new():new
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = "lens",
       DisableValue = 1,
-      DefaultValue = 3,
+      DefaultValue = 4,
       Tooltip = "Enable and reset lens correction module.",
     }
 
@@ -1106,8 +1138,9 @@ function StepLensCorrection:Init()
   self.ComboBoxValues =
   {
     "unchanged",
-    "enable and reset",
-    "enable lensfun method"
+    "reset module",
+    "enable lensfun method",
+    "reset & lensfun method"
   }
 
   self.Widget = dt.new_widget("combobox")
@@ -1126,15 +1159,26 @@ function StepLensCorrection:Run()
     return
   end
 
+  local resetModule = contains(
+    {
+      "reset module",
+      "reset & lensfun method"
+    }, selection)
+
+  local lensfun = contains(
+    {
+      "enable lensfun method",
+      "reset & lensfun method"
+    }, selection)
+
   self:LogStepMessage()
   self:EnableDarkroomModule("iop/lens")
 
-  if (selection == "enable and reset") then
+  if (resetModule) then
     self:ResetDarkroomModule("iop/lens")
   end
 
-  if (selection == "enable lensfun method") then
-    self:ResetDarkroomModule("iop/lens")
+  if (lensfun) then
     GuiAction("iop/lens/correction method", 0, "selection", "item:lensfun database", 1.0)
   end
 end
@@ -1716,6 +1760,7 @@ ButtonEnableRotateAndPerspective = WorkflowStepButton:new():new
             clicked_callback = function(widget)
               local button = GetWorkflowButton(widget)
               button:EnableDarkroomModule("iop/ashift")
+              button:ShowDarkroomModule("iop/ashift")
             end
           }
     }
@@ -1734,6 +1779,7 @@ ButtonEnableCrop = WorkflowStepButton:new():new
             clicked_callback = function(widget)
               local button = GetWorkflowButton(widget)
               button:EnableDarkroomModule("iop/crop")
+              button:ShowDarkroomModule("iop/crop")
             end
           }
     }
@@ -1753,6 +1799,7 @@ ButtonMidToneExposure = WorkflowStepButton:new():new
             clicked_callback = function(widget)
               local button = GetWorkflowButton(widget)
               button:EnableDarkroomModule("iop/exposure")
+              button:ShowDarkroomModule("iop/exposure")
             end
           }
     }
@@ -1761,10 +1808,10 @@ table.insert(WorkflowButtons, ButtonMidToneExposure)
 
 ---------------------------------------------------------------
 
--- TEST button: Special button, used to perform module tests
--- This button should be disabled for general use of the script.
--- To enable it, create a file named "TestFlag.txt" in the same
--- directory as this script file.
+-- MODULE TEST IMPLEMENTATION.
+
+-- This section contains some functions to perform module tests.
+-- The following functions are used during development and deployment.
 
 function FileExists(filename)
   local f = io.open(filename, "r")
@@ -1903,6 +1950,11 @@ local function ModuleTest()
   LogInfo("Module test: Finished.")
 end
 
+-- TEST button: Special button, used to perform module tests.
+-- This button should be disabled for general use of the script.
+-- To enable it, create a file named "TestFlag.txt" in the same
+-- directory as this script file.
+
 if (FileExists("TestFlag.txt")) then
   ButtonModuleTest = WorkflowStepButton:new():new
       {
@@ -1920,7 +1972,7 @@ if (FileExists("TestFlag.txt")) then
         Widget = dt.new_widget("button")
             {
               label = "Custom Code",
-              tooltip = "Execute code from InitialWorkflowModuleTestCustomCode.lua: \z
+              tooltip = "Execute code from TestCustomCode.lua: \z
         This file contains some custom debug code. It can be changed without \z
         restarting darktable. Just edit, save and execute it. You can use it \z
         to try some lua commands on the fly, e.g. dt.gui.action commands.",
@@ -1935,6 +1987,8 @@ if (FileExists("TestFlag.txt")) then
   table.insert(WorkflowButtons, ButtonModuleTestCustomCode)
 end
 
+-- END OF MODULE TEST IMPLEMENTATION.
+
 ---------------------------------------------------------------
 
 --[[
@@ -1944,30 +1998,29 @@ end
   Create main widget. Collect buttons and comboboxes.
 
 ]]
+-- collect all widgets to be displayed within the module
 local function GetWidgets()
-  -- collect all widgets to be displayed within the module
-
-  -- buttons to simplify some manual steps
-  -- buttons to start image processing and to set default values
   widgets =
   {
     dt.new_widget("label") { label = "preparing manual steps", selectable = false, ellipsize = "start", halign = "start" },
     dt.new_widget("box")
     {
       orientation = "horizontal",
-
+      
+      -- buttons to simplify some manual steps
       ButtonEnableRotateAndPerspective.Widget,
       ButtonEnableCrop.Widget,
       ButtonMidToneExposure.Widget,
     },
-
+    
     dt.new_widget("label") { label = "" },
     dt.new_widget("label") { label = "select and perform automatic steps", selectable = false, ellipsize = "start", halign =
     "start" },
     dt.new_widget("box")
     {
       orientation = "horizontal",
-
+      
+      -- buttons to start image processing and to set default values
       ButtonRunSelectedSteps.Widget,
       ButtonEnableDefaultSteps.Widget,
       ButtonDisableAllSteps.Widget
@@ -1976,7 +2029,7 @@ local function GetWidgets()
     dt.new_widget("label") { label = "" },
   }
 
-  -- TEST button: Special buttons, used to perform module tests
+  -- TEST button: Special buttons, used to perform module tests.
   if (ButtonModuleTest) then
     LogInfo("INSERT TEST BUTTON WIDGET")
     table.insert(widgets,
@@ -1989,8 +2042,8 @@ local function GetWidgets()
     )
   end
 
-  -- widget group: all single workflow steps
-  -- the order in the GUI is the same as the order of declaration in the code.
+  -- Comboboxes to configure single workflow steps.
+  -- The order in the GUI is the same as the order of declaration in the code.
   for i, step in ipairs(WorkflowSteps) do
     table.insert(widgets, step.Widget)
   end
@@ -2000,17 +2053,16 @@ end
 
 ---------------------------------------------------------------
 
+-- register the module and create widget box in lighttable and darkroom
 local function InstallModuleRegisterLib()
-  -- register the module and create widget box in lighttable and darkroom
-
   if not env.InstallModuleDone then
     LogInfo("install module - create widget")
 
     dt.register_lib(
-      "InitialWorkflowModule", -- Module name
-      "initial workflow",      -- name
-      true,                    -- expandable
-      true,                    -- resetable
+      ModuleName,         -- Module name
+      "initial workflow", -- name
+      true,               -- expandable
+      true,               -- resetable
 
       {
         [dt.gui.views.lighttable] = { "DT_UI_CONTAINER_PANEL_RIGHT_CENTER", 100 },
@@ -2032,25 +2084,26 @@ local function InstallModuleRegisterLib()
   end
 end
 
+-- register an event to signal changes from darkroom to lighttable
 local function viewChangedEvent(event, old_view, new_view)
-  -- register an event to signal changes from darkroom to lighttable
   LogInfo("view changed event")
   if new_view.name == "lighttable" and old_view.name == "darkroom" then
     InstallModuleRegisterLib()
   end
 end
 
+-- install module
 local function InstallModuleRegisterEvent()
   LogInfo("install module - register event")
 
   if not env.InstallModuleEventRegistered then
-    dt.register_event("InitialWorkflowModule", "view-changed", viewChangedEvent)
+    dt.register_event(ModuleName, "view-changed", viewChangedEvent)
     env.InstallModuleEventRegistered = true
   end
 end
 
+-- main entry function to install the module at startup
 local function InstallInitialWorkflowModule()
-  -- main entry function to install the module at startup
 
   LogInfo("install initial workflow module")
 
