@@ -22,18 +22,17 @@
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This script is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   See the GNU General Public License for more details
   at <http://www.gnu.org/licenses/>.
   ]]
-  local dt = require "darktable"
-  local du = require "lib/dtutils"
+local dt = require "darktable"
+local du = require "lib/dtutils"
 local log = require "lib/dtutils.log"
-local debug = require "darktable.debug"
 
 local ModuleName = "InitialWorkflowModule"
 
@@ -86,7 +85,7 @@ local function LogSummary()
   LogInfo("==============================")
 
   if (#LogSummaryMessages == 0) then
-    LogInfo("Summary: There are no important messages.")
+    LogInfo("Summary: OK. There are no important messages and no timeouts.")
   else
     LogInfo("THERE ARE IMPORTANT MESSAGES:")
 
@@ -105,33 +104,9 @@ local function LogSummary()
   LogInfo("==============================")
 end
 
--- get Darktable workflow setting
--- read preference "auto-apply chromatic adaptation defaults"
-local function GetDarktableWorkflowSetting()
-  return dt.preferences.read("darktable", "plugins/darkroom/chromatic-adaptation", "string")
-end
-
--- debug helper function to dump preference keys
--- helps you to find out strings like "plugins/darkroom/chromatic-adaptation"
--- darktable -d lua > ~/keys.txt
-local function DumpPreferenceKeys()
-  LogInfo("get preference keys...")
-  local keys = dt.preferences.get_keys()
-  LogInfo(#keys .. " retrieved, listing follows")
-  for _, key in ipairs(keys) do
-    LogInfo(key)
-  end
-end
-
-
--- check Darktable API version
--- new API of DT 4.2 is needed to use "pixelpipe-processing-complete" event
-local apiCheck, err = pcall(function() du.check_min_api_version("9.0.0", ModuleName) end)
-if (apiCheck) then
-  LogInfo("Darktable " .. dt.configuration.version .. " with appropriate lua API detected.")
-else
-  LogInfo("This script needs at least Darktable 4.2 API to run.")
-  return
+function ScriptFilePath()
+  local str = debug.getinfo(1, "S").source:sub(2)
+  return str:match("(.*[/\\])")
 end
 
 -- check, if given array contains a certain value
@@ -144,10 +119,57 @@ local function contains(table, value)
   return false
 end
 
+-- check Darktable API version
+-- new API of DT 4.2 is needed to use "pixelpipe-processing-complete" event
+local apiCheck, err = pcall(function() du.check_min_api_version("9.0.0", ModuleName) end)
+if (apiCheck) then
+  LogInfo("Darktable " .. dt.configuration.version .. " with appropriate lua API detected.")
+else
+  LogInfo("This script needs at least Darktable 4.2 API to run.")
+  return
+end
+
+LogInfo("Script executed from " .. ScriptFilePath())
+
+-- debug helper function to dump preference keys
+-- helps you to find out strings like "plugins/darkroom/chromatic-adaptation"
+-- darktable -d lua > ~/keys.txt
+local function DumpPreferenceKeys()
+  LogInfo("get preference keys...")
+  local keys = dt.preferences.get_keys()
+  LogInfo(#keys .. " retrieved, listing follows")
+  for _, key in ipairs(keys) do
+    LogInfo(key .. " = " .. dt.preferences.read("darktable", key, "string"))
+  end
+end
+
 -- check current darktable version
 -- used to handle different behavior of dt 4.2 and following versions
 local function CheckDarktable42()
   return contains({ "4.2", "4.2.0", "4.2.1" }, dt.configuration.version)
+end
+
+-- get Darktable workflow setting
+-- read preference "auto-apply chromatic adaptation defaults"
+local function CheckDarktableModernWorkflowPreference()
+  local modernWorkflows =
+  {
+    "scene-referred (filmic)",
+    "scene-referred (sigmoid)",
+    "modern"
+  }
+
+  local workflow
+
+  if CheckDarktable42() then
+    -- use old dt 4.2 preference setting
+    workflow = dt.preferences.read("darktable", "plugins/darkroom/chromatic-adaptation", "string")
+  else
+    -- use new dt 4.4 preference setting
+    workflow = dt.preferences.read("darktable", "plugins/darkroom/workflow", "string")
+  end
+
+  return contains(modernWorkflows, workflow)
 end
 
 ---------------------------------------------------------------
@@ -203,7 +225,7 @@ function WaitForEventBase:Do(embeddedFunction)
   local output = ".."
 
   while (not self.EventReceivedFlag) or (duration < self.WaitMin) do
-    if (duration % 500 == 0) then
+    if ((duration > 0) and (duration % 500 == 0)) then
       LogInfo(output)
       output = output .. "."
     end
@@ -536,9 +558,10 @@ function WorkflowStepCombobox:ReadPreferenceValue()
   self:Default()
 end
 
+-- combobox selection is returned as negative index value
 -- use index to compare current value with newly selected value
 -- used to avoid unnecessary set commands
-function WorkflowStepCombobox:CreateComboBoxValuesIndex()
+function WorkflowStepCombobox:CreateComboBoxSelectionIndex()
   -- dt.gui.action returns but c types (instead of string / combobox entry)
   self.ComboBoxValuesIndex = {}
   for k, v in pairs(self.ComboBoxValues) do
@@ -549,6 +572,12 @@ function WorkflowStepCombobox:CreateComboBoxValuesIndex()
       self.ComboBoxValuesIndex[v] = -(k - 1)
     end
   end
+end
+
+-- combobox selection is returned as negative index value
+-- convert negative index value to combobox string value
+function WorkflowStepCombobox:GetComboBoxValueFromSelectionIndex(index)
+  return self.ComboBoxValues[(-index) + 1]
 end
 
 -- called from callback function within a "foreign context"
@@ -938,24 +967,23 @@ function StepContrastEqualizer:Run()
 
   self:LogStepMessage()
   self:EnableDarkroomModule("iop/atrous")
-  self:ResetDarkroomModule("iop/atrous")
 
-  if (selection == "clarity, strength 0,25") then
+  if (selection == "reset to default") then
+    self:ResetDarkroomModule("iop/atrous")
+    --
+  elseif (selection == "clarity, strength 0,25") then
     GuiActionButtonOffOn("iop/atrous/preset/clarity")
     GuiActionSetValue("iop/atrous/mix", 0, "value", "set", 0.25)
-  end
-
-  if (selection == "clarity, strength 0,50") then
+    --
+  elseif (selection == "clarity, strength 0,50") then
     GuiActionButtonOffOn("iop/atrous/preset/clarity")
     GuiActionSetValue("iop/atrous/mix", 0, "value", "set", 0.5)
-  end
-
-  if (selection == "denoise & sharpen, strength 0,25") then
+    --
+  elseif (selection == "denoise & sharpen, strength 0,25") then
     GuiActionButtonOffOn("iop/atrous/preset/denoise & sharpen")
     GuiActionSetValue("iop/atrous/mix", 0, "value", "set", 0.25)
-  end
-
-  if (selection == "denoise & sharpen, strength 0,50") then
+    --
+  elseif (selection == "denoise & sharpen, strength 0,50") then
     GuiActionButtonOffOn("iop/atrous/preset/denoise & sharpen")
     GuiActionSetValue("iop/atrous/mix", 0, "value", "set", 0.5)
   end
@@ -1053,7 +1081,7 @@ StepExposureCorrection = WorkflowStepCombobox:new():new
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = "exposure",
       DisableValue = 1,
-      DefaultValue = 5,
+      DefaultValue = 4,
       Tooltip = "Automatically adjust the exposure correction. Remove \z
       the camera exposure bias, useful if you exposed the image to the right."
     }
@@ -1114,8 +1142,8 @@ function StepExposureCorrection:Run()
   end
 
   if (compensateBias) then
-    local checkbox = GuiActionWithoutEvent("iop/exposure/compensate exposure bias", 0, "", 0 / 0)
-    if (not checkbox) then
+    local checkbox = GuiActionGetValue("iop/exposure/compensate exposure bias", "")
+    if (checkbox == 0) then
       GuiAction("iop/exposure/compensate exposure bias", 0, "", "on", 1.0)
     else
       LogInfo('. checkbox already selected, nothing to do')
@@ -1281,13 +1309,19 @@ StepColorCalibrationIlluminant = WorkflowStepCombobox:new():new
       OperationNameInternal = "channelmixerrgb",
       DisableValue = 1,
 
-      -- distinguish between modern and legacy workflow
-      -- keep white balance unchanged, if using legacy workflow
-      -- see Darktable preferences - processing - auto-apply chromatic adaptation defaults
-      DefaultValue = (GetDarktableWorkflowSetting() == "modern") and 2 or 1,
+      -- see Default() override
+      DefaultValue = nil,
       Tooltip = "Perform color space corrections in color calibration \z
-      module. By default unchanged for the legacy workflow."
+      module. Select the illuminant. The type of illuminant assumed to \z
+      have lit the scene. By default unchanged for the legacy workflow."
     }
+
+-- distinguish between modern and legacy workflow
+-- keep value unchanged, if using legacy workflow
+-- depends on darktable preference settings
+function StepColorCalibrationIlluminant:Default()
+  self.Widget.value = CheckDarktableModernWorkflowPreference() and 2 or 1
+end
 
 table.insert(WorkflowSteps, StepColorCalibrationIlluminant)
 
@@ -1313,7 +1347,7 @@ function StepColorCalibrationIlluminant:Init()
     "as shot in camera"
   }
 
-  self:CreateComboBoxValuesIndex()
+  self:CreateComboBoxSelectionIndex()
 
   self.Widget = dt.new_widget("combobox")
       {
@@ -1332,17 +1366,90 @@ function StepColorCalibrationIlluminant:Run()
   end
 
   self:LogStepMessage()
+
+  -- ignore illuminant, if current adaptation is equal to bypass
+  local adaptationSelectionIndex = GuiActionGetValue("iop/channelmixerrgb/adaptation", "selection")
+  local adaptationSelection = StepColorCalibrationAdaptation:GetComboBoxValueFromSelectionIndex(adaptationSelectionIndex)
+  if (adaptationSelection == "none (bypass)") then
+    LogInfo(". adaptation = none (bypass): Illuminant cannot be set.")
+    return
+  else
+    LogInfo(". adaptation = " .. adaptationSelection .. " <> none (bypass): Illuminant can be set.")
+  end
+
+  -- set illuminant
+
   self:EnableDarkroomModule("iop/channelmixerrgb")
 
   local currentSelectionIndex = GuiActionGetValue("iop/channelmixerrgb/illuminant", "selection")
+  local currentSelection = StepColorCalibrationIlluminant:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
 
-  local newSelectionIndex = self.ComboBoxValuesIndex[selection]
-  LogInfo('. selection = "' .. selection .. '" corresponds to index ' .. newSelectionIndex)
-
-  if (newSelectionIndex ~= currentSelectionIndex) then
+  if (selection ~= currentSelection) then
+    LogInfo('. current illuminant = "' .. currentSelection .. '"')
     GuiAction("iop/channelmixerrgb/illuminant", 0, "selection", "item:" .. selection, 1.0)
   else
-    LogInfo('. value already equals to "' .. currentSelectionIndex .. '", nothing to do')
+    LogInfo('. illuminant already "' .. currentSelection .. '", nothing to do')
+  end
+end
+
+---------------------------------------------------------------
+
+StepColorCalibrationAdaptation = WorkflowStepCombobox:new():new
+    {
+      -- internal operation name should be copied from gui action command (iop/OperationName)
+      OperationNameInternal = "channelmixerrgb",
+      DisableValue = 1,
+      DefaultValue = 3,
+      Tooltip = "Perform color space corrections in color calibration \z
+      module. Select the adaptation. The working color space in which \z
+      the module will perform its chromatic adaptation transform and \z
+      channel mixing."
+    }
+
+table.insert(WorkflowSteps, StepColorCalibrationAdaptation)
+
+-- combobox values see darktable typedef enum dt_adaptation_t
+
+function StepColorCalibrationAdaptation:Init()
+  self.ComboBoxValues =
+  {
+    "unchanged", -- additional value
+    "linear Bradford (ICC v4)",
+    "CAT16 (CIECAM16)",
+    "non-linear Bradford",
+    "XYZ",
+    "none (bypass)"
+  }
+
+  self:CreateComboBoxSelectionIndex()
+
+  self.Widget = dt.new_widget("combobox")
+      {
+        changed_callback = ComboBoxChangedCallback,
+        label = "color calibration adaptation",
+        tooltip = self.Tooltip,
+        table.unpack(self.ComboBoxValues)
+      }
+end
+
+function StepColorCalibrationAdaptation:Run()
+  local selection = self.Widget.value
+
+  if (selection == "unchanged") then
+    return
+  end
+
+  self:LogStepMessage()
+  self:EnableDarkroomModule("iop/channelmixerrgb")
+
+  local currentSelectionIndex = GuiActionGetValue("iop/channelmixerrgb/adaptation", "selection")
+  local currentSelection = StepColorCalibrationAdaptation:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
+
+  if (selection ~= currentSelection) then
+    LogInfo('. current adaptation = "' .. currentSelection .. '"')
+    GuiAction("iop/channelmixerrgb/adaptation", 0, "selection", "item:" .. selection, 1.0)
+  else
+    LogInfo('. adaptation already "' .. currentSelection .. '", nothing to do')
   end
 end
 
@@ -1425,13 +1532,19 @@ StepWhiteBalance = WorkflowStepCombobox:new():new
       OperationNameInternal = "temperature",
       DisableValue = 1,
 
-      -- distinguish between modern and legacy workflow
-      -- keep white balance unchanged, if using legacy workflow
-      -- see Darktable preferences - processing - auto-apply chromatic adaptation defaults
-      DefaultValue = (GetDarktableWorkflowSetting() == "modern") and 2 or 1,
+      -- see Default() override
+      DefaultValue = nil,
       Tooltip = "Adjust the white balance of the image by altering the \z
       temperature. By default unchanged for the legacy workflow."
     }
+
+
+-- distinguish between modern and legacy workflow
+-- keep value unchanged, if using legacy workflow
+-- depends on darktable preference settings
+function StepWhiteBalance:Default()
+  self.Widget.value = CheckDarktableModernWorkflowPreference() and 2 or 1
+end
 
 table.insert(WorkflowSteps, StepWhiteBalance)
 
@@ -1445,7 +1558,7 @@ function StepWhiteBalance:Init()
     "camera reference"
   }
 
-  self:CreateComboBoxValuesIndex()
+  self:CreateComboBoxSelectionIndex()
 
   self.Widget = dt.new_widget("combobox")
       {
@@ -1467,14 +1580,13 @@ function StepWhiteBalance:Run()
   self:EnableDarkroomModule("iop/temperature")
 
   local currentSelectionIndex = GuiActionGetValue("iop/temperature/settings/settings", "selection")
+  local currentSelection = StepWhiteBalance:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
 
-  local newSelectionIndex = self.ComboBoxValuesIndex[selection]
-  LogInfo('. selection = "' .. selection .. '" corresponds to index ' .. newSelectionIndex)
-
-  if (newSelectionIndex ~= currentSelectionIndex) then
+  if (selection ~= currentSelection) then
+    LogInfo('. current value = "' .. currentSelection .. '"')
     GuiAction("iop/temperature/settings/" .. selection, 0, "", "", 1.0)
   else
-    LogInfo('. value already equals to "' .. currentSelectionIndex .. '", nothing to do')
+    LogInfo('. value already "' .. currentSelection .. '", nothing to do')
   end
 end
 
@@ -1582,8 +1694,7 @@ function StepShowModulesDuringExecution:Init()
 end
 
 function StepShowModulesDuringExecution:Run()
-  -- local selection = self.Widget.value
-  self:LogStepMessage()
+  -- do nothing...
 end
 
 ---------------------------------------------------------------
@@ -1660,11 +1771,6 @@ local function ProcessSelectedImagesInLighttableView()
   for index, image in ipairs(images) do
     LogMajorNr = index
     LogCurrentStep = ""
-
-    --debug.max_depth = 3
-    --log.msg(log.always, 4, dt.debug.dump(image))
-    --local d = dt.gui.libs.modulegroups
-    --log.msg(log.always, 4, dt.debug.dump(d))
 
     -- load selected image and show it in darkroom view
     LogInfo("load image " .. index .. " of " .. #images)
@@ -1956,7 +2062,7 @@ end
 -- To enable it, create a file named "TestFlag.txt" in the same
 -- directory as this script file.
 
-if (FileExists("TestFlag.txt")) then
+if (FileExists(ScriptFilePath() .. "TestFlag.txt")) then
   ButtonModuleTest = WorkflowStepButton:new():new
       {
         Widget = dt.new_widget("button")
@@ -1979,7 +2085,9 @@ if (FileExists("TestFlag.txt")) then
         to try some lua commands on the fly, e.g. dt.gui.action commands.",
 
               clicked_callback = function()
-                dofile "TestCustomCode.lua"
+                fileName = ScriptFilePath() .. "TestCustomCode.lua"
+                LogInfo('Execute script "' .. fileName .. '"')
+                dofile(fileName)
               end
             }
       }
@@ -2007,20 +2115,20 @@ local function GetWidgets()
     dt.new_widget("box")
     {
       orientation = "horizontal",
-      
+
       -- buttons to simplify some manual steps
       ButtonEnableRotateAndPerspective.Widget,
       ButtonEnableCrop.Widget,
       ButtonMidToneExposure.Widget,
     },
-    
+
     dt.new_widget("label") { label = "" },
     dt.new_widget("label") { label = "select and perform automatic steps", selectable = false, ellipsize = "start", halign =
     "start" },
     dt.new_widget("box")
     {
       orientation = "horizontal",
-      
+
       -- buttons to start image processing and to set default values
       ButtonRunSelectedSteps.Widget,
       ButtonEnableDefaultSteps.Widget,
@@ -2057,8 +2165,6 @@ end
 -- register the module and create widget box in lighttable and darkroom
 local function InstallModuleRegisterLib()
   if not Env.InstallModuleDone then
-    LogInfo("install module - create widget")
-
     dt.register_lib(
       ModuleName,         -- Module name
       "initial workflow", -- name
@@ -2105,15 +2211,14 @@ end
 
 -- main entry function to install the module at startup
 local function InstallInitialWorkflowModule()
-
-  LogInfo("install initial workflow module")
+  LogInfo("create widget in lighttable and darkroom panels")
 
   -- initialize workflow steps
   for i, step in ipairs(WorkflowSteps) do
     step:Init()
   end
 
-  -- default settings
+  -- get current settings as saved in darktable preferences
   for i, step in ipairs(WorkflowSteps) do
     step:ReadPreferenceValue()
   end
