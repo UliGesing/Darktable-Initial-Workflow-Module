@@ -411,8 +411,8 @@ local WorkflowButtons = {}
 -- base class of all workflow steps
 local WorkflowStep =
 {
-  Widget,
-  Tooltip,
+  Widget = nil,
+  Tooltip = nil,
 }
 
 -- workflow step base class constructor
@@ -500,9 +500,9 @@ WorkflowStepButton = WorkflowStep:new():new
 -- base class of workflow steps with Combobox widget
 WorkflowStepCombobox = WorkflowStep:new():new
     {
-      OperationNameInternal,
-      DisableValue,
-      DefaultValue
+      OperationNameInternal = nil,
+      DisableValue = nil,
+      DefaultValue = nil
     }
 
 -- disable step, setting keeps unchanged during script execution
@@ -1718,7 +1718,7 @@ local function ProcessWorkflowSteps()
   -- execute all workflow steps
   -- the order is from bottom to top, along the pixel pipeline.
   for i = 1, #WorkflowSteps do
-    step = WorkflowSteps[#WorkflowSteps + 1 - i]
+    local step = WorkflowSteps[#WorkflowSteps + 1 - i]
     LogCurrentStep = step.Widget.label
     step:Run()
   end
@@ -1868,8 +1868,10 @@ ButtonEnableRotateAndPerspective = WorkflowStepButton:new():new
 
             clicked_callback = function(widget)
               local button = GetWorkflowButton(widget)
-              button:EnableDarkroomModule("iop/ashift")
-              button:ShowDarkroomModule("iop/ashift")
+              if button ~= nil then
+                button:EnableDarkroomModule("iop/ashift")
+                button:ShowDarkroomModule("iop/ashift")
+              end
             end
           }
     }
@@ -1887,8 +1889,10 @@ ButtonEnableCrop = WorkflowStepButton:new():new
 
             clicked_callback = function(widget)
               local button = GetWorkflowButton(widget)
-              button:EnableDarkroomModule("iop/crop")
-              button:ShowDarkroomModule("iop/crop")
+              if (button ~= nil) then
+                button:EnableDarkroomModule("iop/crop")
+                button:ShowDarkroomModule("iop/crop")
+              end
             end
           }
     }
@@ -1907,8 +1911,10 @@ ButtonMidToneExposure = WorkflowStepButton:new():new
 
             clicked_callback = function(widget)
               local button = GetWorkflowButton(widget)
-              button:EnableDarkroomModule("iop/exposure")
-              button:ShowDarkroomModule("iop/exposure")
+              if (button ~= nil) then
+                button:EnableDarkroomModule("iop/exposure")
+                button:ShowDarkroomModule("iop/exposure")
+              end
             end
           }
     }
@@ -1932,9 +1938,11 @@ function FileExists(filename)
 end
 
 local function GetFileModified(fileName)
-  local f = io.popen("stat -c %Y '" .. fileName .. "'")
-  local xmpModified = f:read()
-  return xmpModified
+  local fileHandle = io.popen("stat -c %Y '" .. fileName .. "'")
+  if (fileHandle ~= nil) then
+    return fileHandle:read()
+  end
+  return nil
 end
 
 local function WaitForFileModified(xmpFile, xmpModified)
@@ -2085,7 +2093,7 @@ if (FileExists(ScriptFilePath() .. "TestFlag.txt")) then
         to try some lua commands on the fly, e.g. dt.gui.action commands.",
 
               clicked_callback = function()
-                fileName = ScriptFilePath() .. "TestCustomCode.lua"
+                local fileName = ScriptFilePath() .. "TestCustomCode.lua"
                 LogInfo('Execute script "' .. fileName .. '"')
                 dofile(fileName)
               end
@@ -2109,11 +2117,10 @@ end
 ]]
 -- collect all widgets to be displayed within the module
 local function GetWidgets()
-  widgets =
+  local widgets =
   {
     dt.new_widget("label") { label = "preparing manual steps", selectable = false, ellipsize = "start", halign = "start" },
-    dt.new_widget("box")
-    {
+    dt.new_widget("box") {
       orientation = "horizontal",
 
       -- buttons to simplify some manual steps
@@ -2125,8 +2132,7 @@ local function GetWidgets()
     dt.new_widget("label") { label = "" },
     dt.new_widget("label") { label = "select and perform automatic steps", selectable = false, ellipsize = "start", halign =
     "start" },
-    dt.new_widget("box")
-    {
+    dt.new_widget("box") {
       orientation = "horizontal",
 
       -- buttons to start image processing and to set default values
