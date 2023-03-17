@@ -42,7 +42,6 @@ local Env =
 {
   InstallModuleEventRegistered = false,
   InstallModuleDone = false,
-  DefaultSleepDuration = 1000
 }
 
 ---------------------------------------------------------------
@@ -107,6 +106,13 @@ end
 function ScriptFilePath()
   local str = debug.getinfo(1, "S").source:sub(2)
   return str:match("(.*[/\\])")
+end
+
+function ThreadSleep(milliseconds)
+  local timeout = StepTimeout:Value()
+  local factor = milliseconds / timeout
+  LogInfo(". wait for " .. milliseconds .. "ms... (config=" .. timeout .. "ms * " .. factor .. ")")
+  dt.control.sleep(milliseconds)
 end
 
 -- check, if given array contains a certain value
@@ -181,9 +187,7 @@ local WaitForEventBase =
 {
   ModuleName = ModuleName,
   EventType = nil,
-  EventReceivedFlag = nil,
-  WaitMin = 100,
-  WaitMax = 5000
+  EventReceivedFlag = nil
 }
 
 -- base class constructor
@@ -221,10 +225,12 @@ function WaitForEventBase:Do(embeddedFunction)
 
   -- wait for registered event
   local duration = 0
-  local period = Env.DefaultSleepDuration / 10
+  local durationMax = StepTimeout:Value() * 5
+  local period = StepTimeout:Value() / 10
   local output = ".."
 
-  while (not self.EventReceivedFlag) or (duration < self.WaitMin) do
+
+  while (not self.EventReceivedFlag) or (duration < period) do
     if ((duration > 0) and (duration % 500 == 0)) then
       LogInfo(output)
       output = output .. "."
@@ -233,9 +239,10 @@ function WaitForEventBase:Do(embeddedFunction)
     dt.control.sleep(period)
     duration = duration + period
 
-    if (duration >= self.WaitMax) then
-      LogInfo("timeout waiting for event " .. self.EventType)
-      LogSummaryMessage("timeout waiting for event " .. self.EventType)
+    if (duration >= durationMax) then
+      local timeoutMessage = "timeout after " .. durationMax .. "ms waiting for event " .. self.EventType
+      LogInfo(timeoutMessage)
+      LogSummaryMessage(timeoutMessage)
       break
     end
   end
@@ -274,7 +281,7 @@ function WaitForImageLoaded:EventReceivedFunction(event, clean, image)
     LogInfo(message)
     LogSummaryMessage(message)
 
-    dt.control.sleep(Env.DefaultSleepDuration)
+    ThreadSleep(StepTimeout:Value() * 2)
     dt.gui.views.darkroom.display_image(image)
   else
     WaitForImageLoaded:EventReceivedFlagSet()
@@ -335,7 +342,7 @@ local function GuiActionInternal(path, instance, element, effect, speed, waitFor
   else
     result = dt.gui.action(path, instance, element, effect, speed)
     -- wait a bit...
-    dt.control.sleep(Env.DefaultSleepDuration)
+    ThreadSleep(StepTimeout:Value() / 2)
   end
 
   return result
@@ -429,7 +436,7 @@ end
 -- message at the beginning of a step
 function WorkflowStep:LogStepMessage()
   LogInfo("==============================")
-  LogInfo("Step setting = " .. self.Widget.value)
+  LogInfo("selection = " .. self.Widget.value)
 end
 
 -- show given darkroom module
@@ -625,7 +632,7 @@ StepCompressHistoryStack = WorkflowStepCombobox:new():new
       DisableValue = 1, -- item in ComboBoxValues
       DefaultValue = 2, -- item in ComboBoxValues
       Tooltip =
-      "Generate the shortest history stack that reproduces the current \z
+      "Generate the shortest history stack that reproduces the current \n\z
       image. This removes your current history snapshots."
     }
 
@@ -661,9 +668,9 @@ StepDynamicRangeSceneToDisplay = WorkflowStepCombobox:new():new
       OperationNameInternal = "Filmic or Sigmoid",
       DisableValue = 1,
       DefaultValue = 4,
-      Tooltip = "Use Filmic or Sigmoid to expand or contract the dynamic range of the \z
-      scene to fit the dynamic range of the display. Auto tune filmic levels of black + \z
-      white relative exposure and / or reset module settings. Or use Sigmoid with one of \z
+      Tooltip = "Use Filmic or Sigmoid to expand or contract the dynamic range of the \n\z
+      scene to fit the dynamic range of the display. Auto tune filmic levels of black + \n\z
+      white relative exposure and / or reset module settings. Or use Sigmoid with one of \n\z
       its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others."
     }
 
@@ -877,8 +884,8 @@ StepColorBalanceRGB = WorkflowStepCombobox:new():new
       OperationNameInternal = "colorbalancergb",
       DisableValue = 1,
       DefaultValue = 2,
-      Tooltip = "Choose a predefined preset for your color-grading. Or set \z
-      auto pickers of the module mask and peak white and gray luminance value \z
+      Tooltip = "Choose a predefined preset for your color-grading. Or set \n\z
+      auto pickers of the module mask and peak white and gray luminance value \n\z
       to normalize the power setting in the 4 ways tab."
     }
 
@@ -931,8 +938,8 @@ StepContrastEqualizer = WorkflowStepCombobox:new():new
       OperationNameInternal = "atrous",
       DisableValue = 1,
       DefaultValue = 3,
-      Tooltip = "Adjust luminance and chroma contrast. Apply choosen \z
-      preset (clarity or denoise & sharpen). Choose different values \z
+      Tooltip = "Adjust luminance and chroma contrast. Apply choosen \n\z
+      preset (clarity or denoise & sharpen). Choose different values \n\z
       to adjust the strength of the effect."
     }
 
@@ -997,9 +1004,9 @@ StepToneEqualizerMask = WorkflowStepCombobox:new():new
       OperationNameInternal = "toneequal",
       DisableValue = 1,
       DefaultValue = 3,
-      Tooltip = "Use default preset mask blending for all purposes \z
-      plus automatic mask contrast and exposure compensation. Or use \z
-      preset to compress shadows and highlights with exposure-independent \z
+      Tooltip = "Use default preset mask blending for all purposes \n\z
+      plus automatic mask contrast and exposure compensation. Or use \n\z
+      preset to compress shadows and highlights with exposure-independent \n\z
       guided filter (eigf) (soft, medium or strong)."
     }
 
@@ -1082,7 +1089,7 @@ StepExposureCorrection = WorkflowStepCombobox:new():new
       OperationNameInternal = "exposure",
       DisableValue = 1,
       DefaultValue = 4,
-      Tooltip = "Automatically adjust the exposure correction. Remove \z
+      Tooltip = "Automatically adjust the exposure correction. Remove \n\z
       the camera exposure bias, useful if you exposed the image to the right."
     }
 
@@ -1311,8 +1318,8 @@ StepColorCalibrationIlluminant = WorkflowStepCombobox:new():new
 
       -- see Default() override
       DefaultValue = nil,
-      Tooltip = "Perform color space corrections in color calibration \z
-      module. Select the illuminant. The type of illuminant assumed to \z
+      Tooltip = "Perform color space corrections in color calibration \n\z
+      module. Select the illuminant. The type of illuminant assumed to \n\z
       have lit the scene. By default unchanged for the legacy workflow."
     }
 
@@ -1400,9 +1407,9 @@ StepColorCalibrationAdaptation = WorkflowStepCombobox:new():new
       OperationNameInternal = "channelmixerrgb",
       DisableValue = 1,
       DefaultValue = 3,
-      Tooltip = "Perform color space corrections in color calibration \z
-      module. Select the adaptation. The working color space in which \z
-      the module will perform its chromatic adaptation transform and \z
+      Tooltip = "Perform color space corrections in color calibration \n\z
+      module. Select the adaptation. The working color space in which \n\z
+      the module will perform its chromatic adaptation transform and \n\z
       channel mixing."
     }
 
@@ -1464,8 +1471,8 @@ StepHighlightReconstruction = WorkflowStepCombobox:new():new
       OperationNameInternal = "highlights",
       DisableValue = 1,
       DefaultValue = 1,
-      Tooltip = "Reconstruct color information for clipped pixels. \z
-      Select an appropriate reconstruction methods to reconstruct the \z
+      Tooltip = "Reconstruct color information for clipped pixels. \n\z
+      Select an appropriate reconstruction methods to reconstruct the \n\z
       missing data from unclipped channels and/or neighboring pixels."
     }
 
@@ -1534,7 +1541,7 @@ StepWhiteBalance = WorkflowStepCombobox:new():new
 
       -- see Default() override
       DefaultValue = nil,
-      Tooltip = "Adjust the white balance of the image by altering the \z
+      Tooltip = "Adjust the white balance of the image by altering the \n\z
       temperature. By default unchanged for the legacy workflow."
     }
 
@@ -1599,8 +1606,8 @@ StepResetModuleHistory = WorkflowStepCombobox:new():new
       OperationNameInternal = nil,
       DisableValue = 1, -- item in ComboBoxValues
       DefaultValue = 2, -- item in ComboBoxValues
-      Tooltip = "Reset modules that are part of this initial workflow. \z
-      Keep other module settings like crop, rotate and perspective. Or \z
+      Tooltip = "Reset modules that are part of this initial workflow. \n\z
+      Keep other module settings like crop, rotate and perspective. Or \n\z
       reset all modules of the pixelpipe and discard complete history stack."
     }
 
@@ -1674,8 +1681,8 @@ StepShowModulesDuringExecution = WorkflowStepCombobox:new():new
       DisableValue = 1, -- item in ComboBoxValues
       DefaultValue = 1, -- item in ComboBoxValues
       Tooltip =
-      "Show darkroom modules for enabled workflow steps during \z
-      execution of this initial workflow. This makes the changes \z
+      "Show darkroom modules for enabled workflow steps during \n\z
+      execution of this initial workflow. This makes the changes \n\z
       easier to understand."
     }
 
@@ -1699,6 +1706,54 @@ end
 
 ---------------------------------------------------------------
 
+StepTimeout = WorkflowStepCombobox:new():new
+    {
+      -- operation = nil: ignore this module during module reset
+      OperationNameInternal = nil,
+      DisableValue = 2, -- item in ComboBoxValues
+      DefaultValue = 2, -- item in ComboBoxValues
+      Tooltip =
+      "Some calculations take a certain amount of time. Depending on \n\z
+      the hardware equipment also longer.This script waits and attempts to \n\z
+      detect timeouts. If steps take much longer than expected, those \n\z
+      steps will be aborted. You can configure the default timeout (ms). \n\z
+      Before and after each step of the workflow, the script waits this time. \n\z
+      In other places also a multiple (loading an image) or a fraction \n\z
+      (querying a status)."
+    }
+
+table.insert(WorkflowSteps, StepTimeout)
+
+function StepTimeout:Init()
+  self.ComboBoxValues =
+  {
+    "500",
+    "1000",
+    "2000",
+    "3000",
+    "4000",
+    "5000"
+  }
+
+  self.Widget = dt.new_widget("combobox")
+      {
+        changed_callback = ComboBoxChangedCallback,
+        label = "timeout value",
+        tooltip = self.Tooltip,
+        table.unpack(self.ComboBoxValues)
+      }
+end
+
+function StepTimeout:Run()
+  LogInfo("Step timeout = " .. self:Value() .. "ms")
+end
+
+function StepTimeout:Value()
+  return tonumber(self.Widget.value)
+end
+
+---------------------------------------------------------------
+
 --[[
 
   IMPLEMENTATION OF BUTTON CONTROLS
@@ -1708,12 +1763,12 @@ end
 ]]
 ---------------------------------------------------------------
 
+-- process all configured workflow steps
 local function ProcessWorkflowSteps()
-  -- process current image
   LogInfo("==============================")
   LogInfo("process workflow steps")
 
-  dt.control.sleep(Env.DefaultSleepDuration)
+  ThreadSleep(StepTimeout:Value())
 
   -- execute all workflow steps
   -- the order is from bottom to top, along the pixel pipeline.
@@ -1723,11 +1778,11 @@ local function ProcessWorkflowSteps()
     step:Run()
   end
 
-  dt.control.sleep(Env.DefaultSleepDuration)
-
   LogCurrentStep = ""
+  ThreadSleep(StepTimeout:Value())
 end
 
+-- process current image in darkroom view
 local function ProcessImageInDarkroomView()
   LogMajorMax = 1
   LogMajorNr = 1
@@ -1740,9 +1795,8 @@ local function ProcessImageInDarkroomView()
   LogSummary()
 end
 
+-- process selected image(s)
 local function ProcessSelectedImagesInLighttableView()
-  -- function to process selected image(s)
-
   LogMajorMax = 0
   LogMajorNr = 0
   LogCurrentStep = ""
@@ -1753,11 +1807,16 @@ local function ProcessSelectedImagesInLighttableView()
   LogInfo("process selected images")
 
   -- check that there is an image selected to activate darkroom view
-
-  local images = dt.gui.selection() -- dt.gui.action_images
+  local images = dt.gui.action_images
   if not images or #images == 0 then
     LogScreen("no image selected")
     return
+  end
+
+  -- remember currently selected images
+  images = {}
+  for _, newImage in ipairs(dt.gui.action_images) do
+    table.insert(images, newImage)
   end
 
   -- switch to darkroom view
@@ -1768,19 +1827,21 @@ local function ProcessSelectedImagesInLighttableView()
 
   -- process selected images
   LogMajorMax = #images
-  for index, image in ipairs(images) do
+  for index, newImage in ipairs(images) do
     LogMajorNr = index
     LogCurrentStep = ""
 
+    local oldImage = dt.gui.views.darkroom.display_image()
+
     -- load selected image and show it in darkroom view
     LogInfo("load image " .. index .. " of " .. #images)
-    LogInfo("file = " .. image.filename)
+    LogInfo("image file = " .. newImage.filename)
 
-    if (dt.gui.views.darkroom.display_image() ~= image) then
+    if (oldImage ~= newImage) then
       WaitForPixelPipe:Do(function()
-        LogInfo("load image into darkroom view")
+        LogInfo("load new image into darkroom view")
         WaitForImageLoaded:Do(function()
-          dt.gui.views.darkroom.display_image(image)
+          dt.gui.views.darkroom.display_image(newImage)
         end)
       end)
     end
@@ -1789,6 +1850,11 @@ local function ProcessSelectedImagesInLighttableView()
   end
 
   LogSummary()
+
+  -- switch to lighttable view
+  LogInfo("switch to lighttable view")
+  dt.gui.current_view(dt.gui.views.lighttable)
+  dt.gui.selection(images)
 end
 
 ButtonRunSelectedSteps = WorkflowStepButton:new():new
@@ -1796,8 +1862,8 @@ ButtonRunSelectedSteps = WorkflowStepButton:new():new
       Widget = dt.new_widget("button")
           {
             label = "run",
-            tooltip = "Perform all configured steps in darkroom for \z
-        an initial workflow. Perform the steps from bottom to top \z
+            tooltip = "Perform all configured steps in darkroom for \n\z
+        an initial workflow. Perform the steps from bottom to top \n\z
         along the pixel pipeline.",
 
             clicked_callback = function()
@@ -1836,6 +1902,7 @@ table.insert(WorkflowButtons, ButtonDisableAllSteps)
 
 ---------------------------------------------------------------
 
+-- select default configuration for each step
 local function EnableDefaultSteps()
   -- called via default button
   -- called via module reset control
@@ -1906,7 +1973,7 @@ ButtonMidToneExposure = WorkflowStepButton:new():new
       Widget = dt.new_widget("button")
           {
             label = "exposure (midtones)",
-            tooltip = "Show exposure module to adjust the exposure \z
+            tooltip = "Show exposure module to adjust the exposure \n\z
       until the mid-tones are clear enough.",
 
             clicked_callback = function(widget)
@@ -1946,15 +2013,14 @@ local function GetFileModified(fileName)
 end
 
 local function WaitForFileModified(xmpFile, xmpModified)
-  local min = 500
-  local max = 5000
   local duration = 0
-  local period = 500
+  local durationMax = StepTimeout:Value() * 5
+  local period = StepTimeout:Value()
 
-  while (duration < min) do
-    dt.control.sleep(period)
+  while (duration < period) do
+    ThreadSleep(period)
     duration = duration + period
-    if (duration >= max) then
+    if (duration >= durationMax) then
       break
     end
 
@@ -1970,7 +2036,7 @@ end
 
 local function CopyXmpFile(xmpFile, filePath, fileName, appendix, xmpModified)
   -- wait until xmp file was written
-  dt.control.sleep(Env.DefaultSleepDuration)
+  ThreadSleep(StepTimeout:Value())
   local xmpModifiedNew = WaitForFileModified(xmpFile, xmpModified)
 
   -- copy xmp file to test result folder
@@ -1982,7 +2048,14 @@ local function CopyXmpFile(xmpFile, filePath, fileName, appendix, xmpModified)
   return xmpModifiedNew
 end
 
+-- called to perform module tests
 local function ModuleTest()
+  local currentView = dt.gui.current_view()
+  if (currentView ~= dt.gui.views.darkroom) then
+    LogScreen("Module test: Tests must be started from darkroom view")
+    return
+  end
+
   LogSummaryClear()
   LogInfo("Module test: Started.")
 
@@ -1990,13 +2063,6 @@ local function ModuleTest()
   LogMajorNr = 1
   LogCurrentStep = ""
 
-  -- called to perform module tests
-
-  local currentView = dt.gui.current_view()
-  if (currentView ~= dt.gui.views.darkroom) then
-    LogScreen("Module test: Tests must be started from darkroom view")
-    return
-  end
 
   -- get current image information
   local image = dt.gui.views.darkroom.display_image()
@@ -2024,9 +2090,6 @@ local function ModuleTest()
   local comboBoxValuesMax = 1
   for i, step in ipairs(WorkflowSteps) do
     local count = #step.ComboBoxValues
-    if (step == StepColorBalanceGlobalChroma or step == StepColorBalanceGlobalSaturation) then
-      count = 2 -- limit number to sensible values
-    end
     if (count > comboBoxValuesMax) then
       comboBoxValuesMax = count
     end
@@ -2038,10 +2101,16 @@ local function ModuleTest()
   -- configure first step to reset all inital workflow modules
   StepResetModuleHistory.Widget.value = 3
 
+  local ignoreSteps =
+  {
+    StepResetModuleHistory,
+    StepTimeout
+  }
+
   -- set different combinations of module settings
   for comboBoxValue = 1, comboBoxValuesMax do
     for i, step in ipairs(WorkflowSteps) do
-      if (step ~= StepResetModuleHistory) then
+      if (not contains(ignoreSteps, step)) then
         if (comboBoxValue <= #step.ComboBoxValues) then
           step.Widget.value = comboBoxValue
         elseif (comboBoxValue == #step.ComboBoxValues + 1) then
@@ -2087,13 +2156,25 @@ if (FileExists(ScriptFilePath() .. "TestFlag.txt")) then
         Widget = dt.new_widget("button")
             {
               label = "Custom Code",
-              tooltip = "Execute code from TestCustomCode.lua: \z
-        This file contains some custom debug code. It can be changed without \z
-        restarting darktable. Just edit, save and execute it. You can use it \z
+              tooltip = "Execute code from TestCustomCode.lua: \n\z
+        This file contains some custom debug code. It can be changed without \n\z
+        restarting darktable. Just edit, save and execute it. You can use it \n\z
         to try some lua commands on the fly, e.g. dt.gui.action commands.",
 
               clicked_callback = function()
+                --[[                 local currentView = dt.gui.current_view()
+                if (currentView ~= dt.gui.views.darkroom) then
+                  LogScreen("Module test: Tests must be started from darkroom view")
+                  return
+                end
+ ]]
                 local fileName = ScriptFilePath() .. "TestCustomCode.lua"
+
+                if (not FileExists(fileName)) then
+                  LogScreen("Module test: File not found: " .. fileName)
+                  return
+                end
+
                 LogInfo('Execute script "' .. fileName .. '"')
                 dofile(fileName)
               end
