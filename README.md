@@ -3,11 +3,22 @@ This script can be used together with darktable. See https://www.darktable.org/ 
 
 This script offers a new "inital workflow" module both in lighttable and darkroom view. It can be used to do some configuration for an initial image workflow. It calls some automatisms of different modules in the darkroom view, enables your preferred modules and configures some default settings. If this suits your workflow, the script saves some clicks and time.
 
-## Screenshot as overview
-
+The new module offers some configuration settings:
 <img src="ScreenshotModuleDefaults.png" width=250>
 
-## Usage
+In preparation for running the script, use the following buttons to rotate the image, adjust the perspective, crop the image and to adjust the exposure until the mid-tones are clear enough:
+<img src="ScreenshotModulePreparingSteps.png" width=250>
+
+After the preparing steps choose your personal configuration for each step:
+<img src="ScreenshotModuleStepConfiguration.png" width=250>
+
+Each step offers several choices, for example:
+<img src="ScreenshotModuleStepConfigurationFilmic.png" width=250>
+
+Once the configuration is complete, execute the script using the "run" button. The other buttons can be used to select the standard configurations or to deactivate all steps.
+<img src="ScreenshotModuleRunDefaultNoneButtons.png" width=250>
+
+## Installation
 To install this module, see Darktable documentation for your first steps: https://docs.darktable.org/usermanual/4.2/en/lua/. Require this script from your luarc file and restart darktable. To do this, add the path of this file to .config/darktable/luarc: require "examples/InitialWorkflowModule"
 
 You can execute darktable with additional parameters "darktable -d lua" to get some loggings.
