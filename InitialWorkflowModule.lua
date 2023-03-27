@@ -1053,9 +1053,12 @@
       self:ShowDarkroomModule("iop/toneequal")
   
       GuiActionWithoutEvent("iop/toneequal/page", 0, "masking", "", 1.0)
-      GuiActionButtonOffOn("iop/toneequal/mask exposure compensation")
-      GuiActionButtonOffOn("iop/toneequal/mask contrast compensation")
-  
+      
+      GuiAction("iop/toneequal/mask exposure compensation",0,"button", "toggle", 1.0)
+      ThreadSleep(StepTimeout:Value())
+      GuiAction("iop/toneequal/mask contrast compensation",0,"button", "toggle", 1.0)
+      ThreadSleep(StepTimeout:Value())
+
       -- workaround: show this module, otherwise the buttons will not be pressed
       self:HideDarkroomModule("iop/toneequal")
       --
