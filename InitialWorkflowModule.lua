@@ -447,6 +447,7 @@
     LogInfo("show module " .. moduleName .. " (if not visible)")
     local visible = GuiActionGetValue(moduleName, "show")
     if (not GuiActionValueToBoolean(visible)) then
+      dt.gui.panel_show("DT_UI_PANEL_RIGHT")
       GuiActionWithoutEvent(moduleName, 0, "show", "", 1.0)
     else
       LogInfo(". already visible, nothing to do")
@@ -1897,7 +1898,9 @@
   
               clicked_callback = function()
                 for i, step in ipairs(WorkflowSteps) do
-                  step:Disable()
+                  if(step ~= StepTimeout) then
+                    step:Disable()
+                  end 
                 end
               end
             }
@@ -1912,7 +1915,9 @@
     -- called via default button
     -- called via module reset control
     for i, step in ipairs(WorkflowSteps) do
-      step:Default()
+      if(step ~= StepTimeout) then
+        step:Default()
+      end 
     end
   end
   
