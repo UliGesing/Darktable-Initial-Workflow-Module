@@ -37,7 +37,7 @@ Some calculations take a certain amount of time. Depending on the hardware equip
 
 ## Installation and Prerequisites
 
-This script requires darktable 4.2, 4.2.1 or 4.4. It can also be used with the development version 4.3. The script was developed and tested on Linux (EndeavourOs). Individual tests were also carried out with Windows 10 (virtual machine).
+This script requires darktable 4.2.1 or 4.4. It can also be used with the development version 4.3. The script was developed and tested on Linux (EndeavourOs). Individual tests were also carried out with Windows 10 (virtual machine).
 
 To install this module, see Darktable documentation for your first steps: https://docs.darktable.org/usermanual/4.2/en/lua/. Copy the file "InitialWorkflowModule.lua" into your darktable script folder. Require this script from your luarc file. To do this, add the path of this file to .config/darktable/luarc: require "examples/InitialWorkflowModule"
 
