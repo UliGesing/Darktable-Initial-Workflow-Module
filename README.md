@@ -25,15 +25,15 @@ Do you want to know more about what the individual steps of the workflow change?
 
 <img src="ScreenshotModuleStepConfigurationShowModules.png" width=250>
 
+## Limitation
+
+This script only works if darktable is used with an English user interface. Go to darktable preferences, choose page general and set the interface language to English.
+
 ## Timeouts
 
 Some calculations take a certain amount of time. Depending on the hardware equipment also longer. This script waits and attempts to detect timeouts. If steps take much longer than expected, those steps will be aborted. You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status).<br>
 
 <img src="ScreenshotModuleStepConfigurationTimeout.png" width=250>
-
-## Limitation
-
-This script only works if darktable is used with an English user interface. Go to darktable preferences, choose page general and set the interface language to English.
 
 ## Installation and Prerequisites
 
@@ -42,6 +42,10 @@ This script requires darktable 4.2, 4.2.1 or 4.4. It can also be used with the d
 To install this module, see Darktable documentation for your first steps: https://docs.darktable.org/usermanual/4.2/en/lua/. Copy the file "InitialWorkflowModule.lua" into your darktable script folder. Require this script from your luarc file. To do this, add the path of this file to .config/darktable/luarc: require "examples/InitialWorkflowModule"
 
 Restart darktable to load the script. You can execute darktable with additional parameters "darktable -d lua" to get some loggings.
+
+## Request for Change
+
+Do you have any suggestions for further steps or options? Which darkroom modules do you use most often? With which settings does your own workflow start? Just let me know or see the description below how to do it yourself.
 
 ## Add new or modify workflow steps
 
