@@ -91,7 +91,7 @@
       for index, message in ipairs(LogSummaryMessages) do
         LogInfo(message)
       end
-
+  
       LogInfo("If you detect timeouts, you can increase the timeout value and try again.")
     end
   
@@ -500,6 +500,14 @@
     GuiAction(moduleName, 0, "reset", "", 1.0)
   end
   
+  -- handle view changed event (lighttable / darkroom view)
+  -- some comboboxes or buttons need a special handling
+  function WorkflowStep:InitDependingOnCurrentView()
+    -- do nothing by default
+    -- self.Widget.sensitive = true
+    -- self.Widget.visible = true
+  end
+  
   ---------------------------------------------------------------
   -- base class of workflow steps with Button widget
   WorkflowStepButton = WorkflowStep:new():new
@@ -623,11 +631,11 @@
   
   --[[
   
-    IMPLEMENTATION OF WORKFLOW STEPS
+      IMPLEMENTATION OF WORKFLOW STEPS
   
-    For more details see Readme.md in
-    https://github.com/UliGesing/Darktable-Initial-Workflow-Module
-   ]]
+      For more details see Readme.md in
+      https://github.com/UliGesing/Darktable-Initial-Workflow-Module
+     ]]
   StepCompressHistoryStack = WorkflowStepCombobox:new():new
       {
         -- operation = nil: ignore this module during module reset
@@ -636,7 +644,7 @@
         DefaultValue = 2, -- item in ComboBoxValues
         Tooltip =
         "Generate the shortest history stack that reproduces the current \n\z
-        image. This removes your current history snapshots."
+          image. This removes your current history snapshots."
       }
   
   table.insert(WorkflowSteps, StepCompressHistoryStack)
@@ -672,9 +680,9 @@
         DisableValue = 1,
         DefaultValue = 4,
         Tooltip = "Use Filmic or Sigmoid to expand or contract the dynamic range of the \n\z
-        scene to fit the dynamic range of the display. Auto tune filmic levels of black + \n\z
-        white relative exposure and / or reset module settings. Or use Sigmoid with one of \n\z
-        its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others."
+          scene to fit the dynamic range of the display. Auto tune filmic levels of black + \n\z
+          white relative exposure and / or reset module settings. Or use Sigmoid with one of \n\z
+          its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others."
       }
   
   table.insert(WorkflowSteps, StepDynamicRangeSceneToDisplay)
@@ -888,8 +896,8 @@
         DisableValue = 1,
         DefaultValue = 2,
         Tooltip = "Choose a predefined preset for your color-grading. Or set \n\z
-        auto pickers of the module mask and peak white and gray luminance value \n\z
-        to normalize the power setting in the 4 ways tab."
+          auto pickers of the module mask and peak white and gray luminance value \n\z
+          to normalize the power setting in the 4 ways tab."
       }
   
   table.insert(WorkflowSteps, StepColorBalanceRGB)
@@ -942,8 +950,8 @@
         DisableValue = 1,
         DefaultValue = 3,
         Tooltip = "Adjust luminance and chroma contrast. Apply choosen \n\z
-        preset (clarity or denoise & sharpen). Choose different values \n\z
-        to adjust the strength of the effect."
+          preset (clarity or denoise & sharpen). Choose different values \n\z
+          to adjust the strength of the effect."
       }
   
   table.insert(WorkflowSteps, StepContrastEqualizer)
@@ -1008,9 +1016,9 @@
         DisableValue = 1,
         DefaultValue = 3,
         Tooltip = "Use default preset mask blending for all purposes \n\z
-        plus automatic mask contrast and exposure compensation. Or use \n\z
-        preset to compress shadows and highlights with exposure-independent \n\z
-        guided filter (eigf) (soft, medium or strong)."
+          plus automatic mask contrast and exposure compensation. Or use \n\z
+          preset to compress shadows and highlights with exposure-independent \n\z
+          guided filter (eigf) (soft, medium or strong)."
       }
   
   table.insert(WorkflowSteps, StepToneEqualizerMask)
@@ -1054,12 +1062,12 @@
       self:ShowDarkroomModule("iop/toneequal")
   
       GuiActionWithoutEvent("iop/toneequal/page", 0, "masking", "", 1.0)
-      
-      GuiAction("iop/toneequal/mask exposure compensation",0,"button", "toggle", 1.0)
+  
+      GuiAction("iop/toneequal/mask exposure compensation", 0, "button", "toggle", 1.0)
       ThreadSleep(StepTimeout:Value())
-      GuiAction("iop/toneequal/mask contrast compensation",0,"button", "toggle", 1.0)
+      GuiAction("iop/toneequal/mask contrast compensation", 0, "button", "toggle", 1.0)
       ThreadSleep(StepTimeout:Value())
-
+  
       -- workaround: show this module, otherwise the buttons will not be pressed
       self:HideDarkroomModule("iop/toneequal")
       --
@@ -1096,7 +1104,7 @@
         DisableValue = 1,
         DefaultValue = 4,
         Tooltip = "Automatically adjust the exposure correction. Remove \n\z
-        the camera exposure bias, useful if you exposed the image to the right."
+          the camera exposure bias, useful if you exposed the image to the right."
       }
   
   table.insert(WorkflowSteps, StepExposureCorrection)
@@ -1325,8 +1333,8 @@
         -- see Default() override
         DefaultValue = nil,
         Tooltip = "Perform color space corrections in color calibration \n\z
-        module. Select the illuminant. The type of illuminant assumed to \n\z
-        have lit the scene. By default unchanged for the legacy workflow."
+          module. Select the illuminant. The type of illuminant assumed to \n\z
+          have lit the scene. By default unchanged for the legacy workflow."
       }
   
   -- distinguish between modern and legacy workflow
@@ -1414,9 +1422,9 @@
         DisableValue = 1,
         DefaultValue = 3,
         Tooltip = "Perform color space corrections in color calibration \n\z
-        module. Select the adaptation. The working color space in which \n\z
-        the module will perform its chromatic adaptation transform and \n\z
-        channel mixing."
+          module. Select the adaptation. The working color space in which \n\z
+          the module will perform its chromatic adaptation transform and \n\z
+          channel mixing."
       }
   
   table.insert(WorkflowSteps, StepColorCalibrationAdaptation)
@@ -1478,8 +1486,8 @@
         DisableValue = 1,
         DefaultValue = 1,
         Tooltip = "Reconstruct color information for clipped pixels. \n\z
-        Select an appropriate reconstruction methods to reconstruct the \n\z
-        missing data from unclipped channels and/or neighboring pixels."
+          Select an appropriate reconstruction methods to reconstruct the \n\z
+          missing data from unclipped channels and/or neighboring pixels."
       }
   
   -- disabled step
@@ -1548,7 +1556,7 @@
         -- see Default() override
         DefaultValue = nil,
         Tooltip = "Adjust the white balance of the image by altering the \n\z
-        temperature. By default unchanged for the legacy workflow."
+          temperature. By default unchanged for the legacy workflow."
       }
   
   
@@ -1613,8 +1621,8 @@
         DisableValue = 1, -- item in ComboBoxValues
         DefaultValue = 2, -- item in ComboBoxValues
         Tooltip = "Reset modules that are part of this initial workflow. \n\z
-        Keep other module settings like crop, rotate and perspective. Or \n\z
-        reset all modules of the pixelpipe and discard complete history stack."
+          Keep other module settings like crop, rotate and perspective. Or \n\z
+          reset all modules of the pixelpipe and discard complete history stack."
       }
   
   table.insert(WorkflowSteps, StepResetModuleHistory)
@@ -1688,8 +1696,8 @@
         DefaultValue = 1, -- item in ComboBoxValues
         Tooltip =
         "Show darkroom modules for enabled workflow steps during \n\z
-        execution of this initial workflow. This makes the changes \n\z
-        easier to understand."
+          execution of this initial workflow. This makes the changes \n\z
+          easier to understand."
       }
   
   table.insert(WorkflowSteps, StepShowModulesDuringExecution)
@@ -1720,12 +1728,12 @@
         DefaultValue = 2, -- item in ComboBoxValues
         Tooltip =
         "Some calculations take a certain amount of time. Depending on \n\z
-        the hardware equipment also longer.This script waits and attempts to \n\z
-        detect timeouts. If steps take much longer than expected, those \n\z
-        steps will be aborted. You can configure the default timeout (ms). \n\z
-        Before and after each step of the workflow, the script waits this time. \n\z
-        In other places also a multiple (loading an image) or a fraction \n\z
-        (querying a status)."
+          the hardware equipment also longer.This script waits and attempts to \n\z
+          detect timeouts. If steps take much longer than expected, those \n\z
+          steps will be aborted. You can configure the default timeout (ms). \n\z
+          Before and after each step of the workflow, the script waits this time. \n\z
+          In other places also a multiple (loading an image) or a fraction \n\z
+          (querying a status)."
       }
   
   table.insert(WorkflowSteps, StepTimeout)
@@ -1762,11 +1770,11 @@
   
   --[[
   
-    IMPLEMENTATION OF BUTTON CONTROLS
+      IMPLEMENTATION OF BUTTON CONTROLS
   
-    These are buttons to start the execution of the steps or e.g. to set default values.
+      These are buttons to start the execution of the steps or e.g. to set default values.
   
-  ]]
+    ]]
   ---------------------------------------------------------------
   
   -- process all configured workflow steps
@@ -1859,9 +1867,8 @@
     LogInfo("switch to lighttable view")
     dt.gui.current_view(dt.gui.views.lighttable)
     dt.gui.selection(images)
-
-    LogSummary()
   
+    LogSummary()
   end
   
   ButtonRunSelectedSteps = WorkflowStepButton:new():new
@@ -1870,7 +1877,7 @@
             {
               label = "run",
               tooltip = "Perform all configured steps in darkroom for an initial workflow.\n\z
-                        Perform the steps from bottom to top along the pixel pipeline.",
+                          Perform the steps from bottom to top along the pixel pipeline.",
   
               clicked_callback = function()
                 local currentView = dt.gui.current_view()
@@ -1898,9 +1905,9 @@
   
               clicked_callback = function()
                 for i, step in ipairs(WorkflowSteps) do
-                  if(step ~= StepTimeout) then
+                  if (step ~= StepTimeout) then
                     step:Disable()
-                  end 
+                  end
                 end
               end
             }
@@ -1915,9 +1922,9 @@
     -- called via default button
     -- called via module reset control
     for i, step in ipairs(WorkflowSteps) do
-      if(step ~= StepTimeout) then
+      if (step ~= StepTimeout) then
         step:Default()
-      end 
+      end
     end
   end
   
@@ -1941,7 +1948,8 @@
         Widget = dt.new_widget("button")
             {
               label = "rotate + perspective",
-              tooltip = "Activate the module to rotate the image and adjust the perspective.",
+              tooltip = "Activate the module to rotate the image and adjust the perspective. \n\z
+              Enabled in darkroom view.",
   
               clicked_callback = function(widget)
                 local button = GetWorkflowButton(widget)
@@ -1953,6 +1961,11 @@
             }
       }
   
+  function ButtonEnableRotateAndPerspective:InitDependingOnCurrentView()
+    -- override base class function
+    self.Widget.sensitive = (dt.gui.current_view() == dt.gui.views.darkroom)
+  end
+  
   table.insert(WorkflowButtons, ButtonEnableRotateAndPerspective)
   
   ---------------------------------------------------------------
@@ -1962,7 +1975,8 @@
         Widget = dt.new_widget("button")
             {
               label = "crop image",
-              tooltip = "Activate the module to crop the image.",
+              tooltip = "Activate the module to crop the image.  \n\z
+              Enabled in darkroom view.",
   
               clicked_callback = function(widget)
                 local button = GetWorkflowButton(widget)
@@ -1974,6 +1988,11 @@
             }
       }
   
+  function ButtonEnableCrop:InitDependingOnCurrentView()
+    -- override base class function
+    self.Widget.sensitive = (dt.gui.current_view() == dt.gui.views.darkroom)
+  end
+  
   table.insert(WorkflowButtons, ButtonEnableCrop)
   
   ---------------------------------------------------------------
@@ -1984,7 +2003,8 @@
             {
               label = "exposure (midtones)",
               tooltip = "Show exposure module to adjust the exposure \n\z
-                        until the mid-tones are clear enough.",
+                          until the mid-tones are clear enough.  \n\z
+                          Enabled in darkroom view.",
   
               clicked_callback = function(widget)
                 local button = GetWorkflowButton(widget)
@@ -1995,6 +2015,11 @@
               end
             }
       }
+  
+  function ButtonMidToneExposure:InitDependingOnCurrentView()
+    -- override base class function
+    self.Widget.sensitive = (dt.gui.current_view() == dt.gui.views.darkroom)
+  end
   
   table.insert(WorkflowButtons, ButtonMidToneExposure)
   
@@ -2155,11 +2180,17 @@
           Widget = dt.new_widget("button")
               {
                 label = "TEST",
-                tooltip = "Execute module tests. Used during development and deployment.",
+                tooltip = "Execute module tests. Used during development and deployment.  \n\z
+                Enabled in darkroom view.",
   
                 clicked_callback = ModuleTest
               }
         }
+  
+    function ButtonModuleTest:InitDependingOnCurrentView()
+      -- override base class function
+      self.Widget.visible = (dt.gui.current_view() == dt.gui.views.darkroom)
+    end
   
     ButtonModuleTestCustomCode = WorkflowStepButton:new():new
         {
@@ -2167,9 +2198,10 @@
               {
                 label = "Custom Code",
                 tooltip = "Execute code from TestCustomCode.lua: \n\z
-                          This file contains some custom debug code. It can be changed without \n\z
-                          restarting darktable. Just edit, save and execute it. You can use it \n\z
-                          to try some lua commands on the fly, e.g. dt.gui.action commands.",
+                            This file contains some custom debug code. It can be changed without \n\z
+                            restarting darktable. Just edit, save and execute it. You can use it \n\z
+                            to try some lua commands on the fly, e.g. dt.gui.action commands.  \n\z
+                            Enabled in darkroom view.",
   
                 clicked_callback = function()
                   local currentView = dt.gui.current_view()
@@ -2191,6 +2223,11 @@
               }
         }
   
+    function ButtonModuleTestCustomCode:InitDependingOnCurrentView()
+      -- override base class function
+      self.Widget.visible = (dt.gui.current_view() == dt.gui.views.darkroom)
+    end
+  
     table.insert(WorkflowButtons, ButtonModuleTest)
     table.insert(WorkflowButtons, ButtonModuleTestCustomCode)
   end
@@ -2201,11 +2238,11 @@
   
   --[[
   
-    IMPLEMENTATION OF WIDGET FRAME
+      IMPLEMENTATION OF WIDGET FRAME
   
-    Create main widget. Collect buttons and comboboxes.
+      Create main widget. Collect buttons and comboboxes.
   
-  ]]
+    ]]
   -- collect all widgets to be displayed within the module
   local function GetWidgets()
     local widgets =
@@ -2288,22 +2325,27 @@
     end
   end
   
-  -- register an event to signal changes from darkroom to lighttable
-  local function viewChangedEvent(event, old_view, new_view)
-    LogInfo("view changed event")
-    if new_view.name == "lighttable" and old_view.name == "darkroom" then
-      InstallModuleRegisterLib()
+  local function InitAllControlsDependingOnCurrentView()
+    for i, step in ipairs(WorkflowSteps) do
+      step:InitDependingOnCurrentView()
+    end
+  
+    for i, button in ipairs(WorkflowButtons) do
+      button:InitDependingOnCurrentView()
     end
   end
   
-  -- install module
-  local function InstallModuleRegisterEvent()
-    LogInfo("install module - register event")
+  -- event to handle changes from darkroom to lighttable view
+  -- some comboboxes or buttons need a special handling
+  -- see base class overrides for details
+  local function ViewChangedEvent(event, old_view, new_view)
+    LogInfo("view changed to " .. new_view.name)
   
-    if not Env.InstallModuleEventRegistered then
-      dt.register_event(ModuleName, "view-changed", viewChangedEvent)
-      Env.InstallModuleEventRegistered = true
+    if ((new_view == dt.gui.views.lighttable) and (old_view == dt.gui.views.darkroom)) then
+      InstallModuleRegisterLib()
     end
+  
+    InitAllControlsDependingOnCurrentView()
   end
   
   -- main entry function to install the module at startup
@@ -2321,11 +2363,16 @@
     end
   
     -- create the module depending on which view darktable starts in
-    if dt.gui.current_view().id == "lighttable" then
+    if dt.gui.current_view() == dt.gui.views.lighttable then
       InstallModuleRegisterLib()
-    else
-      InstallModuleRegisterEvent()
     end
+  
+    if not Env.InstallModuleEventRegistered then
+      dt.register_event(ModuleName, "view-changed", ViewChangedEvent)
+      Env.InstallModuleEventRegistered = true
+    end
+  
+    InitAllControlsDependingOnCurrentView()
   
     return true
   end
