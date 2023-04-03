@@ -7,7 +7,7 @@ Do you use darktable to develop your raw images? Do you often follow the same in
 
 This script executes some automatic functions that can also be accessed via the GUI (e.g. magic wand controls). It provides several workflow steps like "lens correction" or "adapt exposure".
 
-In preparation for running the script, use the following buttons to rotate the image, adjust the perspective, crop the image and to adjust the exposure until the mid-tones are clear enough:<br>
+In preparation for running the script, use the following buttons in darkroom view to rotate the image, adjust the perspective, crop the image and to adjust the exposure until the mid-tones are clear enough:<br>
 <img src="ReadmeImages/ScreenshotModulePreparingSteps.png" width=250>
 
 After the preparing steps choose your personal configuration for each step. Several steps and configurations are offered, see the tooltips within the module for more information. Your settings are saved in darktable preferences and restored after the next start of the application.<br>
