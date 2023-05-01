@@ -60,7 +60,7 @@ end
 local gettext = dt.gettext
 
 local pathSeparator = dt.configuration.running_os == "windows" and "\\" or "/"
-local localePath = ScriptFilePath() .. "locale"
+local localePath = ScriptFilePath() .. "locale" .. pathSeparator
 
 gettext.bindtextdomain(ModuleName, localePath)
 
@@ -129,16 +129,6 @@ local function contains(table, value)
   return false
 end
 
--- check Darktable API version
--- new API of DT 4.2 is needed to use "pixelpipe-processing-complete" event
-local apiCheck, err = pcall(function() du.check_min_api_version("9.0.0", ModuleName) end)
-if (apiCheck) then
-  LogInfo("Darktable " .. dt.configuration.version .. " with appropriate lua API detected.")
-else
-  LogInfo("This script needs at least Darktable 4.2 API to run.")
-  return
-end
-
 ---------------------------------------------------------------
 -- The script may dump a lot of log messages.
 -- The summary collects some important (error) messages.
@@ -170,10 +160,22 @@ end
 
 ---------------------------------------------------------------
 -- dump some messages during script start up
+
+-- check Darktable API version
+-- new API of DT 4.2 is needed to use "pixelpipe-processing-complete" event
+local apiCheck, err = pcall(function() du.check_min_api_version("9.0.0", ModuleName) end)
+if (apiCheck) then
+  LogInfo("Darktable " .. dt.configuration.version .. " with appropriate lua API detected.")
+else
+  LogInfo("This script needs at least Darktable 4.2 API to run.")
+  return
+end
+
 LogInfo("Script executed from " .. ScriptFilePath())
 LogInfo("Script translation files in " .. localePath)
 LogInfo(_("The script outputs are in English."))
 
+---------------------------------------------------------------
 -- debug helper function to dump preference keys
 -- helps you to find out strings like "plugins/darkroom/chromatic-adaptation"
 -- darktable -d lua > ~/keys.txt
