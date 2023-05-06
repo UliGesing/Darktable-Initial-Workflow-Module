@@ -62,7 +62,9 @@ local gettext = dt.gettext
 local pathSeparator = dt.configuration.running_os == "windows" and "\\" or "/"
 local localePath = ScriptFilePath() .. "locale" .. pathSeparator
 
-gettext.bindtextdomain(ModuleName, localePath)
+gettext.bindtextdomain(ModuleName,dt.configuration.config_dir.."/lua/locale/")
+
+-- gettext.bindtextdomain(ModuleName, localePath)
 
 local function _(msgid)
   return gettext.dgettext(ModuleName, msgid)
@@ -2414,8 +2416,29 @@ local function InstallInitialWorkflowModule()
   return true
 end
 
----------------------------------------------------------------
+-- start it!
+InstallInitialWorkflowModule()
 
-return InstallInitialWorkflowModule()
+---------------------------------------------------------------
+-- darktable script manager integration
+
+-- function to destory the script
+local function destroy()
+  dt.gui.libs[ModuleName].visible = false
+end
+
+-- make the script visible again after it's been hidden
+local function restart()
+  dt.gui.libs[ModuleName].visible = true
+end
+
+local script_data = {}
+script_data.destroy = destroy
+script_data.restart = restart
+-- set to hide since we can't destroy them commpletely yet
+script_data.destroy_method = "hide"
+script_data.show = restart
+
+return script_data
 
 ---------------------------------------------------------------
