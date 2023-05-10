@@ -61,9 +61,6 @@ local gettext = dt.gettext
 
 local pathSeparator = dt.configuration.running_os == "windows" and "\\" or "/"
 local localePath = ScriptFilePath() .. "locale" .. pathSeparator
-
--- gettext.bindtextdomain(ModuleName,dt.configuration.config_dir.."/lua/locale/")
-
 gettext.bindtextdomain(ModuleName, localePath)
 
 local function _(msgid)
