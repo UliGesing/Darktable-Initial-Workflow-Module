@@ -53,13 +53,13 @@ end
 -- execute the following commands from the directory that contains the script
 
 -- create InitialWorkflowModule.po from source code:
--- xgettext InitialWorkflowModule.lua -d InitialWorkflowModule
+-- xgettext InitialWorkflowModule.lua -d InitialWorkflowModuleExtracted --from-code=UTF-8 --language=Lua
 
 -- merge new messages into existing translation files:
--- msgmerge -U locale/de_DE/LC_MESSAGES/InitialWorkflowModule.po InitialWorkflowModule.po
+-- msgmerge -U locale/de/LC_MESSAGES/InitialWorkflowModule.po InitialWorkflowModuleExtracted.po
 
 -- to create a .mo file run:
--- msgfmt -v InitialWorkflowModule.po -o InitialWorkflowModule.mo
+-- msgfmt -v locale/de/LC_MESSAGES/InitialWorkflowModule.po -o locale/de/LC_MESSAGES/InitialWorkflowModule.mo
 
 
 local gettext = dt.gettext
@@ -183,14 +183,14 @@ end
 -- new API of DT 4.2 is needed to use pixelpipe-processing-complete event
 local apiCheck, err = pcall(function() du.check_min_api_version('9.0.0', ModuleName) end)
 if (apiCheck) then
-  LogInfo(_("darktable with appropriate lua API detected: ") .. 'dt' .. dt.configuration.version)
+  LogInfo(string.format(_("darktable with appropriate lua API detected: %s"), 'dt' .. dt.configuration.version))
 else
   LogInfo(_("this script needs at least darktable 4.2 API to run"))
   return
 end
 
-LogInfo(_("script executed from path ") .. ScriptFilePath())
-LogInfo(_("script translation files in ") .. localePath)
+LogInfo(string.format(_("script executed from path %s"), ScriptFilePath()))
+LogInfo(string.format(_("script translation files in %s"), localePath))
 LogInfo(_("script outputs are in English"))
 
 ---------------------------------------------------------------
