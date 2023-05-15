@@ -6,5 +6,5 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "The script outputs are in English."
+msgid "Script outputs are in English."
 msgstr "Die Ausgaben des Skripts erfolgen in deutscher Übersetzung."
