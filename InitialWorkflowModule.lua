@@ -685,7 +685,7 @@ StepCompressHistoryStack = WorkflowStepCombobox:new():new
       OperationNameInternal = nil,
       DisableValue = 1, -- item in ComboBoxValues
       DefaultValue = 2, -- item in ComboBoxValues
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Generate the shortest history stack that reproduces the current image. This removes your current history snapshots."))
     }
 
@@ -721,7 +721,7 @@ StepDynamicRangeSceneToDisplay = WorkflowStepCombobox:new():new
       OperationNameInternal = 'Filmic or Sigmoid',
       DisableValue = 1,
       DefaultValue = 4,
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure and / or reset module settings. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others."))
     }
 
@@ -859,7 +859,7 @@ StepColorBalanceGlobalSaturation = WorkflowStepCombobox:new():new
       OperationNameInternal = 'colorbalancergb',
       DisableValue = 1,
       DefaultValue = 7,
-      Tooltip = _(wordwrap("Adjust global saturation in color balance rgb module."))
+      Tooltip = wordwrap(_("Adjust global saturation in color balance rgb module."))
     }
 
 table.insert(WorkflowSteps, StepColorBalanceGlobalSaturation)
@@ -897,7 +897,7 @@ StepColorBalanceGlobalChroma = WorkflowStepCombobox:new():new
       OperationNameInternal = 'colorbalancergb',
       DisableValue = 1,
       DefaultValue = 5,
-      Tooltip = _(wordwrap("Adjust global chroma in color balance rgb module."))
+      Tooltip = wordwrap(_("Adjust global chroma in color balance rgb module."))
     }
 
 table.insert(WorkflowSteps, StepColorBalanceGlobalChroma)
@@ -935,7 +935,7 @@ StepColorBalanceRGB = WorkflowStepCombobox:new():new
       OperationNameInternal = 'colorbalancergb',
       DisableValue = 1,
       DefaultValue = 2,
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Choose a predefined preset for your color-grading. Or set auto pickers of the module mask and peak white and gray luminance value to normalize the power setting in the 4 ways tab."))
     }
 
@@ -988,7 +988,7 @@ StepContrastEqualizer = WorkflowStepCombobox:new():new
       OperationNameInternal = 'atrous',
       DisableValue = 1,
       DefaultValue = 3,
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect."))
     }
 
@@ -1053,7 +1053,7 @@ StepToneEqualizerMask = WorkflowStepCombobox:new():new
       OperationNameInternal = 'toneequal',
       DisableValue = 1,
       DefaultValue = 3,
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Use default preset mask blending for all purposes plus automatic mask contrast and exposure compensation. Or use preset to compress shadows and highlights with exposure-independent guided filter (eigf) (soft, medium or strong)."))
     }
 
@@ -1139,7 +1139,7 @@ StepExposureCorrection = WorkflowStepCombobox:new():new
       OperationNameInternal = 'exposure',
       DisableValue = 1,
       DefaultValue = 4,
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Automatically adjust the exposure correction. Remove the camera exposure bias, useful if you exposed the image to the right."))
     }
 
@@ -1217,7 +1217,7 @@ StepLensCorrection = WorkflowStepCombobox:new():new
       OperationNameInternal = 'lens',
       DisableValue = 1,
       DefaultValue = 4,
-      Tooltip = _(wordwrap("Enable and reset lens correction module.")),
+      Tooltip = wordwrap(_("Enable and reset lens correction module.")),
     }
 
 table.insert(WorkflowSteps, StepLensCorrection)
@@ -1279,7 +1279,7 @@ StepDenoiseProfiled = WorkflowStepCombobox:new():new
       OperationNameInternal = 'denoiseprofile',
       DisableValue = 1,
       DefaultValue = 2,
-      Tooltip = _(wordwrap("Enable and reset denoise (profiled) module."))
+      Tooltip = wordwrap(_("Enable and reset denoise (profiled) module."))
     }
 
 table.insert(WorkflowSteps, StepDenoiseProfiled)
@@ -1318,7 +1318,7 @@ StepChromaticAberrations = WorkflowStepCombobox:new():new
       OperationNameInternal = 'cacorrect',
       DisableValue = 1,
       DefaultValue = 2,
-      Tooltip = _(wordwrap("Correct chromatic aberrations."))
+      Tooltip = wordwrap(_("Correct chromatic aberrations."))
     }
 
 table.insert(WorkflowSteps, StepChromaticAberrations)
@@ -1368,7 +1368,7 @@ StepColorCalibrationIlluminant = WorkflowStepCombobox:new():new
 
       -- see Default() override
       DefaultValue = nil,
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Perform color space corrections in color calibration module. Select the illuminant. The type of illuminant assumed to have lit the scene. By default unchanged for the legacy workflow."))
     }
 
@@ -1458,7 +1458,7 @@ StepColorCalibrationAdaptation = WorkflowStepCombobox:new():new
       OperationNameInternal = 'channelmixerrgb',
       DisableValue = 1,
       DefaultValue = 3,
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Perform color space corrections in color calibration module. Select the adaptation. The working color space in which the module will perform its chromatic adaptation transform and channel mixing."))
     }
 
@@ -1520,7 +1520,7 @@ StepHighlightReconstruction = WorkflowStepCombobox:new():new
       OperationNameInternal = 'highlights',
       DisableValue = 1,
       DefaultValue = 1,
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Reconstruct color information for clipped pixels. Select an appropriate reconstruction methods to reconstruct the missing data from unclipped channels and/or neighboring pixels."))
     }
 
@@ -1570,7 +1570,7 @@ StepWhiteBalance = WorkflowStepCombobox:new():new
 
       -- see Default() override
       DefaultValue = nil,
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Adjust the white balance of the image by altering the temperature. By default unchanged for the legacy workflow."))
     }
 
@@ -1635,7 +1635,7 @@ StepResetModuleHistory = WorkflowStepCombobox:new():new
       OperationNameInternal = nil,
       DisableValue = 1, -- item in ComboBoxValues
       DefaultValue = 2, -- item in ComboBoxValues
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Reset modules that are part of this initial workflow. Keep other module settings like crop, rotate and perspective. Or reset all modules of the pixelpipe and discard complete history stack."))
     }
 
@@ -1708,7 +1708,7 @@ StepShowModulesDuringExecution = WorkflowStepCombobox:new():new
       OperationNameInternal = nil,
       DisableValue = 1, -- item in ComboBoxValues
       DefaultValue = 1, -- item in ComboBoxValues
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Show darkroom modules for enabled workflow steps during execution of this initial workflow. This makes the changes easier to understand."))
     }
 
@@ -1738,7 +1738,7 @@ StepTimeout = WorkflowStepCombobox:new():new
       OperationNameInternal = nil,
       DisableValue = 2, -- item in ComboBoxValues
       DefaultValue = 2, -- item in ComboBoxValues
-      Tooltip = _(wordwrap(
+      Tooltip = wordwrap(_(
         "Some calculations take a certain amount of time. Depending on the hardware equipment also longer.This script waits and attempts to detect timeouts. If steps take much longer than expected, those steps will be aborted. You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status)."))
     }
 
@@ -1882,7 +1882,7 @@ ButtonRunSelectedSteps = WorkflowStepButton:new():new
       Widget = dt.new_widget('button')
           {
             label = _("run"),
-            tooltip = _(wordwrap(
+            tooltip = wordwrap(_(
               "Perform all configured steps in darkroom for an initial workflow. Perform the steps from bottom to top along the pixel pipeline.")),
 
             clicked_callback = function()
@@ -1907,7 +1907,7 @@ ButtonDisableAllSteps = WorkflowStepButton:new():new
       Widget = dt.new_widget('button')
           {
             label = _("select none"),
-            tooltip = _(wordwrap("Disable all steps of this inital workflow module.")),
+            tooltip = wordwrap(_("Disable all steps of this inital workflow module.")),
 
             clicked_callback = function()
               for i, step in ipairs(WorkflowSteps) do
@@ -1939,7 +1939,7 @@ ButtonEnableDefaultSteps = WorkflowStepButton:new():new
       Widget = dt.new_widget('button')
           {
             label = _("select defaults"),
-            tooltip = _(wordwrap("Enable default steps and settings.")),
+            tooltip = wordwrap(_("Enable default steps and settings.")),
 
             clicked_callback = EnableDefaultSteps
           }
@@ -1954,7 +1954,7 @@ ButtonEnableRotateAndPerspective = WorkflowStepButton:new():new
       Widget = dt.new_widget('button')
           {
             label = _("rotate + perspective"),
-            tooltip = _(wordwrap(
+            tooltip = wordwrap(_(
               "Activate the module to rotate the image and adjust the perspective. Enabled in darkroom view.")),
 
             clicked_callback = function(widget)
@@ -1981,7 +1981,7 @@ ButtonEnableCrop = WorkflowStepButton:new():new
       Widget = dt.new_widget('button')
           {
             label = _("crop image"),
-            tooltip = _(wordwrap("Activate the module to crop the image. Enabled in darkroom view.")),
+            tooltip = wordwrap(_("Activate the module to crop the image. Enabled in darkroom view.")),
 
             clicked_callback = function(widget)
               local button = GetWorkflowButton(widget)
@@ -2007,7 +2007,7 @@ ButtonMidToneExposure = WorkflowStepButton:new():new
       Widget = dt.new_widget('button')
           {
             label = _("exposure (midtones)"),
-            tooltip = _(wordwrap(
+            tooltip = wordwrap(_(
               "Show exposure module to adjust the exposure until the mid-tones are clear enough. Enabled in darkroom view.")),
 
             clicked_callback = function(widget)
@@ -2184,7 +2184,7 @@ if (FileExists(ScriptFilePath() .. 'TestFlag.txt')) then
         Widget = dt.new_widget('button')
             {
               label = 'TEST',
-              tooltip = _(wordwrap(
+              tooltip = wordwrap(_(
                 "Execute module tests. Used during development and deployment. Enabled in darkroom view.")),
 
               clicked_callback = ModuleTest
@@ -2201,7 +2201,7 @@ if (FileExists(ScriptFilePath() .. 'TestFlag.txt')) then
         Widget = dt.new_widget('button')
             {
               label = _("Custom Code"),
-              tooltip = _(wordwrap(
+              tooltip = wordwrap(_(
                 "Execute code from TestCustomCode.lua: This file contains some custom debug code. It can be changed without restarting darktable. Just edit, save and execute it. You can use it to try some lua commands on the fly, e.g. dt.gui.action commands. Enabled in darkroom view.")),
 
               clicked_callback = function()
