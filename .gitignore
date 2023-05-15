@@ -1,3 +1,6 @@
+# gettext backup file
+*.po~
+
 # Compiled Lua sources
 luac.out
 
