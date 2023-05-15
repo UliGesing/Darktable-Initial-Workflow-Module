@@ -47,20 +47,10 @@ local function quote(text)
 end
 
 ---------------------------------------------------------------
--- Translations: https://docs.darktable.org/lua/stable/lua.api.manual/darktable/darktable.gettext/
+-- Translations see documentation for details:
+-- https://docs.darktable.org/lua/stable/lua.api.manual/darktable/darktable.gettext/
 
--- use gettext utilities to update translation file (.po, .mo)
--- execute the following commands from the directory that contains the script
-
--- create InitialWorkflowModule.po from source code:
--- xgettext InitialWorkflowModule.lua -d InitialWorkflowModuleExtracted --from-code=UTF-8 --language=Lua
-
--- merge new messages into existing translation files:
--- msgmerge -U locale/de/LC_MESSAGES/InitialWorkflowModule.po InitialWorkflowModuleExtracted.po
-
--- to create a .mo file run:
--- msgfmt -v locale/de/LC_MESSAGES/InitialWorkflowModule.po -o locale/de/LC_MESSAGES/InitialWorkflowModule.mo
-
+-- use bash script GetTextExtractMessages.sh to update the .mo file
 
 local gettext = dt.gettext
 
