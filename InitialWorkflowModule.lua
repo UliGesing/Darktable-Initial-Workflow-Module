@@ -43,7 +43,7 @@ local function ScriptFilePath()
 end
 
 local function quote(text)
-  return '"' .. text --'"'
+  return '"' .. text .. '"'
 end
 
 ---------------------------------------------------------------
@@ -54,12 +54,18 @@ end
 
 local gettext = dt.gettext
 
+-- used to get back the original text from translated text
+-- used to address internal API values
+local ReverseTranslationIndex = {}
+
 local pathSeparator = dt.configuration.running_os == 'windows' and '\\' or '/'
 local localePath = ScriptFilePath() .. 'locale' .. pathSeparator
 gettext.bindtextdomain(ModuleName, localePath)
 
 local function _(msgid)
-  return gettext.dgettext(ModuleName, msgid)
+  local translation = gettext.dgettext(ModuleName, msgid)
+  ReverseTranslationIndex[translation] = msgid
+  return translation
 end
 
 ---------------------------------------------------------------
@@ -289,6 +295,7 @@ function WaitForEventBase:Do(embeddedFunction)
       local timeoutMessage = string.format(_("timeout after %d ms waiting for event %s"), durationMax, self.EventType)
       LogInfo(timeoutMessage)
       LogSummaryMessage(timeoutMessage)
+      StopDasSkript()
       break
     end
   end
@@ -620,22 +627,6 @@ function WorkflowStepCombobox:ReadPreferenceValue()
 end
 
 -- combobox selection is returned as negative index value
--- use index to compare current value with newly selected value
--- used to avoid unnecessary set commands
-function WorkflowStepCombobox:CreateComboBoxSelectionIndex()
-  -- dt.gui.action returns but c types (instead of string / combobox entry)
-  self.ComboBoxValuesIndex = {}
-  for k, v in pairs(self.ComboBoxValues) do
-    -- ignore first additional combobox entry
-    if (v ~= _("unchanged")) then
-      -- negative index values are used by dt.gui.action
-      -- in order to distinguish the first index from 100%
-      self.ComboBoxValuesIndex[v] = -(k - 1)
-    end
-  end
-end
-
--- combobox selection is returned as negative index value
 -- convert negative index value to combobox string value
 function WorkflowStepCombobox:GetComboBoxValueFromSelectionIndex(index)
   return self.ComboBoxValues[(-index) + 1]
@@ -735,7 +726,7 @@ function StepDynamicRangeSceneToDisplay:Init()
     _("Filmic auto tune levels"),
     _("Filmic reset + auto tune"),
     _("Sigmoid reset defaults, color per channel"),
-    _("Sigmoid reset defaults, color rgb ratio"),
+    _("Sigmoid reset defaults, color RGB ratio"),
     _("Sigmoid ACES 100 preset")
   }
 
@@ -759,7 +750,7 @@ end
 function StepDynamicRangeSceneToDisplay:SigmoidSelected()
   return contains(
     { _("Sigmoid reset defaults, color per channel"),
-      _("Sigmoid reset defaults, color rgb ratio"),
+      _("Sigmoid reset defaults, color RGB ratio"),
       _("Sigmoid ACES 100 preset")
     }, self.Widget.value)
 end
@@ -806,7 +797,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     }, selection)
 
   local sigmoidDefaultRgbRatio = contains(
-    { _("Sigmoid reset defaults, color rgb ratio")
+    { _("Sigmoid reset defaults, color RGB ratio")
     }, selection)
 
   local sigmoidACES100 = contains(
@@ -842,7 +833,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     end
 
     if (sigmoidDefaultRgbRatio) then
-      GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:' .. _("rgb ratio"), 1.0)
+        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:' .. ReverseTranslationIndex[_("RGB ratio")], 1.0)
     end
 
     if (sigmoidACES100) then
@@ -1108,7 +1099,7 @@ function StepToneEqualizerMask:Run()
     self:HideDarkroomModule('iop/toneequal')
     --
   elseif (selection == _("compress shadows-highlights (eigf): medium")) then
-    GuiActionButtonOffOn('iop/toneequal/preset/' .. _("compress shadows-highlights (eigf): medium"))
+    GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
     --
   elseif (selection == _("compress shadows-highlights (eigf): soft")) then
     -- workaround to deal with bug in dt 4.2.x
@@ -1116,7 +1107,7 @@ function StepToneEqualizerMask:Run()
     if (CheckDarktable42()) then
       GuiActionButtonOffOn('iop/toneequal/preset/' .. _("compress shadows-highlights (eigf): soft"))
     else
-      GuiActionButtonOffOn('iop/toneequal/preset/' .. _("compress shadows-highlights (eigf): soft"))
+      GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
     end
     --
   elseif (selection == _("compress shadows-highlights (eigf): strong")) then
@@ -1125,7 +1116,7 @@ function StepToneEqualizerMask:Run()
     if (CheckDarktable42()) then
       GuiActionButtonOffOn('iop/toneequal/preset/' .. _("compress shadows-highlights (eigf): strong"))
     else
-      GuiActionButtonOffOn('iop/toneequal/preset/' .. _("compress shadows-highlights (eigf): strong"))
+      GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
     end
     --
   end
@@ -1403,8 +1394,6 @@ function StepColorCalibrationIlluminant:Init()
     _("as shot in camera")
   }
 
-  self:CreateComboBoxSelectionIndex()
-
   self.Widget = dt.new_widget('combobox')
       {
         changed_callback = ComboBoxChangedCallback,
@@ -1444,7 +1433,7 @@ function StepColorCalibrationIlluminant:Run()
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current illuminant = %s"), quote(currentSelection)))
-    GuiAction('iop/channelmixerrgb/illuminant', 0, 'selection', 'item:' .. selection, 1.0)
+    GuiAction('iop/channelmixerrgb/illuminant', 0, 'selection', 'item:' .. ReverseTranslationIndex[selection], 1.0)
   else
     LogInfo(indent .. string.format(_("nothing to do, illuminant already = %s"), quote(currentSelection)))
   end
@@ -1477,8 +1466,6 @@ function StepColorCalibrationAdaptation:Init()
     _("none (bypass)")
   }
 
-  self:CreateComboBoxSelectionIndex()
-
   self.Widget = dt.new_widget('combobox')
       {
         changed_callback = ComboBoxChangedCallback,
@@ -1503,7 +1490,7 @@ function StepColorCalibrationAdaptation:Run()
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current adaptation = %s"), quote(currentSelection)))
-    GuiAction('iop/channelmixerrgb/adaptation', 0, 'selection', 'item:' .. selection, 1.0)
+    GuiAction('iop/channelmixerrgb/adaptation', 0, 'selection', 'item:' .. ReverseTranslationIndex[selection], 1.0)
   else
     LogInfo(indent .. string.format(_("nothing to do, adaptation already = %s"), quote(currentSelection)))
   end
@@ -1594,8 +1581,6 @@ function StepWhiteBalance:Init()
     _("camera reference")
   }
 
-  self:CreateComboBoxSelectionIndex()
-
   self.Widget = dt.new_widget('combobox')
       {
         changed_callback = ComboBoxChangedCallback,
@@ -1620,7 +1605,7 @@ function StepWhiteBalance:Run()
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current value = %s"), quote(currentSelection)))
-    GuiAction('iop/temperature/settings/' .. selection, 0, '', '', 1.0)
+    GuiAction('iop/temperature/settings/' .. ReverseTranslationIndex[selection], 0, '', '', 1.0)
   else
     LogInfo(indent .. string.format(_("nothing to do, value already = %s"), quote(currentSelection)))
   end
