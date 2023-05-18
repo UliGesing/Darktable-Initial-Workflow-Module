@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-15 18:16+0200\n"
+"POT-Creation-Date: 2023-05-18 14:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,8 @@ msgid "wait for %d ms. (config = %s ms * %s)"
 msgstr ""
 
 #: InitialWorkflowModule.lua:148
-msgid "script summary OK - there are no important messages and no timeouts"
+msgid ""
+"script run without errors - there are no important messages and no timeouts"
 msgstr ""
 
 #: InitialWorkflowModule.lua:150
@@ -46,7 +47,7 @@ msgstr ""
 
 #: InitialWorkflowModule.lua:176
 #, lua-format
-msgid "darktable with appropriate lua API detected: %s"
+msgid "darktable version with appropriate lua API detected: %s"
 msgstr ""
 
 #: InitialWorkflowModule.lua:178
@@ -69,7 +70,7 @@ msgstr ""
 
 #: InitialWorkflowModule.lua:192
 #, lua-format
-msgid "number of %d preference keys retrieved, listing follows"
+msgid "number of %d preference keys retrieved"
 msgstr ""
 
 #: InitialWorkflowModule.lua:209
@@ -130,7 +131,7 @@ msgid "show module if not visible: %s"
 msgstr ""
 
 #: InitialWorkflowModule.lua:498
-msgid "already visible, nothing to do"
+msgid "module is already visible, nothing to do"
 msgstr ""
 
 #: InitialWorkflowModule.lua:505
@@ -139,7 +140,7 @@ msgid "hide module if visible: %s"
 msgstr ""
 
 #: InitialWorkflowModule.lua:510
-msgid "already hidden, nothing to do"
+msgid "module is already hidden, nothing to do"
 msgstr ""
 
 #: InitialWorkflowModule.lua:517
@@ -148,7 +149,7 @@ msgid "enable module if disabled: %s"
 msgstr ""
 
 #: InitialWorkflowModule.lua:522
-msgid "already enabled, nothing to do"
+msgid "module is already enabled, nothing to do"
 msgstr ""
 
 #: InitialWorkflowModule.lua:525 InitialWorkflowModule.lua:695
@@ -162,7 +163,7 @@ msgid "disable module if enabled: %s"
 msgstr ""
 
 #: InitialWorkflowModule.lua:538
-msgid "already disabled, nothing to do"
+msgid "module is already disabled, nothing to do"
 msgstr ""
 
 #: InitialWorkflowModule.lua:544
@@ -244,7 +245,7 @@ msgid "Sigmoid ACES 100 preset"
 msgstr ""
 
 #: InitialWorkflowModule.lua:745
-msgid "dynamic range: scene to display"
+msgid "Filmic / Sigmoid dynamic range"
 msgstr ""
 
 #: InitialWorkflowModule.lua:797
@@ -362,39 +363,30 @@ msgid "default plus mask compensation"
 msgstr ""
 
 #: InitialWorkflowModule.lua:1068 InitialWorkflowModule.lua:1110
-msgid "compress high-low (eigf): medium"
+#: InitialWorkflowModule.lua:1111
+msgid "compress shadows-highlights (eigf): medium"
 msgstr ""
 
 #: InitialWorkflowModule.lua:1069 InitialWorkflowModule.lua:1113
-msgid "compress high-low (eigf): soft"
+#: InitialWorkflowModule.lua:1119
+msgid "compress shadows-highlights (eigf): soft"
 msgstr ""
 
 #: InitialWorkflowModule.lua:1070 InitialWorkflowModule.lua:1122
-msgid "compress high-low (eigf): strong"
+#: InitialWorkflowModule.lua:1128
+msgid "compress shadows-highlights (eigf): strong"
 msgstr ""
 
 #: InitialWorkflowModule.lua:1076
 msgid "tone equalizer"
 msgstr ""
 
-#: InitialWorkflowModule.lua:1111
-msgid "compress shadows-highlights (eigf): medium"
-msgstr ""
-
 #: InitialWorkflowModule.lua:1117
 msgid "compress shadows-highlights (eigf): soft"
 msgstr ""
 
-#: InitialWorkflowModule.lua:1119
-msgid "compress shadows-highlights (eigf): soft"
-msgstr ""
-
 #: InitialWorkflowModule.lua:1126
 msgid "compress shadows-highlights (eigf): strong"
-msgstr ""
-
-#: InitialWorkflowModule.lua:1128
-msgid "compress shadows-highlights (eigf): strong"
 msgstr ""
 
 #: InitialWorkflowModule.lua:1143
@@ -448,10 +440,6 @@ msgstr ""
 
 #: InitialWorkflowModule.lua:1237
 msgid "lens correction"
-msgstr ""
-
-#: InitialWorkflowModule.lua:1270
-msgid "lensfun database"
 msgstr ""
 
 #: InitialWorkflowModule.lua:1282
@@ -788,7 +776,7 @@ msgid ""
 "enough. Enabled in darkroom view."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2094 InitialWorkflowModule.lua:2210
+#: InitialWorkflowModule.lua:2094 InitialWorkflowModule.lua:2205
 msgid "module tests must be started from darkroom view"
 msgstr ""
 
@@ -796,21 +784,21 @@ msgstr ""
 msgid "module test started"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2173
+#: InitialWorkflowModule.lua:2168
 msgid "module test finished"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2188
+#: InitialWorkflowModule.lua:2183
 msgid ""
 "Execute module tests. Used during development and deployment. Enabled in "
 "darkroom view."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2203
+#: InitialWorkflowModule.lua:2198
 msgid "Custom Code"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2205
+#: InitialWorkflowModule.lua:2200
 msgid ""
 "Execute code from TestCustomCode.lua: This file contains some custom debug "
 "code. It can be changed without restarting darktable. Just edit, save and "
@@ -818,28 +806,28 @@ msgid ""
 "action commands. Enabled in darkroom view."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2217
+#: InitialWorkflowModule.lua:2212
 #, lua-format
 msgid "module test file not found: %s"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2251
+#: InitialWorkflowModule.lua:2246
 msgid "preparing manual steps"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2263
+#: InitialWorkflowModule.lua:2258
 msgid "select and perform automatic steps"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2279
+#: InitialWorkflowModule.lua:2274
 msgid "insert test button widget"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2344
+#: InitialWorkflowModule.lua:2339
 #, lua-format
 msgid "view changed to %s"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2355
+#: InitialWorkflowModule.lua:2350
 msgid "create widget in lighttable and darkroom panels"
 msgstr ""

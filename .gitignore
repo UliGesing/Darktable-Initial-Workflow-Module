@@ -1,6 +1,9 @@
 # gettext backup file
 *.po~
 
+# lokalize configuration
+main.lqa
+
 # Compiled Lua sources
 luac.out
 

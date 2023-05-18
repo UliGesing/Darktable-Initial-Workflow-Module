@@ -145,7 +145,7 @@ local function LogSummary()
   LogInfo('==============================')
 
   if (#LogSummaryMessages == 0) then
-    LogInfo(_("script summary OK - there are no important messages and no timeouts"))
+    LogInfo(_("script run without errors - there are no important messages and no timeouts"))
   else
     LogInfo(_("THERE ARE IMPORTANT MESSAGES:"))
 
@@ -173,7 +173,7 @@ end
 -- new API of DT 4.2 is needed to use pixelpipe-processing-complete event
 local apiCheck, err = pcall(function() du.check_min_api_version('9.0.0', ModuleName) end)
 if (apiCheck) then
-  LogInfo(string.format(_("darktable with appropriate lua API detected: %s"), 'dt' .. dt.configuration.version))
+  LogInfo(string.format(_("darktable version with appropriate lua API detected: %s"), 'dt' .. dt.configuration.version))
 else
   LogInfo(_("this script needs at least darktable 4.2 API to run"))
   return
@@ -189,7 +189,7 @@ LogInfo(_("script outputs are in English"))
 -- darktable -d lua > ~/keys.txt
 local function DumpPreferenceKeys()
   local keys = dt.preferences.get_keys()
-  LogInfo(string.format(_("number of %d preference keys retrieved, listing follows"), #keys))
+  LogInfo(string.format(_("number of %d preference keys retrieved"), #keys))
   for _, key in ipairs(keys) do
     LogInfo(key .. ' = ' .. dt.preferences.read('darktable', key, 'string'))
   end
@@ -495,7 +495,7 @@ function WorkflowStep:ShowDarkroomModule(moduleName)
     dt.gui.panel_show('DT_UI_PANEL_RIGHT')
     GuiActionWithoutEvent(moduleName, 0, 'show', '', 1.0)
   else
-    LogInfo(indent .. _("already visible, nothing to do"))
+    LogInfo(indent .. _("module is already visible, nothing to do"))
   end
 end
 
@@ -507,7 +507,7 @@ function WorkflowStep:HideDarkroomModule(moduleName)
   if (GuiActionValueToBoolean(visible)) then
     GuiActionWithoutEvent(moduleName, 0, 'show', '', 1.0)
   else
-    LogInfo(indent .. _("already hidden, nothing to do"))
+    LogInfo(indent .. _("module is already hidden, nothing to do"))
   end
 end
 
@@ -519,7 +519,7 @@ function WorkflowStep:EnableDarkroomModule(moduleName)
   if (not GuiActionValueToBoolean(status)) then
     GuiAction(moduleName, 0, 'enable', '', 1.0)
   else
-    LogInfo(indent .. _("already enabled, nothing to do"))
+    LogInfo(indent .. _("module is already enabled, nothing to do"))
   end
 
   if (StepShowModulesDuringExecution.Widget.value == _("yes")) then
@@ -535,7 +535,7 @@ function WorkflowStep:DisableDarkroomModule(moduleName)
   if (GuiActionValueToBoolean(status)) then
     GuiAction(moduleName, 0, 'enable', '', 1.0)
   else
-    LogInfo(indent .. _("already disabled, nothing to do"))
+    LogInfo(indent .. _("module is already disabled, nothing to do"))
   end
 end
 
@@ -742,7 +742,7 @@ function StepDynamicRangeSceneToDisplay:Init()
   self.Widget = dt.new_widget('combobox')
       {
         changed_callback = ComboBoxChangedCallback,
-        label = _("dynamic range: scene to display"),
+        label = _("Filmic / Sigmoid dynamic range"),
         tooltip = self.Tooltip,
         table.unpack(self.ComboBoxValues)
       }
@@ -1065,9 +1065,9 @@ function StepToneEqualizerMask:Init()
     _("unchanged"),
     _("default mask blending"),
     _("default plus mask compensation"),
-    _("compress high-low (eigf): medium"),
-    _("compress high-low (eigf): soft"),
-    _("compress high-low (eigf): strong")
+    _("compress shadows-highlights (eigf): medium"),
+    _("compress shadows-highlights (eigf): soft"),
+    _("compress shadows-highlights (eigf): strong")
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -1107,10 +1107,10 @@ function StepToneEqualizerMask:Run()
     -- workaround: show this module, otherwise the buttons will not be pressed
     self:HideDarkroomModule('iop/toneequal')
     --
-  elseif (selection == _("compress high-low (eigf): medium")) then
+  elseif (selection == _("compress shadows-highlights (eigf): medium")) then
     GuiActionButtonOffOn('iop/toneequal/preset/' .. _("compress shadows-highlights (eigf): medium"))
     --
-  elseif (selection == _("compress high-low (eigf): soft")) then
+  elseif (selection == _("compress shadows-highlights (eigf): soft")) then
     -- workaround to deal with bug in dt 4.2.x
     -- dt 4.2 uses special characters
     if (CheckDarktable42()) then
@@ -1119,7 +1119,7 @@ function StepToneEqualizerMask:Run()
       GuiActionButtonOffOn('iop/toneequal/preset/' .. _("compress shadows-highlights (eigf): soft"))
     end
     --
-  elseif (selection == _("compress high-low (eigf): strong")) then
+  elseif (selection == _("compress shadows-highlights (eigf): strong")) then
     -- workaround to deal with bug in dt 4.2.x
     -- dt 4.2 uses special characters
     if (CheckDarktable42()) then
@@ -1267,7 +1267,7 @@ function StepLensCorrection:Run()
   end
 
   if (lensfun) then
-    GuiAction('iop/lens/correction method', 0, 'selection', 'item:' .. _("lensfun database"), 1.0)
+    GuiAction('iop/lens/correction method', 0, 'selection', 'item:Lensfun database', 1.0)
   end
 end
 
@@ -2102,20 +2102,17 @@ local function ModuleTest()
   LogMajorNr = 1
   LogCurrentStep = ''
 
-
   -- get current image information
   local image = dt.gui.views.darkroom.display_image()
   local xmpFile = image.path .. '/' .. image.filename .. '.xmp'
   local xmpModified = GetFileModified(xmpFile)
 
-  -- ====================================
   -- reset current image history
   -- start with a well-defined state
   -- copy xmp file (with 'empty' history stack)
   GuiAction('lib/history', 0, 'reset', '', 1.0)
   xmpModified = CopyXmpFile(xmpFile, image.path, image.filename, '_0_Reset', xmpModified)
 
-  -- ====================================
   -- perform default settings
   -- copy xmp file (with 'default' history stack)
   LogMajorMax = 1
@@ -2134,9 +2131,6 @@ local function ModuleTest()
     end
   end
 
-  -- ====================================
-  -- iterate over all workflow steps and combobox value settings
-
   -- configure first step to reset all inital workflow modules
   StepResetModuleHistory.Widget.value = 3
 
@@ -2146,6 +2140,7 @@ local function ModuleTest()
     StepTimeout
   }
 
+  -- iterate over all workflow steps and combobox value settings
   -- set different combinations of module settings
   for comboBoxValue = 1, comboBoxValuesMax do
     for i, step in ipairs(WorkflowSteps) do
