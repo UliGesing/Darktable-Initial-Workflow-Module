@@ -237,7 +237,7 @@ local function CheckDarktableModernWorkflowPreference()
     workflow = dt.preferences.read('darktable', 'plugins/darkroom/workflow', 'string')
   end
 
-  return contains(modernWorkflows, workflow)
+  return contains(modernWorkflows, _(workflow))
 end
 
 ---------------------------------------------------------------
@@ -305,7 +305,6 @@ function WaitForEventBase:Do(embeddedFunction)
       local timeoutMessage = string.format(_("timeout after %d ms waiting for event %s"), durationMax, self.EventType)
       LogInfo(timeoutMessage)
       LogSummaryMessage(timeoutMessage)
-      StopDasSkript()
       break
     end
   end
@@ -845,11 +844,15 @@ function StepDynamicRangeSceneToDisplay:Run()
     self:ResetDarkroomModule('iop/sigmoid')
 
     if (sigmoidDefaultPerChannel) then
-      -- keep defaults
+      -- keep defaults after module reset
     end
 
     if (sigmoidDefaultRgbRatio) then
-        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:' .. GetReverseTranslation(_("RGB ratio")), 1.0)
+      if (CheckDarktable42()) then
+        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:rgb ratio', 1.0)
+      else
+        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:RGB ratio', 1.0)
+      end
     end
 
     if (sigmoidACES100) then
@@ -1114,27 +1117,26 @@ function StepToneEqualizerMask:Run()
     -- workaround: show this module, otherwise the buttons will not be pressed
     self:HideDarkroomModule('iop/toneequal')
     --
-  elseif (selection == _("compress shadows-highlights (eigf): medium")) then
-    GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
-    --
-  elseif (selection == _("compress shadows-highlights (eigf): soft")) then
-    -- workaround to deal with bug in dt 4.2.x
-    -- dt 4.2 uses special characters
+  else
     if (CheckDarktable42()) then
-      GuiActionButtonOffOn('iop/toneequal/preset/' .. _("compress shadows-highlights (eigf): soft"))
+      -- workaround to deal with bug in dt 4.2.x
+      -- dt 4.2 uses special characters
+      -- darktable 4.3 uses some capital letters
+      -- DT42: prefix is removed during script run
+      if (selection == _("compress shadows-highlights (eigf): medium")) then
+        GuiActionButtonOffOn('iop/toneequal/preset/' ..
+          _("DT42:compress shadows-highlights (eigf): medium"):gsub("DT42:", ""))
+      elseif (selection == _("compress shadows-highlights (eigf): soft")) then
+        GuiActionButtonOffOn('iop/toneequal/preset/' .. _("DT42:compress shadows-highlights (eigf): soft"):gsub("DT42:",
+          ""))
+      elseif (selection == _("compress shadows-highlights (eigf): strong")) then
+        GuiActionButtonOffOn('iop/toneequal/preset/' ..
+          _("DT42:compress shadows-highlights (eigf): strong"):gsub("DT42:", ""))
+      end
     else
+      -- dt 4.3+
       GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
     end
-    --
-  elseif (selection == _("compress shadows-highlights (eigf): strong")) then
-    -- workaround to deal with bug in dt 4.2.x
-    -- dt 4.2 uses special characters
-    if (CheckDarktable42()) then
-      GuiActionButtonOffOn('iop/toneequal/preset/' .. _("compress shadows-highlights (eigf): strong"))
-    else
-      GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
-    end
-    --
   end
 end
 
@@ -1273,8 +1275,18 @@ function StepLensCorrection:Run()
     self:ResetDarkroomModule('iop/lens')
   end
 
+  -- 4.2.1 de: lensfun Datenbank
+  -- 4.2.1 en: lensfun database
+
+  -- 4.3.0 de: Lensfun database
+  -- 4.3.0 en: Lensfun database
+
   if (lensfun) then
-    GuiAction('iop/lens/correction method', 0, 'selection', 'item:Lensfun database', 1.0)
+    if (CheckDarktable42()) then
+      GuiAction('iop/lens/correction method', 0, 'selection', 'item:lensfun database', 1.0)
+    else
+      GuiAction('iop/lens/correction method', 0, 'selection', 'item:Lensfun database', 1.0)
+    end
   end
 end
 
