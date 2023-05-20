@@ -68,6 +68,16 @@ local function _(msgid)
   return translation
 end
 
+local function GetReverseTranslation(text)
+  local reverse = ReverseTranslationIndex[text]
+
+  if (reverse ~= nil) then
+    return reverse
+  end
+
+  return text
+end
+
 ---------------------------------------------------------------
 -- declare some variables to install the module
 
@@ -599,19 +609,25 @@ end
 -- used to restore settings after starting darktable
 function WorkflowStepCombobox:SavePreferenceValue()
   -- check, if there are any changes
-  local preferenceValue = dt.preferences.read(ModuleName, self.Widget.label, 'string')
-  local comboBoxValue = self.Widget.value
+  -- preferences are saved with english names and values
+  -- user intercase uses translated names and values
+  local preferenceName = GetReverseTranslation(self.Widget.label)
+  local preferenceValue = dt.preferences.read(ModuleName, preferenceName, 'string')
+  local comboBoxValue = GetReverseTranslation(self.Widget.value)
 
   -- save any changes
   if (preferenceValue ~= comboBoxValue) then
-    dt.preferences.write(ModuleName, self.Widget.label, 'string', comboBoxValue)
+    dt.preferences.write(ModuleName, preferenceName, 'string', comboBoxValue)
   end
 end
 
 -- read saved selection value from darktable preferences
 -- used to restore settings after starting darktable
 function WorkflowStepCombobox:ReadPreferenceValue()
-  local preferenceValue = dt.preferences.read(ModuleName, self.Widget.label, 'string')
+  -- preferences are saved with english names and values
+  -- user intercase uses translated names and values
+  local preferenceName = GetReverseTranslation(self.Widget.label)
+  local preferenceValue = _(dt.preferences.read(ModuleName, preferenceName, 'string'))
 
   -- get combo box index of saved preference value
   for i, comboBoxValue in ipairs(self.ComboBoxValues) do
@@ -833,7 +849,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     end
 
     if (sigmoidDefaultRgbRatio) then
-        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:' .. ReverseTranslationIndex[_("RGB ratio")], 1.0)
+        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:' .. GetReverseTranslation(_("RGB ratio")), 1.0)
     end
 
     if (sigmoidACES100) then
@@ -1433,7 +1449,7 @@ function StepColorCalibrationIlluminant:Run()
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current illuminant = %s"), quote(currentSelection)))
-    GuiAction('iop/channelmixerrgb/illuminant', 0, 'selection', 'item:' .. ReverseTranslationIndex[selection], 1.0)
+    GuiAction('iop/channelmixerrgb/illuminant', 0, 'selection', 'item:' .. GetReverseTranslation(selection), 1.0)
   else
     LogInfo(indent .. string.format(_("nothing to do, illuminant already = %s"), quote(currentSelection)))
   end
@@ -1490,7 +1506,7 @@ function StepColorCalibrationAdaptation:Run()
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current adaptation = %s"), quote(currentSelection)))
-    GuiAction('iop/channelmixerrgb/adaptation', 0, 'selection', 'item:' .. ReverseTranslationIndex[selection], 1.0)
+    GuiAction('iop/channelmixerrgb/adaptation', 0, 'selection', 'item:' .. GetReverseTranslation(selection), 1.0)
   else
     LogInfo(indent .. string.format(_("nothing to do, adaptation already = %s"), quote(currentSelection)))
   end
@@ -1605,7 +1621,7 @@ function StepWhiteBalance:Run()
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current value = %s"), quote(currentSelection)))
-    GuiAction('iop/temperature/settings/' .. ReverseTranslationIndex[selection], 0, '', '', 1.0)
+    GuiAction('iop/temperature/settings/' .. GetReverseTranslation(selection), 0, '', '', 1.0)
   else
     LogInfo(indent .. string.format(_("nothing to do, value already = %s"), quote(currentSelection)))
   end
