@@ -1,5 +1,9 @@
 # darktable Initial Workflow Module
 
+## Releases
+
+- you can download the newest release archive from https://github.com/UliGesing/Darktable-Initial-Workflow-Module/releases
+
 ## Introduction
 
 - This script can be used together with darktable. See https://www.darktable.org/ for more information.
