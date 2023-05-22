@@ -12,7 +12,9 @@
 
 - It offers a new "inital workflow" module both in lighttable and darkroom view. It can be used to do some configuration for an initial image workflow. It calls some automatisms of different modules in the darkroom view, enables your preferred modules and configures some default settings. If this suits your workflow, the script saves some clicks and time.
 
-## Installation and Prerequisites
+## Installation
+
+### Prerequisites
 
 - This script requires darktable 4.2.1 or 4.4. It can also be used with the development version 4.3. The script was developed and tested on Linux (EndeavourOs). Individual tests were also carried out with Windows 10 (virtual machine).
 
