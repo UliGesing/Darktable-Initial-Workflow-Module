@@ -10,6 +10,8 @@
 
 - Do you use darktable to develop your raw images? Do you often follow the same initial steps for new images? Do you often use the same modules in the darkroom and configure them in the same way before going into the details? Then this script can save you work.
 
+>><img src="ReadmeImages/ScreenshotModuleIntroduction.png" width=250>
+
 - It offers a new "inital workflow" module both in lighttable and darkroom view. It can be used to do some configuration for an initial image workflow. It calls some automatisms of different modules in the darkroom view, enables your preferred modules and configures some default settings. If this suits your workflow, the script saves some clicks and time.
 
 ## Installation
@@ -114,7 +116,7 @@ require "InitialWorkflowModule"</code>
 
 - You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status).<br>
 
-- <img src="ReadmeImages/ScreenshotModuleStepConfigurationTimeout.png" width=250>
+>><img src="ReadmeImages/ScreenshotModuleStepConfigurationTimeout.png" width=250>
 
 ## Request for Change
 
@@ -138,24 +140,22 @@ require "InitialWorkflowModule"</code>
 
 ### Module Tests
 
-- The git repository provides some files to execute module tests. This is used during module development and deployment. Within the script code there is an additional and optional module test implementation. This should be disabled and not visible for general use of the script. To run these tests, do the following steps:<br><br>
-- create a file named "TestFlag.txt" in the same directory as the script file and restart darktable
-- from now there is a special "TEST" button, used to perform the module tests
-- open any image in darkroom view, create a backup first
-- create a new folder named "TEST" on your harddisk below the folder of this image file
-- click the TEST button to start the tests
-- up to now, there is a simple module test that iterates over workflow steps and combobox value settings
-- it creates some images and sets different combinations of module settings
-- resulting xmp files are copied to the TEST result folder
-- you can compare these files with previously generated reference files
-- after tests are completed, there should be no error messages
+- The git repository provides some additional files to execute module tests. This is used during module development and deployment. Within the script code there is an additional and optional module test implementation. This should be disabled and not visible for general use of the script. 
+
+- To run these tests, do the following steps:<br>
+>- create a file named "TestFlag.txt" in the same directory as the script file and restart darktable
+>- from now there is a special "TEST" button, used to perform the module tests
+>- open any image in darkroom view, create a backup first
+>- create a new folder named "TEST" on your harddisk below the folder of this image file
+>- click the TEST button to start the tests
+>- up to now, there is a simple module test that iterates over workflow steps and combobox value settings
+>- it creates some images and sets different combinations of module settings
+>- resulting xmp files are copied to the TEST result folder
+>- you can compare these files with previously generated reference files
+>- after tests are completed, there should be no error messages
 
 ### TestCustomCode.lua
 
-The git repository contains one additional file called TestCustomCode.lua.
-- do you want to run some special tests?
-- do you want to execute some dt.gui.action commands?
-- this file contains some custom debug code
-- this code is executed by clicking the "Custom Code" button
-- it can be changed without restarting darktable
-- you can use it to try some commands "on the fly".
+- The git repository contains one additional file called TestCustomCode.lua. You can use it to try some commands or tests "on the fly".
+
+- This file contains some custom debug code. The code is executed by clicking the "Custom Code" button. It can be changed without restarting darktable. This is helpful, if you want to run some special tests or execute some dt.gui.action commands.
