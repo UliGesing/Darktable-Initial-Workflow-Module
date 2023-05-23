@@ -482,6 +482,7 @@ local WorkflowButtons = {}
 local WorkflowStep =
 {
   Widget = nil,
+  WidgetBasic = nil,
   Tooltip = nil,
 }
 
@@ -499,7 +500,7 @@ end
 -- message at the beginning of a step
 function WorkflowStep:LogStepMessage()
   LogInfo('==============================')
-  LogInfo(string.format(_("selection = %s"), self.Widget.value))
+  LogInfo(string.format(_("selection = %s - %s"), self.WidgetBasic.value, self.Widget.value))
 end
 
 -- show given darkroom module
@@ -567,6 +568,8 @@ function WorkflowStep:InitDependingOnCurrentView()
   -- do nothing by default
   -- self.Widget.sensitive = true
   -- self.Widget.visible = true
+  -- self.WidgetBasic.sensitive = true
+  -- self.WidgetBasic.visible = true
 end
 
 ---------------------------------------------------------------
@@ -580,18 +583,85 @@ WorkflowStepButton = WorkflowStep:new():new
 WorkflowStepCombobox = WorkflowStep:new():new
     {
       OperationNameInternal = nil,
-      DisableValue = nil,
-      DefaultValue = nil
+
+      ComboBoxValues = nil,
+      WidgetDisableComboBoxValue = nil,
+      WidgetDefaultComboBoxValue = nil
     }
 
+-- create default basic widget of most workflow steps
+function WorkflowStepCombobox:CreateDefaultBasicWidget()
+  self.WidgetDisableBasicValue = 1
+  self.WidgetDefaultBasicValue = 3
+
+  self.BasicValues = { _("nothing"), _("enable"), _("reset"), _("disable") }
+
+  self.WidgetBasic = dt.new_widget('combobox')
+      {
+        changed_callback = ComboBoxChangedCallback,
+        label = '',
+        table.unpack(self.BasicValues)
+      }
+end
+
+-- create empty invisible basic widget
+function WorkflowStepCombobox:CreateEmptyBasicWidget()
+  self.WidgetDisableBasicValue = 1
+  self.WidgetDefaultBasicValue = 1
+
+  self.BasicValues = { '' }
+
+  self.WidgetBasic = dt.new_widget('combobox')
+      {
+        label = '',
+        table.unpack(self.BasicValues)
+      }
+end
+
+-- evaluate basic widget, common for most workflow steps
+function WorkflowStepCombobox:RunBasicWidget()
+  local basic = self.WidgetBasic.value
+  if (basic == _("nothing")) then
+    return false
+  end
+
+  if (basic == _("disable")) then
+    self:DisableDarkroomModule(self:OperationPath())
+    return false
+  end
+
+  if (basic == _("enable")) then
+    self:EnableDarkroomModule(self:OperationPath())
+    return true
+  end
+
+  if (basic == _("reset")) then
+    self:EnableDarkroomModule(self:OperationPath())
+    self:ResetDarkroomModule(self:OperationPath())
+    return true
+  end
+
+  return true
+end
+
 -- disable step, setting keeps unchanged during script execution
-function WorkflowStepCombobox:Disable()
-  self.Widget.value = self.DisableValue
+function WorkflowStepCombobox:DisableComboBoxValue()
+  self.Widget.value = self.WidgetDisableComboBoxValue
+end
+
+-- disable steps basic setting
+function WorkflowStepCombobox:DisableBasicValue()
+  self.WidgetBasic.value = self.WidgetDisableBasicValue
 end
 
 -- choose default step setting
-function WorkflowStepCombobox:Default()
-  self.Widget.value = self.DefaultValue
+function WorkflowStepCombobox:DefaultComboBoxValue()
+  self.Widget.value = self.WidgetDefaultComboBoxValue
+end
+
+-- choose default basic setting
+function WorkflowStepCombobox:DefaultBasicValue()
+  self.WidgetBasic.value = self.WidgetDefaultBasicValue
 end
 
 -- returns internal operation name like 'colorbalancergb' or 'atrous'
@@ -604,25 +674,35 @@ function WorkflowStepCombobox:OperationPath()
   return 'iop/' .. self:OperationName()
 end
 
--- save current selection of this workflow step
+-- save current selections of this workflow step
 -- used to restore settings after starting darktable
 function WorkflowStepCombobox:SavePreferenceValue()
   -- check, if there are any changes
   -- preferences are saved with english names and values
-  -- user intercase uses translated names and values
+  -- user interfase uses translated names and values
+
+  -- save any changes of this combobox value
   local preferenceName = GetReverseTranslation(self.Widget.label)
   local preferenceValue = dt.preferences.read(ModuleName, preferenceName, 'string')
   local comboBoxValue = GetReverseTranslation(self.Widget.value)
 
-  -- save any changes
   if (preferenceValue ~= comboBoxValue) then
     dt.preferences.write(ModuleName, preferenceName, 'string', comboBoxValue)
+  end
+
+  -- save any changes of this basic value
+  local preferenceBasicName = preferenceName .. "Basic"
+  local preferenceBasicValue = dt.preferences.read(ModuleName, preferenceBasicName, 'string')
+  local basicValue = GetReverseTranslation(self.WidgetBasic.value)
+
+  if (preferenceBasicValue ~= basicValue) then
+    dt.preferences.write(ModuleName, preferenceBasicName, 'string', basicValue)
   end
 end
 
 -- read saved selection value from darktable preferences
 -- used to restore settings after starting darktable
-function WorkflowStepCombobox:ReadPreferenceValue()
+function WorkflowStepCombobox:ReadPreferenceComboBoxValue()
   -- preferences are saved with english names and values
   -- user intercase uses translated names and values
   local preferenceName = GetReverseTranslation(self.Widget.label)
@@ -638,7 +718,28 @@ function WorkflowStepCombobox:ReadPreferenceValue()
     end
   end
 
-  self:Default()
+  self:DefaultComboBoxValue()
+end
+
+-- read saved selection value from darktable preferences
+-- used to restore settings after starting darktable
+function WorkflowStepCombobox:ReadPreferenceBasicValue()
+  -- preferences are saved with english names and values
+  -- user intercase uses translated names and values
+  local preferenceBasicName = GetReverseTranslation(self.Widget.label) .. "Basic"
+  local preferenceBasicValue = _(dt.preferences.read(ModuleName, preferenceBasicName, 'string'))
+
+  -- get combo box index of saved preference value
+  for i, basicValue in ipairs(self.BasicValues) do
+    if (preferenceBasicValue == basicValue) then
+      if (self.WidgetBasic.value ~= i) then
+        self.WidgetBasic.value = i
+      end
+      return
+    end
+  end
+
+  self:DefaultBasicValue()
 end
 
 -- combobox selection is returned as negative index value
@@ -652,6 +753,9 @@ end
 function GetWorkflowItem(widget, table)
   for i, item in ipairs(table) do
     if (item.Widget == widget) then
+      return item
+    end
+    if (item.WidgetBasic == widget) then
       return item
     end
   end
@@ -689,8 +793,8 @@ StepCompressHistoryStack = WorkflowStepCombobox:new():new
     {
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
-      DisableValue = 1, -- item in ComboBoxValues
-      DefaultValue = 2, -- item in ComboBoxValues
+      WidgetDisableComboBoxValue = 1, -- item in ComboBoxValues
+      WidgetDefaultComboBoxValue = 2, -- item in ComboBoxValues
       Tooltip = wordwrap(_(
         "Generate the shortest history stack that reproduces the current image. This removes your current history snapshots."))
     }
@@ -698,8 +802,9 @@ StepCompressHistoryStack = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepCompressHistoryStack)
 
 function StepCompressHistoryStack:Init()
-  self.ComboBoxValues = { _("no"), _("yes") }
+  self:CreateEmptyBasicWidget()
 
+  self.ComboBoxValues = { _("no"), _("yes") }
   self.Widget = dt.new_widget('combobox')
       {
         changed_callback = ComboBoxChangedCallback,
@@ -725,8 +830,8 @@ StepDynamicRangeSceneToDisplay = WorkflowStepCombobox:new():new
       -- internal operation name should be copied from gui action command (iop/OperationName)
       -- this step refers to different modules
       OperationNameInternal = 'Filmic or Sigmoid',
-      DisableValue = 1,
-      DefaultValue = 4,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 4,
       Tooltip = wordwrap(_(
         "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure and / or reset module settings. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others."))
     }
@@ -734,6 +839,8 @@ StepDynamicRangeSceneToDisplay = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepDynamicRangeSceneToDisplay)
 
 function StepDynamicRangeSceneToDisplay:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"),
@@ -786,6 +893,11 @@ function StepDynamicRangeSceneToDisplay:OperationName()
 end
 
 function StepDynamicRangeSceneToDisplay:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -867,14 +979,16 @@ StepColorBalanceGlobalSaturation = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'colorbalancergb',
-      DisableValue = 1,
-      DefaultValue = 7,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 7,
       Tooltip = wordwrap(_("Adjust global saturation in color balance rgb module."))
     }
 
 table.insert(WorkflowSteps, StepColorBalanceGlobalSaturation)
 
 function StepColorBalanceGlobalSaturation:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"), 0, 5, 10, 15, 20, 25, 30, 35
@@ -890,6 +1004,11 @@ function StepColorBalanceGlobalSaturation:Init()
 end
 
 function StepColorBalanceGlobalSaturation:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection ~= _("unchanged")) then
@@ -905,14 +1024,16 @@ StepColorBalanceGlobalChroma = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'colorbalancergb',
-      DisableValue = 1,
-      DefaultValue = 5,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 5,
       Tooltip = wordwrap(_("Adjust global chroma in color balance rgb module."))
     }
 
 table.insert(WorkflowSteps, StepColorBalanceGlobalChroma)
 
 function StepColorBalanceGlobalChroma:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"), 0, 5, 10, 15, 20, 25, 30, 35
@@ -928,6 +1049,11 @@ function StepColorBalanceGlobalChroma:Init()
 end
 
 function StepColorBalanceGlobalChroma:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection ~= _("unchanged")) then
@@ -943,8 +1069,8 @@ StepColorBalanceRGB = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'colorbalancergb',
-      DisableValue = 1,
-      DefaultValue = 2,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 2,
       Tooltip = wordwrap(_(
         "Choose a predefined preset for your color-grading. Or set auto pickers of the module mask and peak white and gray luminance value to normalize the power setting in the 4 ways tab."))
     }
@@ -952,6 +1078,8 @@ StepColorBalanceRGB = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepColorBalanceRGB)
 
 function StepColorBalanceRGB:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"),
@@ -972,6 +1100,11 @@ function StepColorBalanceRGB:Init()
 end
 
 function StepColorBalanceRGB:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -996,8 +1129,8 @@ StepContrastEqualizer = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'atrous',
-      DisableValue = 1,
-      DefaultValue = 3,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 3,
       Tooltip = wordwrap(_(
         "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect."))
     }
@@ -1005,6 +1138,8 @@ StepContrastEqualizer = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepContrastEqualizer)
 
 function StepContrastEqualizer:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"),
@@ -1025,6 +1160,11 @@ function StepContrastEqualizer:Init()
 end
 
 function StepContrastEqualizer:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1061,8 +1201,8 @@ StepToneEqualizerMask = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'toneequal',
-      DisableValue = 1,
-      DefaultValue = 3,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 3,
       Tooltip = wordwrap(_(
         "Use default preset mask blending for all purposes plus automatic mask contrast and exposure compensation. Or use preset to compress shadows and highlights with exposure-independent guided filter (eigf) (soft, medium or strong)."))
     }
@@ -1070,6 +1210,8 @@ StepToneEqualizerMask = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepToneEqualizerMask)
 
 function StepToneEqualizerMask:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"),
@@ -1090,6 +1232,11 @@ function StepToneEqualizerMask:Init()
 end
 
 function StepToneEqualizerMask:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1146,8 +1293,8 @@ StepExposureCorrection = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'exposure',
-      DisableValue = 1,
-      DefaultValue = 4,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 4,
       Tooltip = wordwrap(_(
         "Automatically adjust the exposure correction. Remove the camera exposure bias, useful if you exposed the image to the right."))
     }
@@ -1155,6 +1302,8 @@ StepExposureCorrection = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepExposureCorrection)
 
 function StepExposureCorrection:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"),
@@ -1174,6 +1323,11 @@ function StepExposureCorrection:Init()
 end
 
 function StepExposureCorrection:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1224,14 +1378,16 @@ StepLensCorrection = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'lens',
-      DisableValue = 1,
-      DefaultValue = 4,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 4,
       Tooltip = wordwrap(_("Enable and reset lens correction module.")),
     }
 
 table.insert(WorkflowSteps, StepLensCorrection)
 
 function StepLensCorrection:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"),
@@ -1250,6 +1406,11 @@ function StepLensCorrection:Init()
 end
 
 function StepLensCorrection:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1296,14 +1457,16 @@ StepDenoiseProfiled = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'denoiseprofile',
-      DisableValue = 1,
-      DefaultValue = 2,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 2,
       Tooltip = wordwrap(_("Enable and reset denoise (profiled) module."))
     }
 
 table.insert(WorkflowSteps, StepDenoiseProfiled)
 
 function StepDenoiseProfiled:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues = { _("unchanged"), _("enable and reset") }
 
   self.Widget = dt.new_widget('combobox')
@@ -1316,6 +1479,11 @@ function StepDenoiseProfiled:Init()
 end
 
 function StepDenoiseProfiled:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1335,14 +1503,16 @@ StepChromaticAberrations = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'cacorrect',
-      DisableValue = 1,
-      DefaultValue = 2,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 2,
       Tooltip = wordwrap(_("Correct chromatic aberrations."))
     }
 
 table.insert(WorkflowSteps, StepChromaticAberrations)
 
 function StepChromaticAberrations:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"),
@@ -1360,6 +1530,11 @@ function StepChromaticAberrations:Init()
 end
 
 function StepChromaticAberrations:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1383,10 +1558,10 @@ StepColorCalibrationIlluminant = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'channelmixerrgb',
-      DisableValue = 1,
+      WidgetDisableComboBoxValue = 1,
 
-      -- see Default() override
-      DefaultValue = nil,
+      -- see DefaultComboBoxValue() override
+      WidgetDefaultComboBoxValue = nil,
       Tooltip = wordwrap(_(
         "Perform color space corrections in color calibration module. Select the illuminant. The type of illuminant assumed to have lit the scene. By default unchanged for the legacy workflow."))
     }
@@ -1394,7 +1569,7 @@ StepColorCalibrationIlluminant = WorkflowStepCombobox:new():new
 -- distinguish between modern and legacy workflow
 -- keep value unchanged, if using legacy workflow
 -- depends on darktable preference settings
-function StepColorCalibrationIlluminant:Default()
+function StepColorCalibrationIlluminant:DefaultComboBoxValue()
   self.Widget.value = CheckDarktableModernWorkflowPreference() and 2 or 1
 end
 
@@ -1406,6 +1581,8 @@ table.insert(WorkflowSteps, StepColorCalibrationIlluminant)
 -- github/darktable/build/lib/darktable/plugins/introspection_channelmixerrgb.c
 
 function StepColorCalibrationIlluminant:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"), -- additional value
@@ -1432,6 +1609,11 @@ function StepColorCalibrationIlluminant:Init()
 end
 
 function StepColorCalibrationIlluminant:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1473,8 +1655,8 @@ StepColorCalibrationAdaptation = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'channelmixerrgb',
-      DisableValue = 1,
-      DefaultValue = 3,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 3,
       Tooltip = wordwrap(_(
         "Perform color space corrections in color calibration module. Select the adaptation. The working color space in which the module will perform its chromatic adaptation transform and channel mixing."))
     }
@@ -1484,6 +1666,8 @@ table.insert(WorkflowSteps, StepColorCalibrationAdaptation)
 -- combobox values see darktable typedef enum dt_adaptation_t
 
 function StepColorCalibrationAdaptation:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"), -- additional value
@@ -1504,6 +1688,11 @@ function StepColorCalibrationAdaptation:Init()
 end
 
 function StepColorCalibrationAdaptation:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1533,8 +1722,8 @@ StepHighlightReconstruction = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'highlights',
-      DisableValue = 1,
-      DefaultValue = 1,
+      WidgetDisableComboBoxValue = 1,
+      WidgetDefaultComboBoxValue = 1,
       Tooltip = wordwrap(_(
         "Reconstruct color information for clipped pixels. Select an appropriate reconstruction methods to reconstruct the missing data from unclipped channels and/or neighboring pixels."))
     }
@@ -1544,6 +1733,8 @@ StepHighlightReconstruction = WorkflowStepCombobox:new():new
 -- table.insert(WorkflowSteps, StepHighlightReconstruction)
 
 function StepHighlightReconstruction:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"),
@@ -1564,6 +1755,11 @@ function StepHighlightReconstruction:Init()
 end
 
 function StepHighlightReconstruction:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1581,10 +1777,10 @@ StepWhiteBalance = WorkflowStepCombobox:new():new
     {
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'temperature',
-      DisableValue = 1,
+      WidgetDisableComboBoxValue = 1,
 
-      -- see Default() override
-      DefaultValue = nil,
+      -- see DefaultComboBoxValue() override
+      WidgetDefaultComboBoxValue = nil,
       Tooltip = wordwrap(_(
         "Adjust the white balance of the image by altering the temperature. By default unchanged for the legacy workflow."))
     }
@@ -1593,13 +1789,15 @@ StepWhiteBalance = WorkflowStepCombobox:new():new
 -- distinguish between modern and legacy workflow
 -- keep value unchanged, if using legacy workflow
 -- depends on darktable preference settings
-function StepWhiteBalance:Default()
+function StepWhiteBalance:DefaultComboBoxValue()
   self.Widget.value = CheckDarktableModernWorkflowPreference() and 2 or 1
 end
 
 table.insert(WorkflowSteps, StepWhiteBalance)
 
 function StepWhiteBalance:Init()
+  self:CreateDefaultBasicWidget()
+
   self.ComboBoxValues =
   {
     _("unchanged"),
@@ -1619,6 +1817,11 @@ function StepWhiteBalance:Init()
 end
 
 function StepWhiteBalance:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("unchanged")) then
@@ -1646,8 +1849,8 @@ StepResetModuleHistory = WorkflowStepCombobox:new():new
       -- internal operation name should be copied from gui action command (iop/OperationName)
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
-      DisableValue = 1, -- item in ComboBoxValues
-      DefaultValue = 2, -- item in ComboBoxValues
+      WidgetDisableComboBoxValue = 1, -- item in ComboBoxValues
+      WidgetDefaultComboBoxValue = 2, -- item in ComboBoxValues
       Tooltip = wordwrap(_(
         "Reset modules that are part of this initial workflow. Keep other module settings like crop, rotate and perspective. Or reset all modules of the pixelpipe and discard complete history stack."))
     }
@@ -1655,6 +1858,8 @@ StepResetModuleHistory = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepResetModuleHistory)
 
 function StepResetModuleHistory:Init()
+  self:CreateEmptyBasicWidget()
+
   self.ComboBoxValues =
   {
     _("no"),
@@ -1673,6 +1878,11 @@ function StepResetModuleHistory:Init()
 end
 
 function StepResetModuleHistory:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
   local selection = self.Widget.value
 
   if (selection == _("no")) then
@@ -1719,8 +1929,8 @@ StepShowModulesDuringExecution = WorkflowStepCombobox:new():new
     {
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
-      DisableValue = 1, -- item in ComboBoxValues
-      DefaultValue = 1, -- item in ComboBoxValues
+      WidgetDisableComboBoxValue = 1, -- item in ComboBoxValues
+      WidgetDefaultComboBoxValue = 1, -- item in ComboBoxValues
       Tooltip = wordwrap(_(
         "Show darkroom modules for enabled workflow steps during execution of this initial workflow. This makes the changes easier to understand."))
     }
@@ -1728,6 +1938,8 @@ StepShowModulesDuringExecution = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepShowModulesDuringExecution)
 
 function StepShowModulesDuringExecution:Init()
+  self:CreateEmptyBasicWidget()
+
   self.ComboBoxValues = { _("no"), _("yes") }
 
   self.Widget = dt.new_widget('combobox')
@@ -1749,8 +1961,8 @@ StepTimeout = WorkflowStepCombobox:new():new
     {
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
-      DisableValue = 2, -- item in ComboBoxValues
-      DefaultValue = 2, -- item in ComboBoxValues
+      WidgetDisableComboBoxValue = 2, -- item in ComboBoxValues
+      WidgetDefaultComboBoxValue = 2, -- item in ComboBoxValues
       Tooltip = wordwrap(_(
         "Some calculations take a certain amount of time. Depending on the hardware equipment also longer.This script waits and attempts to detect timeouts. If steps take much longer than expected, those steps will be aborted. You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status)."))
     }
@@ -1758,6 +1970,8 @@ StepTimeout = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepTimeout)
 
 function StepTimeout:Init()
+  self:CreateEmptyBasicWidget()
+
   self.ComboBoxValues =
   {
     '500',
@@ -1920,12 +2134,12 @@ ButtonDisableAllSteps = WorkflowStepButton:new():new
       Widget = dt.new_widget('button')
           {
             label = _("select none"),
-            tooltip = wordwrap(_("Disable all steps of this inital workflow module.")),
+            tooltip = wordwrap(_("DisableComboBoxValue all steps of this inital workflow module.")),
 
             clicked_callback = function()
               for i, step in ipairs(WorkflowSteps) do
                 if (step ~= StepTimeout) then
-                  step:Disable()
+                  step:DisableComboBoxValue()
                 end
               end
             end
@@ -1942,7 +2156,7 @@ local function EnableDefaultSteps()
   -- called via module reset control
   for i, step in ipairs(WorkflowSteps) do
     if (step ~= StepTimeout) then
-      step:Default()
+      step:DefaultComboBoxValue()
     end
   end
 end
@@ -2161,7 +2375,7 @@ local function ModuleTest()
         if (comboBoxValue <= #step.ComboBoxValues) then
           step.Widget.value = comboBoxValue
         elseif (comboBoxValue == #step.ComboBoxValues + 1) then
-          step:Default()
+          step:DefaultComboBoxValue()
         else
           step.Widget.value = (comboBoxValue % #step.ComboBoxValues) + 1
         end
@@ -2295,11 +2509,48 @@ local function GetWidgets()
     )
   end
 
-  -- Comboboxes to configure single workflow steps.
-  -- The order in the GUI is the same as the order of declaration in the code.
+  -- collect step comboboxes (basic and configuration)
+  -- the order in the GUI is the same as the order of declaration in the code.
+  local comboBoxWidgets = {}
+  local basicWidgets = {}
   for i, step in ipairs(WorkflowSteps) do
-    table.insert(widgets, step.Widget)
+    if (step.WidgetBasic ~= nil) then
+      if not contains(basicWidgets, step.WidgetBasic) then
+        table.insert(basicWidgets, step.WidgetBasic)
+      end
+    end
+    table.insert(comboBoxWidgets, step.Widget)
   end
+
+  -- insert three boxes, arranged as columns
+  -- first column: basic combobox widgets
+  -- second column: separator
+  -- third column: step configuration combobox widgets
+  table.insert(widgets,
+    dt.new_widget('box')
+    {
+      orientation = 'horizontal',
+
+      dt.new_widget('box') {
+        orientation = 'vertical',
+        table.unpack(basicWidgets),
+      },
+
+      dt.new_widget('box') {
+        orientation = 'vertical',
+        dt.new_widget('label') {
+          label = ' --- ',
+          selectable = false
+        }
+      },
+
+      dt.new_widget('box') {
+        orientation = 'vertical',
+        table.unpack(comboBoxWidgets),
+      },
+
+    }
+  )
 
   return widgets
 end
@@ -2369,7 +2620,8 @@ local function InstallInitialWorkflowModule()
 
   -- get current settings as saved in darktable preferences
   for i, step in ipairs(WorkflowSteps) do
-    step:ReadPreferenceValue()
+    step:ReadPreferenceBasicValue()
+    step:ReadPreferenceComboBoxValue()
   end
 
   -- create the module depending on which view darktable starts in
