@@ -582,6 +582,24 @@ function WorkflowStepCombobox:CreateDefaultBasicWidget()
       {
         changed_callback = ComboBoxChangedCallback,
         label = '',
+        tooltip = wordwrap(_(
+          "Do nothing at all, enable corresponding module first, reset first and enable corresponding module, or disable module and keep it unchanged. After 'enable' or 'reset' the selected module configuration is set.")),
+        table.unpack(self.BasicValues)
+      }
+end
+
+-- create simple basic widget of some workflow steps
+function WorkflowStepCombobox:CreateSimpleBasicWidget()
+  self.WidgetDisableBasicValue = 1
+  self.WidgetDefaultBasicValue = 2
+
+  self.BasicValues = { _("nothing"), _("enable") }
+
+  self.WidgetBasic = dt.new_widget('combobox')
+      {
+        changed_callback = ComboBoxChangedCallback,
+        label = '',
+        tooltip = wordwrap(_("Do nothing at all or do corresponding configuration.")),
         table.unpack(self.BasicValues)
       }
 end
@@ -626,6 +644,29 @@ function WorkflowStepCombobox:RunBasicWidget()
   if (basic == _("reset")) then
     self:EnableDarkroomModule(self:OperationPath())
     self:ResetDarkroomModule(self:OperationPath())
+    return true
+  end
+
+  return true
+end
+
+-- evaluate basic widget, common for some workflow steps
+function WorkflowStepCombobox:RunSimpleBasicWidget()
+  local basic = self.WidgetBasic.value
+  if (basic == '') then
+    return true
+  end
+
+  if (basic == _("nothing")) then
+    return false
+  end
+
+  self:LogStepMessage()
+
+  if (basic == _("enable")) then
+    if (self:OperationName() ~= nil) then
+      self:EnableDarkroomModule(self:OperationPath())
+    end
     return true
   end
 
@@ -709,17 +750,11 @@ function WorkflowStepCombobox:ReadPreferenceComboBoxValue()
   self:EnableDefaultStepConfiguation()
 end
 
--- read saved selection value from darktable preferences
--- used to restore settings after starting darktable
-function WorkflowStepCombobox:ReadPreferenceBasicValue()
-  -- preferences are saved with english names and values
-  -- user intercase uses translated names and values
-  local preferenceBasicName = GetReverseTranslation(self.Widget.label) .. "Basic"
-  local preferenceBasicValue = _(dt.preferences.read(ModuleName, preferenceBasicName, 'string'))
-
-  -- get combo box index of saved preference value
+-- select widget value
+-- get combo box index of given value
+function WorkflowStepCombobox:SetWidgetBasicValue(value)
   for i, basicValue in ipairs(self.BasicValues) do
-    if (preferenceBasicValue == basicValue) then
+    if (value == basicValue) then
       if (self.WidgetBasic.value ~= i) then
         self.WidgetBasic.value = i
       end
@@ -730,8 +765,20 @@ function WorkflowStepCombobox:ReadPreferenceBasicValue()
   self:EnableDefaultBasicConfiguation()
 end
 
+-- read saved selection value from darktable preferences
+-- used to restore settings after starting darktable
+function WorkflowStepCombobox:ReadPreferenceBasicValue()
+  -- preferences are saved with english names and values
+  -- user intercase uses translated names and values
+  local preferenceBasicName = GetReverseTranslation(self.Widget.label) .. "Basic"
+  local preferenceBasicValue = _(dt.preferences.read(ModuleName, preferenceBasicName, 'string'))
+
+  self:SetWidgetBasicValue(preferenceBasicValue)
+end
+
 -- combobox selection is returned as negative index value
 -- convert negative index value to combobox string value
+-- consider "unchanged" value: + 1
 function WorkflowStepCombobox:GetComboBoxValueFromSelectionIndex(index)
   return self.ComboBoxValues[(-index) + 1]
 end
@@ -793,7 +840,7 @@ StepCompressHistoryStack = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepCompressHistoryStack)
 
 function StepCompressHistoryStack:Init()
-  self:CreateEmptyBasicWidget()
+  self:CreateSimpleBasicWidget()
 
   self.ComboBoxValues = { _("no"), _("yes") }
   self.Widget = dt.new_widget('combobox')
@@ -806,6 +853,11 @@ function StepCompressHistoryStack:Init()
 end
 
 function StepCompressHistoryStack:Run()
+  -- evaluate basic widget
+  if (not self:RunSimpleBasicWidget()) then
+    return
+  end  
+  
   local selection = self.Widget.value
 
   if (selection == _("yes")) then
@@ -917,15 +969,34 @@ function StepDynamicRangeSceneToDisplay:Run()
   end
 
   if (self:SigmoidSelected()) then
+    local colorProcessingValues =
+    {
+      _("per channel"),
+      _("RGB ratio")
+    }
+
+    local currentSelectionIndex = GuiActionGetValue('iop/sigmoid/color processing', 'selection')
+    local currentSelection = colorProcessingValues[-currentSelectionIndex]
+
     if (selection == _("Sigmoid color per channel")) then
-      -- keep defaults after module reset
+      if ('per channel' ~= currentSelection) then
+        LogInfo(indent .. string.format(_("current color processing = %s"), quote(currentSelection)))
+        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:per channel', 1.0)
+      else
+        LogInfo(indent .. string.format(_("nothing to do, color processing already = %s"), quote(currentSelection)))
+      end
     end
 
     if (selection == _("Sigmoid color RGB ratio")) then
-      if (CheckDarktable42()) then
-        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:rgb ratio', 1.0)
+      if ('RGB ratio' ~= currentSelection) then
+        LogInfo(indent .. string.format(_("current color processing = %s"), quote(currentSelection)))
+        if (CheckDarktable42()) then
+          GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:rgb ratio', 1.0)
+        else
+          GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:RGB ratio', 1.0)
+        end
       else
-        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:RGB ratio', 1.0)
+        LogInfo(indent .. string.format(_("nothing to do, color processing already = %s"), quote(currentSelection)))
       end
     end
 
@@ -949,7 +1020,7 @@ StepColorBalanceGlobalSaturation = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepColorBalanceGlobalSaturation)
 
 function StepColorBalanceGlobalSaturation:Init()
-  self:CreateEmptyBasicWidget()
+  self:CreateSimpleBasicWidget()
 
   self.ComboBoxValues =
   {
@@ -967,7 +1038,7 @@ end
 
 function StepColorBalanceGlobalSaturation:Run()
   -- evaluate basic widget
-  if (not self:RunBasicWidget()) then
+  if (not self:RunSimpleBasicWidget()) then
     return
   end
 
@@ -994,7 +1065,7 @@ StepColorBalanceGlobalChroma = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepColorBalanceGlobalChroma)
 
 function StepColorBalanceGlobalChroma:Init()
-  self:CreateEmptyBasicWidget()
+  self:CreateSimpleBasicWidget()
 
   self.ComboBoxValues =
   {
@@ -1012,7 +1083,7 @@ end
 
 function StepColorBalanceGlobalChroma:Run()
   -- evaluate basic widget
-  if (not self:RunBasicWidget()) then
+  if (not self:RunSimpleBasicWidget()) then
     return
   end
 
@@ -1357,7 +1428,7 @@ StepDenoiseProfiled = WorkflowStepCombobox:new():new
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 1,
       Tooltip = wordwrap(_(
-      "Enable denoise (profiled) module. There is nothing to configure, just enable or reset this module."))
+        "Enable denoise (profiled) module. There is nothing to configure, just enable or reset this module."))
     }
 
 table.insert(WorkflowSteps, StepDenoiseProfiled)
@@ -1767,28 +1838,24 @@ StepResetModuleHistory = WorkflowStepCombobox:new():new
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
       WidgetDisableStepConfiguationValue = 1, -- item in ComboBoxValues
-      WidgetDefaultStepConfiguationValue = 2, -- item in ComboBoxValues
-      Tooltip = wordwrap(_(
-        "Reset modules that are part of this initial workflow. Keep other module settings like crop, rotate and perspective. Or reset all modules of the pixelpipe and discard complete history stack."))
+      WidgetDefaultStepConfiguationValue = 1, -- item in ComboBoxValues
+      Tooltip = wordwrap(_("Reset all modules of the pixelpipe and discard complete history stack."))
     }
 
 table.insert(WorkflowSteps, StepResetModuleHistory)
 
 function StepResetModuleHistory:Init()
-  self:CreateEmptyBasicWidget()
+  self:CreateSimpleBasicWidget()
 
   self.ComboBoxValues =
   {
-    _("no"),
-    _("active initial workflow modules"),
-    _("all initial workflow modules"),
-    _("discard complete history stack")
+    _("no"), _("yes")
   }
 
   self.Widget = dt.new_widget('combobox')
       {
         changed_callback = ComboBoxChangedCallback,
-        label = _("reset modules"),
+        label = _("discard complete history stack"),
         tooltip = self.Tooltip,
         table.unpack(self.ComboBoxValues)
       }
@@ -1796,7 +1863,7 @@ end
 
 function StepResetModuleHistory:Run()
   -- evaluate basic widget
-  if (not self:RunBasicWidget()) then
+  if (not self:RunSimpleBasicWidget()) then
     return
   end
 
@@ -1806,35 +1873,8 @@ function StepResetModuleHistory:Run()
     return
   end
 
-  if (selection == _("discard complete history stack")) then
+  if (selection == _("yes")) then
     GuiAction('lib/history', 0, 'reset', '', 1.0)
-  else
-    -- collect modules to reset
-    local modules = {}
-
-    for i, step in ipairs(WorkflowSteps) do
-      if (step ~= self) then
-        if (step:OperationName()) then
-          if (not contains(modules, step:OperationPath())) then
-            -- reset active
-            if (selection == _("active initial workflow modules")) then
-              if (not contains({ _("nothing"), _("disable") }, step.WidgetBasic.value)) then
-                table.insert(modules, step:OperationPath())
-              end
-            end
-            -- reset all
-            if (selection == _("all initial workflow modules")) then
-              table.insert(modules, step:OperationPath())
-            end
-          end
-        end
-      end
-    end
-
-    -- reset relevant modules
-    for i, module in ipairs(modules) do
-      self:ResetDarkroomModule(module)
-    end
   end
 end
 
@@ -2051,105 +2091,16 @@ table.insert(WorkflowButtons, ButtonRunSelectedSteps)
 
 ---------------------------------------------------------------
 
--- disable configuration for each step
--- called via disable button
-local function DisableAllStepConfigurations()
-  for i, step in ipairs(WorkflowSteps) do
-    if (step ~= StepTimeout) then
-      step:DisableStepConfiguration()
-    end
-  end
-end
-
-ButtonDisableAllStepConfigurations = WorkflowStepButton:new():new
-    {
-      Widget = dt.new_widget('button')
-          {
-            label = _("unchanged"),
-            tooltip = wordwrap(_("Disable all step configurations of this inital workflow module.")),
-
-            clicked_callback = DisableAllStepConfigurations
-          }
-    }
-
-table.insert(WorkflowButtons, ButtonDisableAllStepConfigurations)
-
----------------------------------------------------------------
-
--- select default configuration for each step
--- called via default button
+-- select default basic configuration for each step
 -- called via module reset control
-local function EnableAllDefaultStepConfigurations()
+local function ResetModuleConfiguration()
   for i, step in ipairs(WorkflowSteps) do
     if (step ~= StepTimeout) then
+      step:EnableDefaultBasicConfiguation()
       step:EnableDefaultStepConfiguation()
     end
   end
 end
-
-ButtonEnableAllDefaultStepConfigurations = WorkflowStepButton:new():new
-    {
-      Widget = dt.new_widget('button')
-          {
-            label = _("defaults"),
-            tooltip = wordwrap(_("Enable all default step configurations and settings of this inital workflow module.")),
-
-            clicked_callback = EnableAllDefaultStepConfigurations
-          }
-    }
-
-table.insert(WorkflowButtons, ButtonEnableAllDefaultStepConfigurations)
-
----------------------------------------------------------------
-
--- disable configuration for each step
--- called via disable button
-local function DisableAllBasicConfigurations()
-  for i, step in ipairs(WorkflowSteps) do
-    if (step ~= StepTimeout) then
-      step:DisableBasicConfiguation()
-    end
-  end
-end
-
-ButtonDisableAllBasicConfigurations = WorkflowStepButton:new():new
-    {
-      Widget = dt.new_widget('button')
-          {
-            label = _("nothing"),
-            tooltip = wordwrap(_("Disable all basic settings of this inital workflow module.")),
-
-            clicked_callback = DisableAllBasicConfigurations
-          }
-    }
-
-table.insert(WorkflowButtons, ButtonDisableAllBasicConfigurations)
-
----------------------------------------------------------------
-
--- select default configuration for each step
--- called via default button
--- called via module reset control
-local function EnableAllDefaultBasicConfigurations()
-  for i, step in ipairs(WorkflowSteps) do
-    if (step ~= StepTimeout) then
-      step:EnableDefaultBasicConfiguation()
-    end
-  end
-end
-
-ButtonEnableAllDefaultBasicConfigurations = WorkflowStepButton:new():new
-    {
-      Widget = dt.new_widget('button')
-          {
-            label = _("defaults"),
-            tooltip = wordwrap(_("Enable all default basic settings of this inital workflow module.")),
-
-            clicked_callback = EnableAllDefaultBasicConfigurations
-          }
-    }
-
-table.insert(WorkflowButtons, ButtonEnableAllDefaultBasicConfigurations)
 
 ---------------------------------------------------------------
 
@@ -2322,7 +2273,7 @@ local function ModuleTest()
   LogMajorMax = 1
   LogMajorNr = 1
   LogCurrentStep = ''
-  EnableAllDefaultStepConfigurations()
+  ResetModuleConfiguration()
   ProcessWorkflowSteps()
   xmpModified = CopyXmpFile(xmpFile, image.path, image.filename, '_0_Default', xmpModified)
 
@@ -2443,13 +2394,75 @@ end
       Create main widget. Collect buttons and comboboxes.
 
     ]]
+
+---------------------------------------------------------------
+
+local AllStepsBasicWidget
+
+AllStepsBasicWidget = dt.new_widget('combobox')
+    {
+      changed_callback = function()
+        local selection = AllStepsBasicWidget.value
+
+        if (selection ~= _("all steps...")) then
+          for i, step in ipairs(WorkflowSteps) do
+            if (step ~= StepTimeout) then
+              if (selection == _("default")) then
+                step:EnableDefaultBasicConfiguation()
+              else
+                step:SetWidgetBasicValue(selection)
+              end
+            end
+          end
+
+          -- reset to 'all steps...'
+          AllStepsBasicWidget.value = 1
+        end
+      end,
+      label = _(''),
+      tooltip = wordwrap(_(
+        "Configure all basic settings of this inital workflow module: There are different choices: Select default value, do nothing at all, enable corresponding module first, reset first and enable corresponding module, or disable module and keep it unchanged. After 'default', 'enable' or 'reset' the selected module configuration is set.")),
+      table.unpack({ _("all steps..."), _("default"), _("nothing"), _("enable"), _("reset"), _("disable") })
+    }
+
+local AllStepsConfigurationWidget
+
+--xxx
+
+AllStepsConfigurationWidget = dt.new_widget('combobox')
+    {
+      changed_callback = function()
+        local selection = AllStepsConfigurationWidget.value
+
+        if (selection ~= _("all steps...")) then
+          for i, step in ipairs(WorkflowSteps) do
+            if (step ~= StepTimeout) then
+              if (selection == _("default")) then
+                step:EnableDefaultStepConfiguation()
+              elseif (selection == _("unchanged")) then
+                step:DisableStepConfiguration()
+              end
+            end
+          end
+
+          -- reset to 'all steps...'
+          AllStepsConfigurationWidget.value = 1
+        end
+      end,
+      label = _(''),
+      tooltip = wordwrap(_(
+        "Enable all default step configurations and settings of this inital workflow module, or keep all configurations unchanged.")),
+      table.unpack({ _("all steps..."), _("default"), _("unchanged") })
+    }
+
+
 -- collect all widgets to be displayed within the module
 local function GetWidgets()
   local widgets =
   {
-    dt.new_widget('label') { label = _("run automatic or preparing manual steps"), selectable = false, ellipsize =
-    'start', halign =
-    'start' },
+    --    dt.new_widget('label') { label = _("run automatic or preparing manual steps"), selectable = false, ellipsize =
+    --    'start', halign = 'start' },
+
     dt.new_widget('box') {
       orientation = 'horizontal',
 
@@ -2461,10 +2474,6 @@ local function GetWidgets()
     },
 
     dt.new_widget('label') { label = '' },
-    dt.new_widget('label') { label = _("configure automatic steps"), selectable = false, ellipsize = 'start', halign =
-    'start' },
-
-    --dt.new_widget('label') { label = '' },
   }
 
   -- TEST button: Special buttons, used to perform module tests.
@@ -2485,25 +2494,9 @@ local function GetWidgets()
   local comboBoxWidgets = {}
   local basicWidgets = {}
 
-  -- add buttons to first row of basic widgets column
-  table.insert(basicWidgets,
-    dt.new_widget('box') {
-      orientation = 'horizontal',
-
-      -- buttons to start image processing and to set default values
-      ButtonEnableAllDefaultBasicConfigurations.Widget,
-      ButtonDisableAllBasicConfigurations.Widget
-    })
-
-  -- add buttons to first row of step configuration column
-  table.insert(comboBoxWidgets,
-    dt.new_widget('box') {
-      orientation = 'horizontal',
-
-      -- buttons to start image processing and to set default values
-      ButtonEnableAllDefaultStepConfigurations.Widget,
-      ButtonDisableAllStepConfigurations.Widget
-    })
+  -- add overall comboboxes to first row
+  table.insert(basicWidgets, AllStepsBasicWidget)
+  table.insert(comboBoxWidgets, AllStepsConfigurationWidget)
 
   -- add basic widgets and comboboxes
   for i, step in ipairs(WorkflowSteps) do
@@ -2563,7 +2556,7 @@ local function InstallModuleRegisterLib()
       dt.new_widget('box')
       {
         orientation = 'vertical',
-        reset_callback = EnableAllDefaultStepConfigurations,
+        reset_callback = ResetModuleConfiguration,
         table.unpack(GetWidgets()),
       },
 
