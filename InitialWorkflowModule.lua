@@ -301,6 +301,10 @@ function WaitForEventBase:Do(embeddedFunction)
       local timeoutMessage = string.format(_("timeout after %d ms waiting for event %s"), durationMax, self.EventType)
       LogInfo(timeoutMessage)
       LogSummaryMessage(timeoutMessage)
+
+      --xxx
+      StopScriptHere()
+
       break
     end
   end
@@ -576,14 +580,14 @@ function WorkflowStepCombobox:CreateDefaultBasicWidget()
   self.WidgetDisableBasicValue = 1
   self.WidgetDefaultBasicValue = 3
 
-  self.BasicValues = { _("nothing"), _("enable"), _("reset"), _("disable") }
+  self.BasicValues = { _("ignore"), _("enable"), _("reset"), _("disable") }
 
   self.WidgetBasic = dt.new_widget('combobox')
       {
         changed_callback = ComboBoxChangedCallback,
-        label = '',
+        label = ' ',
         tooltip = wordwrap(_(
-          "Do nothing at all, enable corresponding module first, reset first and enable corresponding module, or disable module and keep it unchanged. After 'enable' or 'reset' the selected module configuration is set.")),
+          "Basic setting for this module: Choose to ignore this step / module and do nothing at all. Or choose to enable corresponding module. Or reset first and enable corresponding module. Or disable module and keep it unchanged. After 'enable' or 'reset' the following selected module configuration is set.")),
         table.unpack(self.BasicValues)
       }
 end
@@ -593,13 +597,13 @@ function WorkflowStepCombobox:CreateSimpleBasicWidget()
   self.WidgetDisableBasicValue = 1
   self.WidgetDefaultBasicValue = 2
 
-  self.BasicValues = { _("nothing"), _("enable") }
+  self.BasicValues = { _("ignore"), _("enable") }
 
   self.WidgetBasic = dt.new_widget('combobox')
       {
         changed_callback = ComboBoxChangedCallback,
-        label = '',
-        tooltip = wordwrap(_("Do nothing at all or do corresponding configuration.")),
+        label = ' ',
+        tooltip = wordwrap(_("Ignore this module or do corresponding configuration.")),
         table.unpack(self.BasicValues)
       }
 end
@@ -613,7 +617,7 @@ function WorkflowStepCombobox:CreateEmptyBasicWidget()
 
   self.WidgetBasic = dt.new_widget('combobox')
       {
-        label = '',
+        label = ' ',
         table.unpack(self.BasicValues)
       }
 end
@@ -625,7 +629,7 @@ function WorkflowStepCombobox:RunBasicWidget()
     return true
   end
 
-  if (basic == _("nothing")) then
+  if (basic == _("ignore")) then
     return false
   end
 
@@ -657,7 +661,7 @@ function WorkflowStepCombobox:RunSimpleBasicWidget()
     return true
   end
 
-  if (basic == _("nothing")) then
+  if (basic == _("ignore")) then
     return false
   end
 
@@ -934,7 +938,7 @@ function StepDynamicRangeSceneToDisplay:Run()
   -- special handling (Filmic/Sigmoid/Basecurve)
   -- do nothing or disable corresponding modules
   local basic = self.WidgetBasic.value
-  if (basic == _("nothing")) then
+  if (basic == _("ignore")) then
     return
   end
 
@@ -979,7 +983,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     local currentSelection = colorProcessingValues[-currentSelectionIndex]
 
     if (selection == _("Sigmoid color per channel")) then
-      if ('per channel' ~= currentSelection) then
+      if (_("per channel") ~= currentSelection) then
         LogInfo(indent .. string.format(_("current color processing = %s"), quote(currentSelection)))
         GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:per channel', 1.0)
       else
@@ -988,7 +992,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     end
 
     if (selection == _("Sigmoid color RGB ratio")) then
-      if ('RGB ratio' ~= currentSelection) then
+      if (_("RGB ratio") ~= currentSelection) then
         LogInfo(indent .. string.format(_("current color processing = %s"), quote(currentSelection)))
         if (CheckDarktable42()) then
           GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:rgb ratio', 1.0)
@@ -1420,7 +1424,7 @@ function StepLensCorrection:Run()
     local currentSelectionIndex = GuiActionGetValue('iop/lens/correction method', 'selection')
     local currentSelection = lensCorrectionValues[-currentSelectionIndex]
 
-    if ('lensfun' ~= currentSelection) then
+    if (_("lensfun") ~= currentSelection) then
       LogInfo(indent .. string.format(_("current correction method = %s"), quote(currentSelection)))
       if (CheckDarktable42()) then
         GuiAction('iop/lens/correction method', 0, 'selection', 'item:lensfun database', 1.0)
@@ -1537,7 +1541,7 @@ function StepChromaticAberrations:Run()
   -- special handling (bayer sensor / other)
   -- do nothing or disable corresponding modules
   local basic = self.WidgetBasic.value
-  if (basic == _("nothing")) then
+  if (basic == _("ignore")) then
     return
   end
 
@@ -1650,7 +1654,7 @@ function StepColorCalibrationIlluminant:Run()
   -- set illuminant
 
   local currentSelectionIndex = GuiActionGetValue('iop/channelmixerrgb/illuminant', 'selection')
-  local currentSelection = StepColorCalibrationIlluminant:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
+  local currentSelection = self:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current illuminant = %s"), quote(currentSelection)))
@@ -1711,7 +1715,7 @@ function StepColorCalibrationAdaptation:Run()
   end
 
   local currentSelectionIndex = GuiActionGetValue('iop/channelmixerrgb/adaptation', 'selection')
-  local currentSelection = StepColorCalibrationAdaptation:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
+  local currentSelection = self:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current adaptation = %s"), quote(currentSelection)))
@@ -1774,12 +1778,11 @@ function StepHighlightReconstruction:Run()
   end
 
   local currentSelectionIndex = GuiActionGetValue('iop/highlights/method', 'selection')
-  local currentSelection = StepWhiteBalance:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
+  local currentSelection = self:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current value = %s"), quote(currentSelection)))
     GuiAction('iop/highlights/method', 0, 'selection', 'item:' .. GetReverseTranslation(selection), 1.0)
-    --GuiAction('iop/highlights/method/' .. GetReverseTranslation(selection), 0, '', '', 1.0)
   else
     LogInfo(indent .. string.format(_("nothing to do, value already = %s"), quote(currentSelection)))
   end
@@ -1843,7 +1846,7 @@ function StepWhiteBalance:Run()
   end
 
   local currentSelectionIndex = GuiActionGetValue('iop/temperature/settings/settings', 'selection')
-  local currentSelection = StepWhiteBalance:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
+  local currentSelection = self:GetComboBoxValueFromSelectionIndex(currentSelectionIndex)
 
   if (selection ~= currentSelection) then
     LogInfo(indent .. string.format(_("current value = %s"), quote(currentSelection)))
@@ -2116,7 +2119,7 @@ table.insert(WorkflowButtons, ButtonRunSelectedSteps)
 
 -- select default basic configuration for each step
 -- called via module reset control
-local function ResetModuleConfiguration()
+local function SetAllDefaultModuleConfigurations()
   for i, step in ipairs(WorkflowSteps) do
     if (step ~= StepTimeout) then
       step:EnableDefaultBasicConfiguation()
@@ -2212,6 +2215,19 @@ table.insert(WorkflowButtons, ButtonMidToneExposure)
 -- This section contains some functions to perform module tests.
 -- The following functions are used during development and deployment.
 
+local moduleTestImage
+local moduleTestXmpFile
+local moduleTestXmpModified
+local moduleTestBasicSetting
+
+  -- ignore some basic configurations
+  local moduleTestIgnoreSteps =
+  {
+    StepResetModuleHistory,
+    StepTimeout
+  }
+
+-- check, if file exists
 function FileExists(filename)
   local f = io.open(filename, 'r')
   if f ~= nil then
@@ -2221,6 +2237,7 @@ function FileExists(filename)
   return false
 end
 
+-- check, if file was modified
 local function GetFileModified(fileName)
   local fileHandle = io.popen('stat -c %Y ' .. quote(fileName))
   if (fileHandle ~= nil) then
@@ -2229,6 +2246,7 @@ local function GetFileModified(fileName)
   return nil
 end
 
+-- wait until xmp file was written
 local function WaitForFileModified(xmpFile, xmpModified)
   local duration = 0
   local durationMax = StepTimeout:Value() * 5
@@ -2251,18 +2269,59 @@ local function WaitForFileModified(xmpFile, xmpModified)
   return xmpModified
 end
 
+-- copy xmp file to test result folder
 local function CopyXmpFile(xmpFile, filePath, fileName, appendix, xmpModified)
   -- wait until xmp file was written
   ThreadSleep(StepTimeout:Value())
   local xmpModifiedNew = WaitForFileModified(xmpFile, xmpModified)
 
   -- copy xmp file to test result folder
-  local xmpFileCopyReset = filePath .. '/TEST/' .. fileName .. appendix .. '.xmp'
-  local xmpCopyCommand = 'cp ' .. quote(xmpFile) .. ' ' .. quote(xmpFileCopyReset)
+  local xmpFileCopy = filePath .. '/TEST/' .. fileName .. appendix .. '.xmp'
+  local xmpCopyCommand = 'cp ' .. quote(xmpFile) .. ' ' .. quote(xmpFileCopy)
   LogInfo(xmpCopyCommand)
   local ok = os.execute(xmpCopyCommand)
 
   return xmpModifiedNew
+end
+
+-- iterate over all workflow steps and combobox value settings
+-- set different combinations of module settings
+local function ModuleTestIterateConfigurationValues()
+  -- get maximum number of combobox entries
+  local configurationValuesMax = 1
+  for i, step in ipairs(WorkflowSteps) do
+    local count = #step.ComboBoxValues
+    if (count > configurationValuesMax) then
+      configurationValuesMax = count
+    end
+  end
+
+  -- iterate over all selectable values
+  for configurationValue = 1, configurationValuesMax do
+    -- iterate over all configurations
+    for i, step in ipairs(WorkflowSteps) do
+      -- ignore some basic configurations
+      if (not contains(moduleTestIgnoreSteps, step)) then
+        -- iterate over configuration values
+        if (configurationValue <= #step.ComboBoxValues) then
+          step.Widget.value = configurationValue
+        elseif (configurationValue == #step.ComboBoxValues + 1) then
+          step:EnableDefaultStepConfiguation()
+        else
+          step.Widget.value = (configurationValue % #step.ComboBoxValues) + 1
+        end
+      end
+    end
+
+    -- perform configured settings
+    -- copy xmp file with current settings to test result folder
+    LogMajorMax = configurationValuesMax
+    LogMajorNr = configurationValue
+    LogCurrentStep = ''
+    ProcessWorkflowSteps()
+    moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename,
+      '_' .. moduleTestBasicSetting .. '_' .. configurationValue, moduleTestXmpModified)
+  end
 end
 
 -- called to perform module tests
@@ -2283,16 +2342,9 @@ local function ModuleTest()
   LogCurrentStep = ''
 
   -- get current image information
-  local image = dt.gui.views.darkroom.display_image()
-  local xmpFile = image.path .. '/' .. image.filename .. '.xmp'
-  local xmpModified = GetFileModified(xmpFile)
-
-  -- ignore some basic configurations
-  local ignoreSteps =
-  {
-    StepResetModuleHistory,
-    StepTimeout
-  }
+  moduleTestImage = dt.gui.views.darkroom.display_image()
+  moduleTestXmpFile = moduleTestImage.path .. '/' .. moduleTestImage.filename .. '.xmp'
+  moduleTestXmpModified = GetFileModified(moduleTestXmpFile)
 
   ---------------------------------------------------------------
   -- 1. preparing test case
@@ -2300,7 +2352,8 @@ local function ModuleTest()
   -- start with a well-defined state
   -- copy xmp file (with 'empty' history stack)
   GuiAction('lib/history', 0, 'reset', '', 1.0)
-  xmpModified = CopyXmpFile(xmpFile, image.path, image.filename, '_0_Reset', xmpModified)
+  moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename, '_0_Reset',
+    moduleTestXmpModified)
 
   ---------------------------------------------------------------
   -- 2. test case
@@ -2311,63 +2364,53 @@ local function ModuleTest()
 
   -- reset module configurations
   -- basic widgets are configured to 'reset' modules first
-  ResetModuleConfiguration()
+  moduleTestBasicSetting = 'Default'
+  SetAllDefaultModuleConfigurations()
   ProcessWorkflowSteps()
 
   -- copy xmp file (with 'default' history stack)
-  xmpModified = CopyXmpFile(xmpFile, image.path, image.filename, '_0_Default', xmpModified)
+  moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename, '_0_Default',
+    moduleTestXmpModified)
 
   ---------------------------------------------------------------
-  -- 3. test case
+  -- 3. test case, basic "reset"
   -- iterate over all workflow steps and combobox value settings
   -- set different combinations of module settings
 
   -- reset module configurations
   -- basic widgets are configured to 'reset' modules first
-  ResetModuleConfiguration()
-
-  -- get maximum number of combobox entries
-  local configurationValuesMax = 1
-  for i, step in ipairs(WorkflowSteps) do
-    local count = #step.ComboBoxValues
-    if (count > configurationValuesMax) then
-      configurationValuesMax = count
-    end
-  end
-
-  -- iterate over all selectable values
-  for configurationValue = 1, configurationValuesMax do
-    -- iterate over all configurations
-    for i, step in ipairs(WorkflowSteps) do
-      -- ignore some basic configurations
-      if (not contains(ignoreSteps, step)) then
-        -- iterate over configuration values
-        if (configurationValue <= #step.ComboBoxValues) then
-          step.Widget.value = configurationValue
-        elseif (configurationValue == #step.ComboBoxValues + 1) then
-          step:EnableDefaultStepConfiguation()
-        else
-          step.Widget.value = (configurationValue % #step.ComboBoxValues) + 1
-        end
-      end
-    end
-
-    -- perform configured settings
-    -- copy xmp file with current settings to test result folder
-    LogMajorMax = configurationValuesMax
-    LogMajorNr = configurationValue
-    LogCurrentStep = ''
-    ProcessWorkflowSteps()
-    xmpModified = CopyXmpFile(xmpFile, image.path, image.filename, '_' .. configurationValue, xmpModified)
-  end
+  moduleTestBasicSetting = 'BasicDefault'
+  SetAllDefaultModuleConfigurations()
+  ModuleTestIterateConfigurationValues()
 
   ---------------------------------------------------------------
-  -- 4. test case
-  -- iterate over basic settings (reset, enable, nothing, ...)
+  -- 4. test case, basic "enable"
+  -- iterate over all workflow steps and combobox value settings
+  -- set different combinations of module settings
+
+  -- prepare test case, reset module configurations
+  -- basic widgets are configured to 'reset' modules first
+  SetAllDefaultModuleConfigurations()
+  ProcessWorkflowSteps()
+
+  -- basic widgets are configured to 'enable' modules first, without reset
+  for i, step in ipairs(WorkflowSteps) do
+    if (step ~= StepTimeout) then
+      step:SetWidgetBasicValue(_("enable"))
+    end
+  end
+
+  moduleTestBasicSetting = 'BasicEnable'
+  ModuleTestIterateConfigurationValues()
+
+  ---------------------------------------------------------------
+  -- 5. test case
+  -- iterate over basic settings (reset, enable, ignore, ...)
 
   -- reset module configurations
   -- basic widgets are configured to 'reset' modules first
-  ResetModuleConfiguration()
+  moduleTestBasicSetting = 'BasicIterate'
+  SetAllDefaultModuleConfigurations()
 
   -- get maximum number of combobox entries
   local basicValuesMax = 1
@@ -2385,7 +2428,7 @@ local function ModuleTest()
       -- ignore empty comboboxes
       if (#step.BasicValues > 1) then
         -- ignore some basic configurations
-        if (not contains(ignoreSteps, step)) then
+        if (not contains(moduleTestIgnoreSteps, step)) then
           -- iterate over configuration values
           if (basicValue <= #step.BasicValues) then
             step.WidgetBasic.value = basicValue
@@ -2404,7 +2447,8 @@ local function ModuleTest()
     LogMajorNr = basicValue
     LogCurrentStep = ''
     ProcessWorkflowSteps()
-    xmpModified = CopyXmpFile(xmpFile, image.path, image.filename, '_BASIC_' .. basicValue, xmpModified)
+    moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename,
+      '_BasicIterate_' .. basicValue, moduleTestXmpModified)
   end
 
   ---------------------------------------------------------------
@@ -2510,10 +2554,10 @@ AllStepsBasicWidget = dt.new_widget('combobox')
           AllStepsBasicWidget.value = 1
         end
       end,
-      label = _(' '),
+      label = ' ',
       tooltip = wordwrap(_(
-        "Configure all basic settings of this inital workflow module: There are different choices: Select default value, do nothing at all, enable corresponding module first, reset first and enable corresponding module, or disable module and keep it unchanged. After 'default', 'enable' or 'reset' the selected module configuration is set.")),
-      table.unpack({ _("all steps..."), _("default"), _("nothing"), _("enable"), _("reset"), _("disable") })
+        "Configure all basic settings of this inital workflow module: There are different choices: Select default value, ignore this step / module, enable corresponding module first, reset first and enable corresponding module, or disable module and keep it unchanged. After 'default', 'enable' or 'reset' the selected module configuration is set.")),
+      table.unpack({ _("all steps..."), _("default"), _("ignore"), _("enable"), _("reset"), _("disable") })
     }
 
 local AllStepsConfigurationWidget
@@ -2538,7 +2582,7 @@ AllStepsConfigurationWidget = dt.new_widget('combobox')
           AllStepsConfigurationWidget.value = 1
         end
       end,
-      label = _(' '),
+      label = ' ',
       tooltip = wordwrap(_(
         "Enable all default step configurations and settings of this inital workflow module, or keep all configurations unchanged.")),
       table.unpack({ _("all steps..."), _("default"), _("unchanged") })
@@ -2559,7 +2603,7 @@ local function GetWidgets()
       ButtonMidToneExposure.Widget,
     },
 
-    dt.new_widget('label') { label = '' },
+    dt.new_widget('label') { label = ' ' },
   }
 
   -- TEST button: Special buttons, used to perform module tests.
@@ -2642,7 +2686,7 @@ local function InstallModuleRegisterLib()
       dt.new_widget('box')
       {
         orientation = 'vertical',
-        reset_callback = ResetModuleConfiguration,
+        reset_callback = SetAllDefaultModuleConfigurations,
         table.unpack(GetWidgets()),
       },
 
