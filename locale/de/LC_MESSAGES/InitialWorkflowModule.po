@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-08 14:21+0200\n"
+"POT-Creation-Date: 2023-06-08 14:33+0200\n"
 "PO-Revision-Date: 2023-06-08 14:11+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -999,15 +999,15 @@ msgstr ""
 "Einstellungen werden angewendet, falls 'standard' oder 'aktivieren' als "
 "Grundeinstellung gewählt wird."
 
-#: InitialWorkflowModule.lua:2663
+#: InitialWorkflowModule.lua:2661
 msgid "insert test button widget"
 msgstr "Test-Button einfügen"
 
-#: InitialWorkflowModule.lua:2769
+#: InitialWorkflowModule.lua:2767
 #, lua-format
 msgid "view changed to %s"
 msgstr "Ansicht geändert zu %s"
 
-#: InitialWorkflowModule.lua:2780
+#: InitialWorkflowModule.lua:2778
 msgid "create widget in lighttable and darkroom panels"
 msgstr "Modul in Leuchttisch- und Dunkelkammer-Ansicht erstellen"

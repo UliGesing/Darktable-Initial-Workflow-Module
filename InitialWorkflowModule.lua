@@ -2648,8 +2648,6 @@ local function GetWidgets()
       orientation = 'horizontal',
 
       -- buttons to simplify some manual steps
-      ButtonRunSelectedSteps.Widget,
-      dt.new_widget('label') { label = '   ' },
       ButtonEnableRotateAndPerspective.Widget,
       ButtonEnableCrop.Widget,
       ButtonMidToneExposure.Widget,
@@ -2678,7 +2676,7 @@ local function GetWidgets()
   local comboBoxWidgets = {}
 
   -- add overall comboboxes to first row
-  table.insert(labelWidgets, dt.new_widget('combobox') { label = ' ' })
+  table.insert(labelWidgets, ButtonRunSelectedSteps.Widget)
   table.insert(labelWidgets, dt.new_widget('label') { label = ' ' })
   table.insert(basicWidgets, AllStepsBasicWidget)
   table.insert(basicWidgets, dt.new_widget('label') { label = ' ' })
@@ -2693,8 +2691,8 @@ local function GetWidgets()
   end
 
   -- insert boxes, arranged as columns
-  -- first column: basic widgets
-  -- second column: separator
+  -- first column: label widgets
+  -- second column: basic widgets (reset, enable, ignore...)
   -- third column: step configuration combobox widgets
   table.insert(widgets,
     dt.new_widget('box')
