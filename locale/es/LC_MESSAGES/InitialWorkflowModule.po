@@ -79,6 +79,7 @@ msgstr ""
 msgid "scene-referred (sigmoid)"
 msgstr ""
 
+# must be identical to darktable user interface / menu / preferences / module setting / module preset name
 #: InitialWorkflowModule.lua:224
 msgid "modern"
 msgstr ""
@@ -276,10 +277,12 @@ msgstr ""
 msgid "Filmic / Sigmoid dynamic range"
 msgstr ""
 
+# must be identical to darktable user interface / menu / preferences / module setting / module preset name
 #: InitialWorkflowModule.lua:983 InitialWorkflowModule.lua:991
 msgid "per channel"
 msgstr ""
 
+# must be identical to darktable user interface / menu / preferences / module setting / module preset name
 #: InitialWorkflowModule.lua:984 InitialWorkflowModule.lua:1000
 msgid "RGB ratio"
 msgstr ""
@@ -669,22 +672,27 @@ msgid ""
 "channels and/or neighboring pixels."
 msgstr ""
 
+# must be identical to darktable user interface / menu / preferences / module setting / module preset name
 #: InitialWorkflowModule.lua:1757
 msgid "inpaint opposed"
 msgstr ""
 
+# must be identical to darktable user interface / menu / preferences / module setting / module preset name
 #: InitialWorkflowModule.lua:1758
 msgid "reconstruct in LCh"
 msgstr ""
 
+# must be identical to darktable user interface / menu / preferences / module setting / module preset name
 #: InitialWorkflowModule.lua:1759
 msgid "clip highlights"
 msgstr ""
 
+# must be identical to darktable user interface / menu / preferences / module setting / module preset name
 #: InitialWorkflowModule.lua:1760
 msgid "segmentation based"
 msgstr ""
 
+# must be identical to darktable user interface / menu / preferences / module setting / module preset name
 #: InitialWorkflowModule.lua:1761
 msgid "guided laplacians"
 msgstr ""
