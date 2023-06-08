@@ -730,7 +730,7 @@ function WorkflowStepCombobox:SavePreferenceValue()
   -- user interfase uses translated names and values
 
   -- save any changes of this combobox value
-  local preferenceName = GetReverseTranslation(self.Widget.label)
+  local preferenceName = GetReverseTranslation(self.Label)
   local preferenceValue = dt.preferences.read(ModuleName, preferenceName, 'string')
   local comboBoxValue = GetReverseTranslation(self.Widget.value)
 
@@ -753,7 +753,7 @@ end
 function WorkflowStepCombobox:ReadPreferenceComboBoxValue()
   -- preferences are saved with english names and values
   -- user intercase uses translated names and values
-  local preferenceName = GetReverseTranslation(self.Widget.label)
+  local preferenceName = GetReverseTranslation(self.Label)
   local preferenceValue = _(dt.preferences.read(ModuleName, preferenceName, 'string'))
 
   -- get combo box index of saved preference value
@@ -789,7 +789,7 @@ end
 function WorkflowStepCombobox:ReadPreferenceBasicValue()
   -- preferences are saved with english names and values
   -- user intercase uses translated names and values
-  local preferenceBasicName = GetReverseTranslation(self.Widget.label) .. "Basic"
+  local preferenceBasicName = GetReverseTranslation(self.Label) .. "Basic"
   local preferenceBasicValue = _(dt.preferences.read(ModuleName, preferenceBasicName, 'string'))
 
   self:SetWidgetBasicValue(preferenceBasicValue)
@@ -1255,26 +1255,24 @@ StepToneEqualizerMask = WorkflowStepCombobox:new():new
       -- internal operation name should be copied from gui action command (iop/OperationName)
       OperationNameInternal = 'toneequal',
       WidgetDisableStepConfiguationValue = 1,
-      WidgetDefaultStepConfiguationValue = 3,
-      Label = _("tone equalizer"),
+      WidgetDefaultStepConfiguationValue = 4,
+      Label = _("tone equalizer mask"),
       Tooltip = wordwrap(_(
-        "Use default preset mask blending for all purposes plus automatic mask contrast and exposure compensation. Or use preset to compress shadows and highlights with exposure-independent guided filter (eigf) (soft, medium or strong)."))
+        "Apply automatic mask contrast and exposure compensation. Auto adjust the contrast and average exposure."))
     }
 
 table.insert(WorkflowSteps, StepToneEqualizerMask)
 
 function StepToneEqualizerMask:Init()
   self:CreateLabelWidget()
-  self:CreateDefaultBasicWidget()
+  self:CreateSimpleBasicWidget()
 
   self.ComboBoxValues =
   {
     _("unchanged"),
-    _("default mask blending"),
-    _("default plus mask compensation"),
-    _("compress shadows-highlights (eigf): medium"),
-    _("compress shadows-highlights (eigf): soft"),
-    _("compress shadows-highlights (eigf): strong")
+    _("mask exposure compensation"),
+    _("mask contrast compensation"),
+    _("exposure & contrast comp."),
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -1298,43 +1296,96 @@ function StepToneEqualizerMask:Run()
     return
   end
 
-  if (selection == _("default mask blending")) then
-    -- nothing else to do...
+  -- workaround: show this module, otherwise the buttons will not be pressed
+  self:ShowDarkroomModule('iop/toneequal')
+  GuiActionWithoutEvent('iop/toneequal/page', 0, 'masking', '', 1.0)
+
+  if (selection == _("mask exposure compensation")) then
+    GuiAction('iop/toneequal/mask exposure compensation', 0, 'button', 'toggle', 1.0)
+    ThreadSleep(StepTimeout:Value())
     --
-  elseif (selection == _("default plus mask compensation")) then
-    -- workaround: show this module, otherwise the buttons will not be pressed
-    self:ShowDarkroomModule('iop/toneequal')
-
-    GuiActionWithoutEvent('iop/toneequal/page', 0, 'masking', '', 1.0)
-
+  elseif (selection == _("mask contrast compensation")) then
+    GuiAction('iop/toneequal/mask contrast compensation', 0, 'button', 'toggle', 1.0)
+    ThreadSleep(StepTimeout:Value())
+    --
+  elseif (selection == _("exposure & contrast comp.")) then
     GuiAction('iop/toneequal/mask exposure compensation', 0, 'button', 'toggle', 1.0)
     ThreadSleep(StepTimeout:Value())
     GuiAction('iop/toneequal/mask contrast compensation', 0, 'button', 'toggle', 1.0)
     ThreadSleep(StepTimeout:Value())
+  end
 
-    -- workaround: show this module, otherwise the buttons will not be pressed
-    self:HideDarkroomModule('iop/toneequal')
-    --
-  else
-    if (CheckDarktable42()) then
-      -- workaround to deal with bug in dt 4.2.x
-      -- dt 4.2 uses special characters
-      -- darktable 4.3 uses some capital letters
-      -- DT42: prefix is removed during script run
-      if (selection == _("compress shadows-highlights (eigf): medium")) then
-        GuiActionButtonOffOn('iop/toneequal/preset/' ..
-          _("DT42:compress shadows-highlights (eigf): medium"):gsub("DT42:", ""))
-      elseif (selection == _("compress shadows-highlights (eigf): soft")) then
-        GuiActionButtonOffOn('iop/toneequal/preset/' .. _("DT42:compress shadows-highlights (eigf): soft"):gsub("DT42:",
-          ""))
-      elseif (selection == _("compress shadows-highlights (eigf): strong")) then
-        GuiActionButtonOffOn('iop/toneequal/preset/' ..
-          _("DT42:compress shadows-highlights (eigf): strong"):gsub("DT42:", ""))
-      end
-    else
-      -- dt 4.3+
-      GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
+  -- workaround: show this module, otherwise the buttons will not be pressed
+  self:HideDarkroomModule('iop/toneequal')
+  --
+end
+
+---------------------------------------------------------------
+
+StepToneEqualizer = WorkflowStepCombobox:new():new
+    {
+      -- internal operation name should be copied from gui action command (iop/OperationName)
+      OperationNameInternal = 'toneequal',
+      WidgetDisableStepConfiguationValue = 1,
+      WidgetDefaultStepConfiguationValue = 1,
+      Label = _("tone equalizer"),
+      Tooltip = wordwrap(_(
+        "Use preset to compress shadows and highlights with exposure-independent guided filter (eigf) (soft, medium or strong)."))
+    }
+
+table.insert(WorkflowSteps, StepToneEqualizer)
+
+function StepToneEqualizer:Init()
+  self:CreateLabelWidget()
+  self:CreateDefaultBasicWidget()
+
+  self.ComboBoxValues =
+  {
+    _("unchanged"),
+    _("compress shadows-highlights (eigf): medium"),
+    _("compress shadows-highlights (eigf): soft"),
+    _("compress shadows-highlights (eigf): strong")
+  }
+
+  self.Widget = dt.new_widget('combobox')
+      {
+        changed_callback = ComboBoxChangedCallback,
+        label = ' ', -- use separate label widget
+        tooltip = self.Tooltip,
+        table.unpack(self.ComboBoxValues)
+      }
+end
+
+function StepToneEqualizer:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
+  local selection = self.Widget.value
+
+  if (selection == _("unchanged")) then
+    return
+  end
+
+  if (CheckDarktable42()) then
+    -- workaround to deal with bug in dt 4.2.x
+    -- dt 4.2 uses special characters
+    -- darktable 4.3 uses some capital letters
+    -- DT42: prefix is removed during script run
+    if (selection == _("compress shadows-highlights (eigf): medium")) then
+      GuiActionButtonOffOn('iop/toneequal/preset/' ..
+        _("DT42:compress shadows-highlights (eigf): medium"):gsub("DT42:", ""))
+    elseif (selection == _("compress shadows-highlights (eigf): soft")) then
+      GuiActionButtonOffOn('iop/toneequal/preset/' .. _("DT42:compress shadows-highlights (eigf): soft"):gsub("DT42:",
+        ""))
+    elseif (selection == _("compress shadows-highlights (eigf): strong")) then
+      GuiActionButtonOffOn('iop/toneequal/preset/' ..
+        _("DT42:compress shadows-highlights (eigf): strong"):gsub("DT42:", ""))
     end
+  else
+    -- dt 4.3+
+    GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
   end
 end
 
@@ -2053,7 +2104,7 @@ local function ProcessWorkflowSteps()
   -- the order is from bottom to top, along the pixel pipeline.
   for i = 1, #WorkflowSteps do
     local step = WorkflowSteps[#WorkflowSteps + 1 - i]
-    LogCurrentStep = step.Widget.label
+    LogCurrentStep = step.Label
     step:Run()
   end
 
