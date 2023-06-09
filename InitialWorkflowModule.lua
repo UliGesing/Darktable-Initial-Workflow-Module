@@ -63,10 +63,16 @@ local pathSeparator = dt.configuration.running_os == 'windows' and '\\' or '/'
 local localePath = ScriptFilePath() .. 'locale' .. pathSeparator
 gettext.bindtextdomain(ModuleName, localePath)
 
+-- return translation from local .po / .mo file
 local function _(msgid)
   local translation = gettext.dgettext(ModuleName, msgid)
   ReverseTranslationIndex[translation] = msgid
   return translation
+end
+
+-- return translation from darktable
+local function _dt(msgid)
+  return gettext.dgettext('darktable', msgid)
 end
 
 local function GetReverseTranslation(text)
@@ -1203,8 +1209,10 @@ function StepContrastEqualizer:Init()
   self.ComboBoxValues =
   {
     _("unchanged"),
+    _("clarity, strength 0,10"),
     _("clarity, strength 0,25"),
     _("clarity, strength 0,50"),
+    _("denoise & sharpen, 0,10"),
     _("denoise & sharpen, 0,25"),
     _("denoise & sharpen, 0,50")
   }
@@ -1230,13 +1238,21 @@ function StepContrastEqualizer:Run()
     return
   end
 
-  if (selection == _("clarity, strength 0,25")) then
+  if (selection == _("clarity, strength 0,10")) then
+    GuiActionButtonOffOn('iop/atrous/preset/' .. _("clarity"))
+    GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
+    --
+  elseif (selection == _("clarity, strength 0,25")) then
     GuiActionButtonOffOn('iop/atrous/preset/' .. _("clarity"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
     --
   elseif (selection == _("clarity, strength 0,50")) then
     GuiActionButtonOffOn('iop/atrous/preset/' .. _("clarity"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
+    --
+  elseif (selection == _("denoise & sharpen, 0,10")) then
+    GuiActionButtonOffOn('iop/atrous/preset/' .. _("denoise & sharpen"))
+    GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
     --
   elseif (selection == _("denoise & sharpen, 0,25")) then
     GuiActionButtonOffOn('iop/atrous/preset/' .. _("denoise & sharpen"))
@@ -1246,6 +1262,56 @@ function StepContrastEqualizer:Run()
     GuiActionButtonOffOn('iop/atrous/preset/' .. _("denoise & sharpen"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
   end
+end
+
+---------------------------------------------------------------
+
+StepDiffuseOrSharpen = WorkflowStepCombobox:new():new
+    {
+      -- internal operation name should be copied from gui action command (iop/OperationName)
+      OperationNameInternal = 'diffuse',
+      WidgetDisableStepConfiguationValue = 1,
+      WidgetDefaultStepConfiguationValue = 2,
+      Label = _("diffuse or sharpen"),
+      Tooltip = wordwrap(_(
+        "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect."))
+    }
+
+table.insert(WorkflowSteps, StepDiffuseOrSharpen)
+
+function StepDiffuseOrSharpen:Init()
+  self:CreateLabelWidget()
+  self:CreateDefaultBasicWidget()
+
+  self.ComboBoxValues =
+  {
+    _("unchanged"),
+    _dt("sharpen demosaicing: AA filter"),
+    _dt("local contrast")
+  }
+
+  self.Widget = dt.new_widget('combobox')
+      {
+        changed_callback = ComboBoxChangedCallback,
+        label = ' ', -- use separate label widget
+        tooltip = self.Tooltip,
+        table.unpack(self.ComboBoxValues)
+      }
+end
+
+function StepDiffuseOrSharpen:Run()
+  -- evaluate basic widget
+  if (not self:RunBasicWidget()) then
+    return
+  end
+
+  local selection = self.Widget.value
+
+  if (selection == _("unchanged")) then
+    return
+  end
+
+  GuiAction('iop/diffuse/preset/' .. _dt(selection), 0, '', '', 1.0)
 end
 
 ---------------------------------------------------------------

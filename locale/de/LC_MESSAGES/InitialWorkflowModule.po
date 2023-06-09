@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-08 15:34+0200\n"
-"PO-Revision-Date: 2023-06-08 15:36+0200\n"
+"POT-Creation-Date: 2023-06-09 10:47+0200\n"
+"PO-Revision-Date: 2023-06-09 10:17+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
 "Language: de_DE\n"
@@ -14,99 +14,99 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 23.04.1\n"
 
-#: InitialWorkflowModule.lua:131
+#: InitialWorkflowModule.lua:137
 msgid ""
 "script run without errors - there are no important messages and no timeouts"
 msgstr ""
 "Skript-Ausführung ohne Fehler - Es gibt keine wichtigen Nachrichten und "
 "keine Zeitüberschreitungen"
 
-#: InitialWorkflowModule.lua:133
+#: InitialWorkflowModule.lua:139
 msgid "THERE ARE IMPORTANT MESSAGES:"
 msgstr "ES GIBT WICHTIGE NACHRICHTEN:"
 
-#: InitialWorkflowModule.lua:139
+#: InitialWorkflowModule.lua:145
 msgid ""
 "if you detect timeouts, you can increase the timeout value and try again"
 msgstr ""
 "Wenn Sie Zeitüberschreitungen feststellen, können Sie den Timeout-Wert "
 "erhöhen und es erneut versuchen"
 
-#: InitialWorkflowModule.lua:143 InitialWorkflowModule.lua:148
+#: InitialWorkflowModule.lua:149 InitialWorkflowModule.lua:154
 msgid "initial workflow - image processing has been completed"
 msgstr "initial workflow - Die Bildverarbeitung wurde abgeschlossen"
 
-#: InitialWorkflowModule.lua:145
+#: InitialWorkflowModule.lua:151
 msgid ""
 "THERE ARE IMPORTANT MESSAGES - see log for details / increase timeout value"
 msgstr ""
 "ES GIBT WICHTIGE NACHRICHTEN - Siehe Log für mehr Details / evtl. sollten "
 "Sie den Timeout-Wert erhöhen"
 
-#: InitialWorkflowModule.lua:158
+#: InitialWorkflowModule.lua:164
 #, lua-format
 msgid "wait for %d ms. (config = %s ms * %s)"
 msgstr "Warten für %d ms. (Konfiguration = %s ms * %s)"
 
-#: InitialWorkflowModule.lua:190
+#: InitialWorkflowModule.lua:196
 #, lua-format
 msgid "darktable version with appropriate lua API detected: %s"
 msgstr "darktable-Version mit passender Lua-API erkannt: %s"
 
-#: InitialWorkflowModule.lua:192
+#: InitialWorkflowModule.lua:198
 msgid "this script needs at least darktable 4.2 API to run"
 msgstr "Dieses Skript benötigt mindestens darktable 4.2 API für die Ausführung"
 
-#: InitialWorkflowModule.lua:196
+#: InitialWorkflowModule.lua:202
 #, lua-format
 msgid "script executed from path %s"
 msgstr "Skript wird ausgeführt von Pfad %s"
 
-#: InitialWorkflowModule.lua:197
+#: InitialWorkflowModule.lua:203
 #, lua-format
 msgid "script translation files in %s"
 msgstr "Skript-Übersetzungsdateien befinden sich in %s"
 
-#: InitialWorkflowModule.lua:198
+#: InitialWorkflowModule.lua:204
 msgid "script outputs are in English"
 msgstr "Skriptausgaben erfolgen in Deutsch"
 
-#: InitialWorkflowModule.lua:206
+#: InitialWorkflowModule.lua:212
 #, lua-format
 msgid "number of %d preference keys retrieved"
 msgstr "Anzahl der gefundenen darktable Einstellungen: %d"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:223
+#: InitialWorkflowModule.lua:229
 msgid "scene-referred (filmic)"
 msgstr "szenenbezogen (Filmic)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:224
+#: InitialWorkflowModule.lua:230
 msgid "scene-referred (sigmoid)"
 msgstr "szenenbezogen (Sigmoid)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:225
+#: InitialWorkflowModule.lua:231
 msgid "modern"
 msgstr "modern"
 
-#: InitialWorkflowModule.lua:269
+#: InitialWorkflowModule.lua:275
 #, lua-format
 msgid "received event %s"
 msgstr "Event %s empfangen"
 
-#: InitialWorkflowModule.lua:280
+#: InitialWorkflowModule.lua:286
 #, lua-format
 msgid "wait for event %s"
 msgstr "Warte auf Event %s"
 
-#: InitialWorkflowModule.lua:302
+#: InitialWorkflowModule.lua:308
 #, lua-format
 msgid "timeout after %d ms waiting for event %s"
 msgstr "Zeitüberschreitung nach %d ms beim Warten auf das Event %s"
 
-#: InitialWorkflowModule.lua:336
+#: InitialWorkflowModule.lua:342
 msgid ""
 "loading image failed, reload is performed (this could indicate a timing "
 "problem)"
@@ -114,103 +114,103 @@ msgstr ""
 "Laden des Bildes ist fehlgeschlagen. Das Bild wird erneut geladen (dies "
 "könnte auf ein Timing-Problem hinweisen)."
 
-#: InitialWorkflowModule.lua:445
+#: InitialWorkflowModule.lua:451
 #, lua-format
 msgid "nothing to do, value already equals to %s"
 msgstr "Es gibt nichts zu tun, der Wert ist bereits %s"
 
-#: InitialWorkflowModule.lua:451
+#: InitialWorkflowModule.lua:457
 #, lua-format
 msgid "push button off and on: %s"
 msgstr "Funktion (Button, Zauberstab) aus- und einschalten: %s"
 
-#: InitialWorkflowModule.lua:457
+#: InitialWorkflowModule.lua:463
 msgid "nothing to do, button is already inactive"
 msgstr "Es gibt nichts zu tun, die Funktion ist bereits inaktiv"
 
-#: InitialWorkflowModule.lua:496
+#: InitialWorkflowModule.lua:502
 #, lua-format
 msgid "selection = %s - %s"
 msgstr "Auswahl = %s"
 
-#: InitialWorkflowModule.lua:502
+#: InitialWorkflowModule.lua:508
 #, lua-format
 msgid "show module if not visible: %s"
 msgstr "Modul anzeigen, falls nicht sichtbar: %s"
 
-#: InitialWorkflowModule.lua:508
+#: InitialWorkflowModule.lua:514
 msgid "module is already visible, nothing to do"
 msgstr "Modul ist bereits sichtbar, es gibt nichts zu tun"
 
-#: InitialWorkflowModule.lua:515
+#: InitialWorkflowModule.lua:521
 #, lua-format
 msgid "hide module if visible: %s"
 msgstr "Modul ausblenden, falls sichtbar: %s"
 
-#: InitialWorkflowModule.lua:520
+#: InitialWorkflowModule.lua:526
 msgid "module is already hidden, nothing to do"
 msgstr "Modul ist bereits ausgeblendet, es gibt nichts zu tun"
 
-#: InitialWorkflowModule.lua:527
+#: InitialWorkflowModule.lua:533
 #, lua-format
 msgid "enable module if disabled: %s"
 msgstr "Modul aktivieren, falls deaktiviert: %s"
 
-#: InitialWorkflowModule.lua:532
+#: InitialWorkflowModule.lua:538
 msgid "module is already enabled, nothing to do"
 msgstr "Modul ist bereits aktiviert, es gibt nichts zu tun"
 
-#: InitialWorkflowModule.lua:535 InitialWorkflowModule.lua:866
-#: InitialWorkflowModule.lua:884 InitialWorkflowModule.lua:1976
-#: InitialWorkflowModule.lua:2000 InitialWorkflowModule.lua:2024
+#: InitialWorkflowModule.lua:541 InitialWorkflowModule.lua:872
+#: InitialWorkflowModule.lua:890 InitialWorkflowModule.lua:2042
+#: InitialWorkflowModule.lua:2066 InitialWorkflowModule.lua:2090
 msgid "yes"
 msgstr "ja"
 
-#: InitialWorkflowModule.lua:543
+#: InitialWorkflowModule.lua:549
 #, lua-format
 msgid "disable module if enabled: %s"
 msgstr "Modul deaktivieren, falls aktiviert: %s"
 
-#: InitialWorkflowModule.lua:548
+#: InitialWorkflowModule.lua:554
 msgid "module is already disabled, nothing to do"
 msgstr "Modul ist bereits deaktiviert, es gibt nichts zu tun"
 
-#: InitialWorkflowModule.lua:554
+#: InitialWorkflowModule.lua:560
 #, lua-format
 msgid "reset module %s"
 msgstr "Modul %s zurücksetzen"
 
-#: InitialWorkflowModule.lua:580 InitialWorkflowModule.lua:587
-#: InitialWorkflowModule.lua:2647 InitialWorkflowModule.lua:2662
-#: InitialWorkflowModule.lua:2675 InitialWorkflowModule.lua:2690
+#: InitialWorkflowModule.lua:586 InitialWorkflowModule.lua:593
+#: InitialWorkflowModule.lua:2713 InitialWorkflowModule.lua:2728
+#: InitialWorkflowModule.lua:2741 InitialWorkflowModule.lua:2756
 msgid "default"
 msgstr "standard"
 
-#: InitialWorkflowModule.lua:580 InitialWorkflowModule.lua:615
-#: InitialWorkflowModule.lua:647 InitialWorkflowModule.lua:679
-#: InitialWorkflowModule.lua:960 InitialWorkflowModule.lua:1632
-#: InitialWorkflowModule.lua:2662
+#: InitialWorkflowModule.lua:586 InitialWorkflowModule.lua:621
+#: InitialWorkflowModule.lua:653 InitialWorkflowModule.lua:685
+#: InitialWorkflowModule.lua:966 InitialWorkflowModule.lua:1698
+#: InitialWorkflowModule.lua:2728
 msgid "ignore"
 msgstr "ignorieren"
 
-#: InitialWorkflowModule.lua:580 InitialWorkflowModule.lua:615
-#: InitialWorkflowModule.lua:658 InitialWorkflowModule.lua:685
-#: InitialWorkflowModule.lua:2501 InitialWorkflowModule.lua:2662
+#: InitialWorkflowModule.lua:586 InitialWorkflowModule.lua:621
+#: InitialWorkflowModule.lua:664 InitialWorkflowModule.lua:691
+#: InitialWorkflowModule.lua:2567 InitialWorkflowModule.lua:2728
 msgid "enable"
 msgstr "aktivieren"
 
-#: InitialWorkflowModule.lua:580 InitialWorkflowModule.lua:663
-#: InitialWorkflowModule.lua:2662
+#: InitialWorkflowModule.lua:586 InitialWorkflowModule.lua:669
+#: InitialWorkflowModule.lua:2728
 msgid "reset"
 msgstr "zurücksetzen"
 
-#: InitialWorkflowModule.lua:580 InitialWorkflowModule.lua:653
-#: InitialWorkflowModule.lua:964 InitialWorkflowModule.lua:1636
-#: InitialWorkflowModule.lua:2662
+#: InitialWorkflowModule.lua:586 InitialWorkflowModule.lua:659
+#: InitialWorkflowModule.lua:970 InitialWorkflowModule.lua:1702
+#: InitialWorkflowModule.lua:2728
 msgid "disable"
 msgstr "deaktivieren"
 
-#: InitialWorkflowModule.lua:596
+#: InitialWorkflowModule.lua:602
 msgid ""
 "Basic setting for this module: a) Select default value. b) Ignore this "
 "step / module and do nothing at all. c) Enable corresponding module and set "
@@ -223,15 +223,15 @@ msgstr ""
 "wende die gewählte Konfiguration an. e) Deaktiviere das Modul und erhalte es "
 "unverändert."
 
-#: InitialWorkflowModule.lua:621
+#: InitialWorkflowModule.lua:627
 msgid "Ignore this module or do corresponding configuration."
 msgstr "Ignoriere dieses Modul oder wende die dazugehörende Konfiguration an."
 
-#: InitialWorkflowModule.lua:855
+#: InitialWorkflowModule.lua:861
 msgid "compress history stack"
 msgstr "Verlaufsstapel komprimieren"
 
-#: InitialWorkflowModule.lua:857
+#: InitialWorkflowModule.lua:863
 msgid ""
 "Generate the shortest history stack that reproduces the current image. This "
 "removes your current history snapshots."
@@ -239,16 +239,16 @@ msgstr ""
 "Generiert einen minimalen Verlaufsstapel, der das gleiche Bild erzeugt. "
 "Dadurch werden die aktuellen Snapshots des Verlaufs entfernt."
 
-#: InitialWorkflowModule.lua:866 InitialWorkflowModule.lua:1976
-#: InitialWorkflowModule.lua:1996 InitialWorkflowModule.lua:2024
+#: InitialWorkflowModule.lua:872 InitialWorkflowModule.lua:2042
+#: InitialWorkflowModule.lua:2062 InitialWorkflowModule.lua:2090
 msgid "no"
 msgstr "nein"
 
-#: InitialWorkflowModule.lua:899
+#: InitialWorkflowModule.lua:905
 msgid "Filmic / Sigmoid dynamic"
 msgstr "Filmic / Sigmoid Dynamik"
 
-#: InitialWorkflowModule.lua:901
+#: InitialWorkflowModule.lua:907
 msgid ""
 "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene "
 "to fit the dynamic range of the display. Auto tune filmic levels of black + "
@@ -262,90 +262,91 @@ msgstr ""
 "Voreinstellungen. Es wird nur eines der Module Filmic, Sigmoid oder "
 "Basiskurve zugleich aktiviert. Die jeweils anderen werden deaktiviert."
 
-#: InitialWorkflowModule.lua:912 InitialWorkflowModule.lua:986
-#: InitialWorkflowModule.lua:1052 InitialWorkflowModule.lua:1072
-#: InitialWorkflowModule.lua:1099 InitialWorkflowModule.lua:1119
-#: InitialWorkflowModule.lua:1147 InitialWorkflowModule.lua:1172
-#: InitialWorkflowModule.lua:1205 InitialWorkflowModule.lua:1229
-#: InitialWorkflowModule.lua:1272 InitialWorkflowModule.lua:1295
-#: InitialWorkflowModule.lua:1344 InitialWorkflowModule.lua:1367
-#: InitialWorkflowModule.lua:1413 InitialWorkflowModule.lua:1435
-#: InitialWorkflowModule.lua:1471 InitialWorkflowModule.lua:1492
-#: InitialWorkflowModule.lua:1562 InitialWorkflowModule.lua:1588
-#: InitialWorkflowModule.lua:1657 InitialWorkflowModule.lua:1697
-#: InitialWorkflowModule.lua:1728 InitialWorkflowModule.lua:1780
-#: InitialWorkflowModule.lua:1805 InitialWorkflowModule.lua:1845
-#: InitialWorkflowModule.lua:1870 InitialWorkflowModule.lua:1916
-#: InitialWorkflowModule.lua:1940 InitialWorkflowModule.lua:2677
-#: InitialWorkflowModule.lua:2690
+#: InitialWorkflowModule.lua:918 InitialWorkflowModule.lua:992
+#: InitialWorkflowModule.lua:1058 InitialWorkflowModule.lua:1078
+#: InitialWorkflowModule.lua:1105 InitialWorkflowModule.lua:1125
+#: InitialWorkflowModule.lua:1153 InitialWorkflowModule.lua:1178
+#: InitialWorkflowModule.lua:1211 InitialWorkflowModule.lua:1237
+#: InitialWorkflowModule.lua:1288 InitialWorkflowModule.lua:1310
+#: InitialWorkflowModule.lua:1338 InitialWorkflowModule.lua:1361
+#: InitialWorkflowModule.lua:1410 InitialWorkflowModule.lua:1433
+#: InitialWorkflowModule.lua:1479 InitialWorkflowModule.lua:1501
+#: InitialWorkflowModule.lua:1537 InitialWorkflowModule.lua:1558
+#: InitialWorkflowModule.lua:1628 InitialWorkflowModule.lua:1654
+#: InitialWorkflowModule.lua:1723 InitialWorkflowModule.lua:1763
+#: InitialWorkflowModule.lua:1794 InitialWorkflowModule.lua:1846
+#: InitialWorkflowModule.lua:1871 InitialWorkflowModule.lua:1911
+#: InitialWorkflowModule.lua:1936 InitialWorkflowModule.lua:1982
+#: InitialWorkflowModule.lua:2006 InitialWorkflowModule.lua:2743
+#: InitialWorkflowModule.lua:2756
 msgid "unchanged"
 msgstr "unverändert"
 
-#: InitialWorkflowModule.lua:913 InitialWorkflowModule.lua:930
+#: InitialWorkflowModule.lua:919 InitialWorkflowModule.lua:936
 msgid "Filmic auto tune levels"
 msgstr "Filmic-Auto-Tune-Levels"
 
-#: InitialWorkflowModule.lua:914 InitialWorkflowModule.lua:936
-#: InitialWorkflowModule.lua:1004
+#: InitialWorkflowModule.lua:920 InitialWorkflowModule.lua:942
+#: InitialWorkflowModule.lua:1010
 msgid "Sigmoid color per channel"
 msgstr "Sigmoid Farbe je Kanal"
 
-#: InitialWorkflowModule.lua:915 InitialWorkflowModule.lua:937
-#: InitialWorkflowModule.lua:1013
+#: InitialWorkflowModule.lua:921 InitialWorkflowModule.lua:943
+#: InitialWorkflowModule.lua:1019
 msgid "Sigmoid color RGB ratio"
 msgstr "Sigmoid RGB-Verhältnis"
 
-#: InitialWorkflowModule.lua:916 InitialWorkflowModule.lua:938
-#: InitialWorkflowModule.lua:1026
+#: InitialWorkflowModule.lua:922 InitialWorkflowModule.lua:944
+#: InitialWorkflowModule.lua:1032
 msgid "Sigmoid ACES 100 preset"
 msgstr "Sigmoid ACES 100"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:997 InitialWorkflowModule.lua:1005
+#: InitialWorkflowModule.lua:1003 InitialWorkflowModule.lua:1011
 msgid "per channel"
 msgstr "Je Kanal"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:998 InitialWorkflowModule.lua:1014
+#: InitialWorkflowModule.lua:1004 InitialWorkflowModule.lua:1020
 msgid "RGB ratio"
 msgstr "RGB Verhältnis"
 
-#: InitialWorkflowModule.lua:1006 InitialWorkflowModule.lua:1015
+#: InitialWorkflowModule.lua:1012 InitialWorkflowModule.lua:1021
 #, lua-format
 msgid "current color processing = %s"
 msgstr "aktuelle Farbbehandlung = %s"
 
-#: InitialWorkflowModule.lua:1009 InitialWorkflowModule.lua:1022
+#: InitialWorkflowModule.lua:1015 InitialWorkflowModule.lua:1028
 #, lua-format
 msgid "nothing to do, color processing already = %s"
 msgstr "Nichts zu tun, aktuelle Farbbehandlung ist bereits = %s"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1027
+#: InitialWorkflowModule.lua:1033
 msgid "ACES 100-nit like"
 msgstr "ACES 100-nit ähnlich"
 
-#: InitialWorkflowModule.lua:1040
+#: InitialWorkflowModule.lua:1046
 msgid "color balance rgb saturation"
 msgstr "Farbbalance RGB, Sättigung"
 
-#: InitialWorkflowModule.lua:1041
+#: InitialWorkflowModule.lua:1047
 msgid "Adjust global saturation in color balance rgb module."
 msgstr "Passt die globale Sättigung im Farbbalance-RGB-Modul an."
 
-#: InitialWorkflowModule.lua:1087
+#: InitialWorkflowModule.lua:1093
 msgid "color balance rgb chroma"
 msgstr "Farbbalance RGB, Chroma"
 
-#: InitialWorkflowModule.lua:1088
+#: InitialWorkflowModule.lua:1094
 msgid "Adjust global chroma in color balance rgb module."
 msgstr "Passt die globale Chroma im Farbbalance-RGB-Modul an."
 
-#: InitialWorkflowModule.lua:1134
+#: InitialWorkflowModule.lua:1140
 msgid "color balance rgb"
 msgstr "Farbbalance RGB"
 
-#: InitialWorkflowModule.lua:1136
+#: InitialWorkflowModule.lua:1142
 msgid ""
 "Choose a predefined preset for your color-grading. Or set auto pickers of "
 "the module mask and peak white and gray luminance value to normalize the "
@@ -356,35 +357,35 @@ msgstr ""
 "und Grauluminanz automatisch an, um die Potenzfunktion auf der Registerkarte "
 "„4 HSL\" zu normalisieren."
 
-#: InitialWorkflowModule.lua:1148 InitialWorkflowModule.lua:1176
+#: InitialWorkflowModule.lua:1154 InitialWorkflowModule.lua:1182
 msgid "peak white & grey fulcrum"
 msgstr "max. Weiß- und Kontrast-Graupunkt"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1149
+#: InitialWorkflowModule.lua:1155
 msgid "add basic colorfulness (legacy)"
 msgstr "Basiseinstellung Farbigkeit (alt)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1150
+#: InitialWorkflowModule.lua:1156
 msgid "basic colorfulness: natural skin"
 msgstr "Basisfarbigkeit: lebendige Farben"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1151
+#: InitialWorkflowModule.lua:1157
 msgid "basic colorfulness: standard"
 msgstr "Basisfarbigkeit: natürliche Hauttöne"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1152
+#: InitialWorkflowModule.lua:1158
 msgid "basic colorfulness: vibrant colors"
 msgstr "Basisfarbigkeit: Standard"
 
-#: InitialWorkflowModule.lua:1192
+#: InitialWorkflowModule.lua:1198
 msgid "contrast equalizer"
 msgstr "Kontrast-Equalizer"
 
-#: InitialWorkflowModule.lua:1194
+#: InitialWorkflowModule.lua:1200 InitialWorkflowModule.lua:1277
 msgid ""
 "Adjust luminance and chroma contrast. Apply choosen preset (clarity or "
 "denoise & sharpen). Choose different values to adjust the strength of the "
@@ -394,37 +395,52 @@ msgstr ""
 "Voreinstellung anwenden (Klarheit oder entrauschen & schärfen). Wählen Sie "
 "verschiedene Werte, um die Stärke des Effekts anzupassen."
 
-#: InitialWorkflowModule.lua:1206 InitialWorkflowModule.lua:1233
+#: InitialWorkflowModule.lua:1212 InitialWorkflowModule.lua:1241
+msgid "clarity, strength 0,10"
+msgstr "Klarheit, Stärke 0,10"
+
+#: InitialWorkflowModule.lua:1213 InitialWorkflowModule.lua:1245
 msgid "clarity, strength 0,25"
 msgstr "Klarheit, Stärke 0,25"
 
-#: InitialWorkflowModule.lua:1207 InitialWorkflowModule.lua:1237
+#: InitialWorkflowModule.lua:1214 InitialWorkflowModule.lua:1249
 msgid "clarity, strength 0,50"
 msgstr "Klarheit, Stärke 0,50"
 
-#: InitialWorkflowModule.lua:1208 InitialWorkflowModule.lua:1241
+#: InitialWorkflowModule.lua:1215 InitialWorkflowModule.lua:1253
+msgid "denoise & sharpen, 0,10"
+msgstr "entrauschen & schärfen, 0,10"
+
+#: InitialWorkflowModule.lua:1216 InitialWorkflowModule.lua:1257
 msgid "denoise & sharpen, 0,25"
 msgstr "entrauschen & schärfen, 0,25"
 
-#: InitialWorkflowModule.lua:1209 InitialWorkflowModule.lua:1245
+#: InitialWorkflowModule.lua:1217 InitialWorkflowModule.lua:1261
 msgid "denoise & sharpen, 0,50"
 msgstr "entrauschen & schärfen, 0,50"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1234 InitialWorkflowModule.lua:1238
+#: InitialWorkflowModule.lua:1242 InitialWorkflowModule.lua:1246
+#: InitialWorkflowModule.lua:1250
 msgid "clarity"
 msgstr "Klarheit"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1242 InitialWorkflowModule.lua:1246
+#: InitialWorkflowModule.lua:1254 InitialWorkflowModule.lua:1258
+#: InitialWorkflowModule.lua:1262
 msgid "denoise & sharpen"
 msgstr "entrauschen & schärfen"
 
-#: InitialWorkflowModule.lua:1259
+# must be identical to darktable user interface / menu / preferences / module setting / module preset name
+#: InitialWorkflowModule.lua:1275
+msgid "diffuse or sharpen"
+msgstr "Diffusion / Schärfe"
+
+#: InitialWorkflowModule.lua:1325
 msgid "tone equalizer mask"
 msgstr "Tonwert-Equalizer Maskierung"
 
-#: InitialWorkflowModule.lua:1261
+#: InitialWorkflowModule.lua:1327
 msgid ""
 "Apply automatic mask contrast and exposure compensation. Auto adjust the "
 "contrast and average exposure."
@@ -432,23 +448,23 @@ msgstr ""
 "Automatische Anpassung der durchschnittlichen Belichtung und des Kontrasts "
 "der Maske."
 
-#: InitialWorkflowModule.lua:1273 InitialWorkflowModule.lua:1303
+#: InitialWorkflowModule.lua:1339 InitialWorkflowModule.lua:1369
 msgid "mask exposure compensation"
 msgstr "Maskenbelichtung kompensieren"
 
-#: InitialWorkflowModule.lua:1274 InitialWorkflowModule.lua:1307
+#: InitialWorkflowModule.lua:1340 InitialWorkflowModule.lua:1373
 msgid "mask contrast compensation"
 msgstr "Maskenkontrast kompensieren"
 
-#: InitialWorkflowModule.lua:1275 InitialWorkflowModule.lua:1311
+#: InitialWorkflowModule.lua:1341 InitialWorkflowModule.lua:1377
 msgid "exposure & contrast comp."
 msgstr "Belichtung & Kontrast komp."
 
-#: InitialWorkflowModule.lua:1331
+#: InitialWorkflowModule.lua:1397
 msgid "tone equalizer"
 msgstr "Tonwert-Equalizer"
 
-#: InitialWorkflowModule.lua:1333
+#: InitialWorkflowModule.lua:1399
 msgid ""
 "Use preset to compress shadows and highlights with exposure-independent "
 "guided filter (eigf) (soft, medium or strong)."
@@ -459,19 +475,19 @@ msgstr ""
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: InitialWorkflowModule.lua:1345 InitialWorkflowModule.lua:1376
+#: InitialWorkflowModule.lua:1411 InitialWorkflowModule.lua:1442
 msgid "compress shadows-highlights (eigf): medium"
 msgstr "komprimiert Schatten-Spitzlichter (EIGF): mittel"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: InitialWorkflowModule.lua:1346 InitialWorkflowModule.lua:1379
+#: InitialWorkflowModule.lua:1412 InitialWorkflowModule.lua:1445
 msgid "compress shadows-highlights (eigf): soft"
 msgstr "komprimiert Schatten-Spitzlichter (EIGF): gering"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: InitialWorkflowModule.lua:1347 InitialWorkflowModule.lua:1382
+#: InitialWorkflowModule.lua:1413 InitialWorkflowModule.lua:1448
 msgid "compress shadows-highlights (eigf): strong"
 msgstr "komprimiert Schatten-Spitzlichter (EIGF): stark"
 
@@ -479,7 +495,7 @@ msgstr "komprimiert Schatten-Spitzlichter (EIGF): stark"
 # workaround to deal with bug in dt 4.2.x, dt 4.2 uses special characters
 # darktable 4.3 uses some capital letters
 # DT42: prefix is removed during script run
-#: InitialWorkflowModule.lua:1378
+#: InitialWorkflowModule.lua:1444
 msgid "DT42:compress shadows-highlights (eigf): medium"
 msgstr "DT42:komprimiert Schatten-Spitzlichter (eigf): mittel"
 
@@ -487,7 +503,7 @@ msgstr "DT42:komprimiert Schatten-Spitzlichter (eigf): mittel"
 # workaround to deal with bug in dt 4.2.x, dt 4.2 uses special characters
 # darktable 4.3 uses some capital letters
 # DT42: prefix is removed during script run
-#: InitialWorkflowModule.lua:1380
+#: InitialWorkflowModule.lua:1446
 msgid "DT42:compress shadows-highlights (eigf): soft"
 msgstr "DT42:komprimiert Schatten-Spitzlichter (eigf): gering"
 
@@ -495,15 +511,15 @@ msgstr "DT42:komprimiert Schatten-Spitzlichter (eigf): gering"
 # workaround to deal with bug in dt 4.2.x, dt 4.2 uses special characters
 # darktable 4.3 uses some capital letters
 # DT42: prefix is removed during script run
-#: InitialWorkflowModule.lua:1384
+#: InitialWorkflowModule.lua:1450
 msgid "DT42:compress shadows-highlights (eigf): strong"
 msgstr "DT42:komprimiert Schatten-Spitzlichter (eigf): stark"
 
-#: InitialWorkflowModule.lua:1400
+#: InitialWorkflowModule.lua:1466
 msgid "exposure"
 msgstr "Belichtung"
 
-#: InitialWorkflowModule.lua:1402
+#: InitialWorkflowModule.lua:1468
 msgid ""
 "Automatically adjust the exposure correction. Remove the camera exposure "
 "bias, useful if you exposed the image to the right."
@@ -512,53 +528,53 @@ msgstr ""
 "Belichtungskorrektur der Kamera. Dies ist nützlich, wenn Sie das Bild \"nach "
 "rechts\" belichtet haben."
 
-#: InitialWorkflowModule.lua:1414
+#: InitialWorkflowModule.lua:1480
 msgid "adjust exposure correction"
 msgstr "Belichtungskorrektur kompensieren"
 
-#: InitialWorkflowModule.lua:1415 InitialWorkflowModule.lua:1441
+#: InitialWorkflowModule.lua:1481 InitialWorkflowModule.lua:1507
 msgid "adjust & compensate bias"
 msgstr "Belichtung & BIAS anpassen"
 
-#: InitialWorkflowModule.lua:1446
+#: InitialWorkflowModule.lua:1512
 msgid "checkbox already selected, nothing to do"
 msgstr "Einstellung bereits ausgewählt, nichts zu tun"
 
-#: InitialWorkflowModule.lua:1459
+#: InitialWorkflowModule.lua:1525
 msgid "lens correction"
 msgstr "Objektivkorrektur"
 
-#: InitialWorkflowModule.lua:1460
+#: InitialWorkflowModule.lua:1526
 msgid "Enable and reset lens correction module."
 msgstr "Objektivkorrektur aktivieren und zurücksetzen."
 
-#: InitialWorkflowModule.lua:1472 InitialWorkflowModule.lua:1496
+#: InitialWorkflowModule.lua:1538 InitialWorkflowModule.lua:1562
 msgid "enable lensfun"
 msgstr "Lensfun aktivieren"
 
-#: InitialWorkflowModule.lua:1504
+#: InitialWorkflowModule.lua:1570
 msgid "embedded metadata"
 msgstr "eingebettete Metadaten"
 
-#: InitialWorkflowModule.lua:1505 InitialWorkflowModule.lua:1511
+#: InitialWorkflowModule.lua:1571 InitialWorkflowModule.lua:1577
 msgid "lensfun"
 msgstr "lensfun"
 
-#: InitialWorkflowModule.lua:1512
+#: InitialWorkflowModule.lua:1578
 #, lua-format
 msgid "current correction method = %s"
 msgstr "Aktuelle Anpassung = %s"
 
-#: InitialWorkflowModule.lua:1519
+#: InitialWorkflowModule.lua:1585
 #, lua-format
 msgid "nothing to do, correction method already = %s"
 msgstr "Nichts zu tun, Anpassung ist bereits = %s"
 
-#: InitialWorkflowModule.lua:1532
+#: InitialWorkflowModule.lua:1598
 msgid "denoise (profiled)"
 msgstr "Entrauschen (Profil)"
 
-#: InitialWorkflowModule.lua:1534
+#: InitialWorkflowModule.lua:1600
 msgid ""
 "Enable denoise (profiled) module. There is nothing to configure, just enable "
 "or reset this module."
@@ -566,11 +582,11 @@ msgstr ""
 "Aktiviere das Entrauschen (Profil) Modul. Es gibt hier nichts zu "
 "konfigurieren, das Modul kann aktiviert oder zusätzlich zurückgesetzt werden."
 
-#: InitialWorkflowModule.lua:1575
+#: InitialWorkflowModule.lua:1641
 msgid "chromatic aberrations"
 msgstr "chromatische Aberrationen"
 
-#: InitialWorkflowModule.lua:1577
+#: InitialWorkflowModule.lua:1643
 msgid ""
 "Correct chromatic aberrations. Distinguish between Bayer sensor and other "
 "camera sensors. This operation uses the corresponding correction module and "
@@ -581,19 +597,19 @@ msgstr ""
 "Konfiguration nutzt das passende Korrekturmodul und deaktiviert das jeweils "
 "andere."
 
-#: InitialWorkflowModule.lua:1589 InitialWorkflowModule.lua:1604
+#: InitialWorkflowModule.lua:1655 InitialWorkflowModule.lua:1670
 msgid "Bayer sensor"
 msgstr "Bayer-Sensor"
 
-#: InitialWorkflowModule.lua:1590 InitialWorkflowModule.lua:1610
+#: InitialWorkflowModule.lua:1656 InitialWorkflowModule.lua:1676
 msgid "other sensors"
 msgstr "andere Sensoren"
 
-#: InitialWorkflowModule.lua:1672
+#: InitialWorkflowModule.lua:1738
 msgid "color calibration illuminant"
 msgstr "Farbkalibrierung Leuchtmittel"
 
-#: InitialWorkflowModule.lua:1674
+#: InitialWorkflowModule.lua:1740
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "illuminant. The type of illuminant assumed to have lit the scene. By default "
@@ -605,93 +621,93 @@ msgstr ""
 "Workflow."
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1698
+#: InitialWorkflowModule.lua:1764
 msgid "same as pipeline (D50)"
 msgstr "Gleich wie Pipeline (D50)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1699
+#: InitialWorkflowModule.lua:1765
 msgid "A (incandescent)"
 msgstr "A (Glühbirne)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1700
+#: InitialWorkflowModule.lua:1766
 msgid "D (daylight)"
 msgstr "D (Tageslicht)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1701
+#: InitialWorkflowModule.lua:1767
 msgid "E (equi-energy)"
 msgstr "E (Gleichenergie)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1702
+#: InitialWorkflowModule.lua:1768
 msgid "F (fluorescent)"
 msgstr "F (Leuchtstofflampe)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1703
+#: InitialWorkflowModule.lua:1769
 msgid "LED (LED light)"
 msgstr "LED (LED-Licht)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1704
+#: InitialWorkflowModule.lua:1770
 msgid "Planckian (black body)"
 msgstr "Planckscher Strahler (schwarzer Körper)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1705
+#: InitialWorkflowModule.lua:1771
 msgid "custom"
 msgstr "Benutzerdefiniert"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1706
+#: InitialWorkflowModule.lua:1772
 msgid "(AI) detect from image surfaces..."
 msgstr "(KI) Erkennen von Bildoberflächen..."
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1707
+#: InitialWorkflowModule.lua:1773
 msgid "(AI) detect from image edges..."
 msgstr "(KI) Erkennen von Bildkanten..."
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1708
+#: InitialWorkflowModule.lua:1774
 msgid "as shot in camera"
 msgstr "Wie in der Kamera aufgenommen"
 
-#: InitialWorkflowModule.lua:1736
+#: InitialWorkflowModule.lua:1802
 #, lua-format
 msgid "color calibration adaption = %s"
 msgstr "Farbkalibrierung Anpassung = %s"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1737 InitialWorkflowModule.lua:1785
+#: InitialWorkflowModule.lua:1803 InitialWorkflowModule.lua:1851
 msgid "none (bypass)"
 msgstr "keine"
 
-#: InitialWorkflowModule.lua:1738
+#: InitialWorkflowModule.lua:1804
 msgid "illuminant cannot be set"
 msgstr "Leuchtmittel kann nicht eingestellt werden"
 
-#: InitialWorkflowModule.lua:1741
+#: InitialWorkflowModule.lua:1807
 msgid "illuminant can be set"
 msgstr "Leuchtmittel kann eingestellt werden"
 
-#: InitialWorkflowModule.lua:1750
+#: InitialWorkflowModule.lua:1816
 #, lua-format
 msgid "current illuminant = %s"
 msgstr "Aktuelles Leuchtmittel = %s"
 
-#: InitialWorkflowModule.lua:1753
+#: InitialWorkflowModule.lua:1819
 #, lua-format
 msgid "nothing to do, illuminant already = %s"
 msgstr "Nichts zu tun, Leuchtmittel bereits = %s"
 
-#: InitialWorkflowModule.lua:1765
+#: InitialWorkflowModule.lua:1831
 msgid "color calibration adaptation"
 msgstr "Farbkalibrierung Anpassung"
 
-#: InitialWorkflowModule.lua:1767
+#: InitialWorkflowModule.lua:1833
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "adaptation. The working color space in which the module will perform its "
@@ -702,40 +718,40 @@ msgstr ""
 "Anpassung und Kanalmischung durchführt."
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1781
+#: InitialWorkflowModule.lua:1847
 msgid "linear Bradford (ICC v4)"
 msgstr "linear Bradford"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1782
+#: InitialWorkflowModule.lua:1848
 msgid "CAT16 (CIECAM16)"
 msgstr "CAT16 (CIECAM16)"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1783
+#: InitialWorkflowModule.lua:1849
 msgid "non-linear Bradford"
 msgstr "nichtlinear Bradford"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1784
+#: InitialWorkflowModule.lua:1850
 msgid "XYZ"
 msgstr "XYZ"
 
-#: InitialWorkflowModule.lua:1813
+#: InitialWorkflowModule.lua:1879
 #, lua-format
 msgid "current adaptation = %s"
 msgstr "Aktuelle Anpassung = %s"
 
-#: InitialWorkflowModule.lua:1816
+#: InitialWorkflowModule.lua:1882
 #, lua-format
 msgid "nothing to do, adaptation already = %s"
 msgstr "Nichts zu tun, Anpassung bereits = %s"
 
-#: InitialWorkflowModule.lua:1828
+#: InitialWorkflowModule.lua:1894
 msgid "highlight reconstruction"
 msgstr "Spitzlicht-Rekonstruktion"
 
-#: InitialWorkflowModule.lua:1830
+#: InitialWorkflowModule.lua:1896
 msgid ""
 "Reconstruct color information for clipped pixels. Select an appropriate "
 "reconstruction methods to reconstruct the missing data from unclipped "
@@ -746,45 +762,45 @@ msgstr ""
 "abgeschnittenen Kanälen und/oder benachbarten Pixeln zu rekonstruieren."
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1846
+#: InitialWorkflowModule.lua:1912
 msgid "inpaint opposed"
 msgstr "inpaint opposed"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1847
+#: InitialWorkflowModule.lua:1913
 msgid "reconstruct in LCh"
 msgstr "reconstruct in LCh"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1848
+#: InitialWorkflowModule.lua:1914
 msgid "clip highlights"
 msgstr "clip highlights"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1849
+#: InitialWorkflowModule.lua:1915
 msgid "segmentation based"
 msgstr "segmentation based"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1850
+#: InitialWorkflowModule.lua:1916
 msgid "guided laplacians"
 msgstr "guided laplacians"
 
-#: InitialWorkflowModule.lua:1878 InitialWorkflowModule.lua:1948
+#: InitialWorkflowModule.lua:1944 InitialWorkflowModule.lua:2014
 #, lua-format
 msgid "current value = %s"
 msgstr "Aktueller Wert = %s"
 
-#: InitialWorkflowModule.lua:1881 InitialWorkflowModule.lua:1951
+#: InitialWorkflowModule.lua:1947 InitialWorkflowModule.lua:2017
 #, lua-format
 msgid "nothing to do, value already = %s"
 msgstr "Nichts zu tun, Wert ist bereits = %s"
 
-#: InitialWorkflowModule.lua:1895
+#: InitialWorkflowModule.lua:1961
 msgid "white balance"
 msgstr "Weißabgleich"
 
-#: InitialWorkflowModule.lua:1897
+#: InitialWorkflowModule.lua:1963
 msgid ""
 "Adjust the white balance of the image by altering the temperature. By "
 "default unchanged for the legacy workflow."
@@ -793,39 +809,39 @@ msgstr ""
 "Standardmäßig unverändert für den Legacy-Workflow."
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1917
+#: InitialWorkflowModule.lua:1983
 msgid "as shot"
 msgstr "wie bei Aufnahme"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1918
+#: InitialWorkflowModule.lua:1984
 msgid "from image area"
 msgstr "aus Bildbereich"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1919
+#: InitialWorkflowModule.lua:1985
 msgid "user modified"
 msgstr "manuell angepasst"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
-#: InitialWorkflowModule.lua:1920
+#: InitialWorkflowModule.lua:1986
 msgid "camera reference"
 msgstr "Kamerareferenzpunkt"
 
-#: InitialWorkflowModule.lua:1964
+#: InitialWorkflowModule.lua:2030
 msgid "discard complete history"
 msgstr "Verlauf ganz verwerfen"
 
-#: InitialWorkflowModule.lua:1965
+#: InitialWorkflowModule.lua:2031
 msgid "Reset all modules of the pixelpipe and discard complete history."
 msgstr ""
 "Setze alle Module der Pixelpipeline zurück und lösche den kompletten Verlauf."
 
-#: InitialWorkflowModule.lua:2013
+#: InitialWorkflowModule.lua:2079
 msgid "show modules"
 msgstr "Module anzeigen"
 
-#: InitialWorkflowModule.lua:2015
+#: InitialWorkflowModule.lua:2081
 msgid ""
 "Show darkroom modules for enabled workflow steps during execution of this "
 "initial workflow. This makes the changes easier to understand."
@@ -833,11 +849,11 @@ msgstr ""
 "Module in der Dunkelkammer anzeigen, während Schritte im Initial-Workflow "
 "ausgeführt werden. Dadurch sind die Änderungen leichter verständlich."
 
-#: InitialWorkflowModule.lua:2047
+#: InitialWorkflowModule.lua:2113
 msgid "timeout value"
 msgstr "Zeitlimit / Timeout"
 
-#: InitialWorkflowModule.lua:2049
+#: InitialWorkflowModule.lua:2115
 msgid ""
 "Some calculations take a certain amount of time. Depending on the hardware "
 "equipment also longer.This script waits and attempts to detect timeouts. If "
@@ -854,50 +870,50 @@ msgstr ""
 "An anderen Stellen auch ein Vielfaches (Laden eines Bildes) oder ein "
 "Bruchteil davon (Abfragen eines aktuellen Wertes)."
 
-#: InitialWorkflowModule.lua:2078
+#: InitialWorkflowModule.lua:2144
 #, lua-format
 msgid "step timeout = %s ms"
 msgstr "Zeitlimit / Timeout für Schritt = %s ms"
 
-#: InitialWorkflowModule.lua:2099
+#: InitialWorkflowModule.lua:2165
 msgid "process workflow steps"
 msgstr "Workflow-Schritte durchführen"
 
-#: InitialWorkflowModule.lua:2137
+#: InitialWorkflowModule.lua:2203
 msgid "process selected images"
 msgstr "Ausgewählte Bilder verarbeiten"
 
-#: InitialWorkflowModule.lua:2142
+#: InitialWorkflowModule.lua:2208
 msgid "no image selected"
 msgstr "Kein Bild ausgewählt"
 
-#: InitialWorkflowModule.lua:2153
+#: InitialWorkflowModule.lua:2219
 msgid "switch to darkroom view"
 msgstr "Zur Dunkelkammer-Ansicht wechseln"
 
-#: InitialWorkflowModule.lua:2167
+#: InitialWorkflowModule.lua:2233
 #, lua-format
 msgid "load image number %s of %s"
 msgstr "Lade Bild Nummer %s von %s"
 
-#: InitialWorkflowModule.lua:2168
+#: InitialWorkflowModule.lua:2234
 #, lua-format
 msgid "image file = %s"
 msgstr "Bilddatei = %s"
 
-#: InitialWorkflowModule.lua:2172
+#: InitialWorkflowModule.lua:2238
 msgid "load new image into darkroom view"
 msgstr "Neues Bild in der Dunkelkammer-Ansicht laden"
 
-#: InitialWorkflowModule.lua:2183
+#: InitialWorkflowModule.lua:2249
 msgid "switch to lighttable view"
 msgstr "Zur Leuchttisch-Ansicht wechseln"
 
-#: InitialWorkflowModule.lua:2201
+#: InitialWorkflowModule.lua:2267
 msgid "run"
 msgstr "starten"
 
-#: InitialWorkflowModule.lua:2203
+#: InitialWorkflowModule.lua:2269
 msgid ""
 "Perform all configured steps in darkroom for an initial workflow. Perform "
 "the steps from bottom to top along the pixel pipeline."
@@ -906,11 +922,11 @@ msgstr ""
 "durchführen. Die Schritte werden von unten nach oben entlang der "
 "Pixelpipeline ausgeführt."
 
-#: InitialWorkflowModule.lua:2239
+#: InitialWorkflowModule.lua:2305
 msgid "rotate + perspective"
 msgstr "Drehen + Perspektive"
 
-#: InitialWorkflowModule.lua:2241
+#: InitialWorkflowModule.lua:2307
 msgid ""
 "Activate the module to rotate the image and adjust the perspective. Enabled "
 "in darkroom view."
@@ -918,21 +934,21 @@ msgstr ""
 "Das Modul aktivieren, um das Bild zu drehen und die Perspektive anzupassen. "
 "In der Dunkelkammer-Ansicht ausführbar."
 
-#: InitialWorkflowModule.lua:2266
+#: InitialWorkflowModule.lua:2332
 msgid "crop image"
 msgstr "Bild zuschneiden"
 
-#: InitialWorkflowModule.lua:2267
+#: InitialWorkflowModule.lua:2333
 msgid "Activate the module to crop the image. Enabled in darkroom view."
 msgstr ""
 "Das Modul aktivieren, um das Bild zuzuschneiden. In der Dunkelkammer-Ansicht "
 "ausführbar."
 
-#: InitialWorkflowModule.lua:2292
+#: InitialWorkflowModule.lua:2358
 msgid "exposure (midtones)"
 msgstr "Belichtung (Mitteltöne)"
 
-#: InitialWorkflowModule.lua:2294
+#: InitialWorkflowModule.lua:2360
 msgid ""
 "Show exposure module to adjust the exposure until the mid-tones are clear "
 "enough. Enabled in darkroom view."
@@ -940,19 +956,19 @@ msgstr ""
 "Das Belichtungsmodul anzeigen, um die Belichtung anzupassen, bis die "
 "Mitteltöne klar genug sind. In der Dunkelkammer-Ansicht ausführbar."
 
-#: InitialWorkflowModule.lua:2434 InitialWorkflowModule.lua:2597
+#: InitialWorkflowModule.lua:2500 InitialWorkflowModule.lua:2663
 msgid "module tests must be started from darkroom view"
 msgstr "Modultests müssen in der Dunkelkammer-Ansicht gestartet werden"
 
-#: InitialWorkflowModule.lua:2440
+#: InitialWorkflowModule.lua:2506
 msgid "module test started"
 msgstr "Modultest gestartet"
 
-#: InitialWorkflowModule.lua:2560
+#: InitialWorkflowModule.lua:2626
 msgid "module test finished"
 msgstr "Modultest abgeschlossen"
 
-#: InitialWorkflowModule.lua:2575
+#: InitialWorkflowModule.lua:2641
 msgid ""
 "Execute module tests. Used during development and deployment. Enabled in "
 "darkroom view."
@@ -960,11 +976,11 @@ msgstr ""
 "Modultests durchführen. Dies wird während der Entwicklung und Bereitstellung "
 "des Skripts verwendet. In Dunkelkammer-Ansicht ausführbar."
 
-#: InitialWorkflowModule.lua:2590
+#: InitialWorkflowModule.lua:2656
 msgid "Custom Code"
 msgstr "Custom Code"
 
-#: InitialWorkflowModule.lua:2592
+#: InitialWorkflowModule.lua:2658
 msgid ""
 "Execute code from TestCustomCode.lua: This file contains some custom debug "
 "code. It can be changed without restarting darktable. Just edit, save and "
@@ -977,17 +993,17 @@ msgstr ""
 "können damit einige Lua-Befehle im Handumdrehen ausprobieren, z. dt.gui."
 "action-Befehle. In der Dunkelkammer-Ansicht aktiviert."
 
-#: InitialWorkflowModule.lua:2604
+#: InitialWorkflowModule.lua:2670
 #, lua-format
 msgid "module test file not found: %s"
 msgstr "Modultest-Datei nicht gefunden: %s"
 
-#: InitialWorkflowModule.lua:2644 InitialWorkflowModule.lua:2662
-#: InitialWorkflowModule.lua:2672 InitialWorkflowModule.lua:2690
+#: InitialWorkflowModule.lua:2710 InitialWorkflowModule.lua:2728
+#: InitialWorkflowModule.lua:2738 InitialWorkflowModule.lua:2756
 msgid "all steps..."
 msgstr "alle Schritte..."
 
-#: InitialWorkflowModule.lua:2661
+#: InitialWorkflowModule.lua:2727
 msgid ""
 "Configure all basic settings of this inital workflow module: a) Select "
 "default value. b) Ignore this step / module and do nothing at all. c) Enable "
@@ -1001,7 +1017,7 @@ msgstr ""
 "an. d) Setze dieses Modul zuerst zurück und wende die gewählte Konfiguration "
 "an. e) Deaktiviere das Modul und erhalte es unverändert."
 
-#: InitialWorkflowModule.lua:2689
+#: InitialWorkflowModule.lua:2755
 msgid ""
 "Configure all settings of this inital workflow module: Keep all modules "
 "unchanged or enable all default configurations. These configurations are "
@@ -1012,15 +1028,15 @@ msgstr ""
 "Einstellungen werden angewendet, falls 'standard' oder 'aktivieren' als "
 "Grundeinstellung gewählt wird."
 
-#: InitialWorkflowModule.lua:2712
+#: InitialWorkflowModule.lua:2778
 msgid "insert test button widget"
 msgstr "Test-Button einfügen"
 
-#: InitialWorkflowModule.lua:2818
+#: InitialWorkflowModule.lua:2884
 #, lua-format
 msgid "view changed to %s"
 msgstr "Ansicht geändert zu %s"
 
-#: InitialWorkflowModule.lua:2829
+#: InitialWorkflowModule.lua:2895
 msgid "create widget in lighttable and darkroom panels"
 msgstr "Modul in Leuchttisch- und Dunkelkammer-Ansicht erstellen"
