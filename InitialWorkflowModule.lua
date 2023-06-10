@@ -72,7 +72,9 @@ end
 
 -- return translation from darktable
 local function _dt(msgid)
-  return gettext.dgettext('darktable', msgid)
+  local translation = gettext.dgettext('darktable', msgid)
+  ReverseTranslationIndex[translation] = msgid
+  return translation
 end
 
 local function GetReverseTranslation(text)
@@ -226,9 +228,9 @@ end
 local function CheckDarktableModernWorkflowPreference()
   local modernWorkflows =
   {
-    _("scene-referred (filmic)"),
-    _("scene-referred (sigmoid)"),
-    _("modern")
+    _dt("scene-referred (filmic)"),
+    _dt("scene-referred (sigmoid)"),
+    _dt("modern")
   }
 
   local workflow
@@ -858,7 +860,7 @@ StepCompressHistoryStack = WorkflowStepCombobox:new():new
       OperationNameInternal = nil,
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
-      Label = _("compress history stack"),
+      Label = _dt("compress history stack"),
       Tooltip = wordwrap(_(
         "Generate the shortest history stack that reproduces the current image. This removes your current history snapshots."))
     }
@@ -1000,15 +1002,15 @@ function StepDynamicRangeSceneToDisplay:Run()
   if (self:SigmoidSelected()) then
     local colorProcessingValues =
     {
-      _("per channel"),
-      _("RGB ratio")
+      _dt("per channel"),
+      _dt("RGB ratio")
     }
 
     local currentSelectionIndex = GuiActionGetValue('iop/sigmoid/color processing', 'selection')
     local currentSelection = colorProcessingValues[-currentSelectionIndex]
 
     if (selection == _("Sigmoid color per channel")) then
-      if (_("per channel") ~= currentSelection) then
+      if (_dt("per channel") ~= currentSelection) then
         LogInfo(indent .. string.format(_("current color processing = %s"), quote(currentSelection)))
         GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:per channel', 1.0)
       else
@@ -1017,7 +1019,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     end
 
     if (selection == _("Sigmoid color RGB ratio")) then
-      if (_("RGB ratio") ~= currentSelection) then
+      if (_dt("RGB ratio") ~= currentSelection) then
         LogInfo(indent .. string.format(_("current color processing = %s"), quote(currentSelection)))
         if (CheckDarktable42()) then
           GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:rgb ratio', 1.0)
@@ -1030,7 +1032,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     end
 
     if (selection == _("Sigmoid ACES 100 preset")) then
-      GuiActionButtonOffOn('iop/sigmoid/preset/' .. _("ACES 100-nit like"))
+      GuiActionButtonOffOn('iop/sigmoid/preset/' .. _dt("ACES 100-nit like"))
     end
   end
 end
@@ -1043,7 +1045,7 @@ StepColorBalanceGlobalSaturation = WorkflowStepCombobox:new():new
       OperationNameInternal = 'colorbalancergb',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 7,
-      Label = _("color balance rgb saturation"),
+      Label = _dt("color balance rgb") .. ' '.. _dt("saturation"),
       Tooltip = wordwrap(_("Adjust global saturation in color balance rgb module."))
     }
 
@@ -1090,7 +1092,7 @@ StepColorBalanceGlobalChroma = WorkflowStepCombobox:new():new
       OperationNameInternal = 'colorbalancergb',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 5,
-      Label = _("color balance rgb chroma"),
+      Label = _dt("color balance rgb") .. ' ' .. _dt("chroma"),
       Tooltip = wordwrap(_("Adjust global chroma in color balance rgb module."))
     }
 
@@ -1137,7 +1139,7 @@ StepColorBalanceRGB = WorkflowStepCombobox:new():new
       OperationNameInternal = 'colorbalancergb',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
-      Label = _("color balance rgb"),
+      Label = _dt("color balance rgb"),
       Tooltip = wordwrap(_(
         "Choose a predefined preset for your color-grading. Or set auto pickers of the module mask and peak white and gray luminance value to normalize the power setting in the 4 ways tab."))
     }
@@ -1152,10 +1154,10 @@ function StepColorBalanceRGB:Init()
   {
     _("unchanged"),
     _("peak white & grey fulcrum"),
-    _("add basic colorfulness (legacy)"),
-    _("basic colorfulness: natural skin"),
-    _("basic colorfulness: standard"),
-    _("basic colorfulness: vibrant colors")
+    _dt("add basic colorfulness (legacy)"),
+    _dt("basic colorfulness: natural skin"),
+    _dt("basic colorfulness: standard"),
+    _dt("basic colorfulness: vibrant colors")
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -1195,12 +1197,20 @@ StepContrastEqualizer = WorkflowStepCombobox:new():new
       OperationNameInternal = 'atrous',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
-      Label = _("contrast equalizer"),
+      Label = _dt("contrast equalizer"),
       Tooltip = wordwrap(_(
         "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect."))
     }
 
 table.insert(WorkflowSteps, StepContrastEqualizer)
+
+local clarity010 = _dt("clarity") .. ', ' .. _dt("mix") .. ' '.. "0.10"
+local clarity025 = _dt("clarity") .. ', ' .. _dt("mix") .. ' '.. "0.25"
+local clarity050 = _dt("clarity") .. ', ' .. _dt("mix") .. ' '.. "0.50"
+
+local denoise010 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' '.. "0.10"
+local denoise025 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' '.. "0.25"
+local denoise050 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' '.. "0.50"
 
 function StepContrastEqualizer:Init()
   self:CreateLabelWidget()
@@ -1209,12 +1219,12 @@ function StepContrastEqualizer:Init()
   self.ComboBoxValues =
   {
     _("unchanged"),
-    _("clarity, strength 0,10"),
-    _("clarity, strength 0,25"),
-    _("clarity, strength 0,50"),
-    _("denoise & sharpen, 0,10"),
-    _("denoise & sharpen, 0,25"),
-    _("denoise & sharpen, 0,50")
+    clarity010,
+    clarity025,
+    clarity050,
+    denoise010,
+    denoise025,
+    denoise050
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -1238,28 +1248,28 @@ function StepContrastEqualizer:Run()
     return
   end
 
-  if (selection == _("clarity, strength 0,10")) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _("clarity"))
+  if (selection == clarity010) then
+    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
     --
-  elseif (selection == _("clarity, strength 0,25")) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _("clarity"))
+  elseif (selection == clarity025) then
+    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
     --
-  elseif (selection == _("clarity, strength 0,50")) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _("clarity"))
+  elseif (selection == clarity050) then
+    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
     --
-  elseif (selection == _("denoise & sharpen, 0,10")) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _("denoise & sharpen"))
+  elseif (selection == denoise010) then
+    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
     --
-  elseif (selection == _("denoise & sharpen, 0,25")) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _("denoise & sharpen"))
+  elseif (selection == denoise025) then
+    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
     --
-  elseif (selection == _("denoise & sharpen, 0,50")) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _("denoise & sharpen"))
+  elseif (selection == denoise050) then
+    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
   end
 end
@@ -1272,7 +1282,7 @@ StepDiffuseOrSharpen = WorkflowStepCombobox:new():new
       OperationNameInternal = 'diffuse',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
-      Label = _("diffuse or sharpen"),
+      Label = _dt("diffuse or sharpen"),
       Tooltip = wordwrap(_(
         "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect."))
     }
@@ -1322,7 +1332,7 @@ StepToneEqualizerMask = WorkflowStepCombobox:new():new
       OperationNameInternal = 'toneequal',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 4,
-      Label = _("tone equalizer mask"),
+      Label = _dt("tone equalizer") .. ' ' .. _dt("masking"),
       Tooltip = wordwrap(_(
         "Apply automatic mask contrast and exposure compensation. Auto adjust the contrast and average exposure."))
     }
@@ -1394,7 +1404,7 @@ StepToneEqualizer = WorkflowStepCombobox:new():new
       OperationNameInternal = 'toneequal',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 1,
-      Label = _("tone equalizer"),
+      Label = _dt("tone equalizer"),
       Tooltip = wordwrap(_(
         "Use preset to compress shadows and highlights with exposure-independent guided filter (eigf) (soft, medium or strong)."))
     }
@@ -1463,7 +1473,7 @@ StepExposureCorrection = WorkflowStepCombobox:new():new
       OperationNameInternal = 'exposure',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 3,
-      Label = _("exposure"),
+      Label = _dt("exposure"),
       Tooltip = wordwrap(_(
         "Automatically adjust the exposure correction. Remove the camera exposure bias, useful if you exposed the image to the right."))
     }
@@ -1522,7 +1532,7 @@ StepLensCorrection = WorkflowStepCombobox:new():new
       OperationNameInternal = 'lens',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
-      Label = _("lens correction"),
+      Label = _dt("lens correction"),
       Tooltip = wordwrap(_("Enable and reset lens correction module.")),
     }
 
@@ -1595,7 +1605,7 @@ StepDenoiseProfiled = WorkflowStepCombobox:new():new
       OperationNameInternal = 'denoiseprofile',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 1,
-      Label = _("denoise (profiled)"),
+      Label = _dt("denoise (profiled)"),
       Tooltip = wordwrap(_(
         "Enable denoise (profiled) module. There is nothing to configure, just enable or reset this module."))
     }
@@ -1638,7 +1648,7 @@ StepChromaticAberrations = WorkflowStepCombobox:new():new
       OperationNameInternal = 'cacorrect',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
-      Label = _("chromatic aberrations"),
+      Label = _dt("chromatic aberrations"),
       Tooltip = wordwrap(_(
         "Correct chromatic aberrations. Distinguish between Bayer sensor and other camera sensors. This operation uses the corresponding correction module and disables the other."))
     }
@@ -1735,7 +1745,7 @@ StepColorCalibrationIlluminant = WorkflowStepCombobox:new():new
 
       -- see EnableDefaultStepConfiguation() override
       WidgetDefaultStepConfiguationValue = nil,
-      Label = _("color calibration illuminant"),
+      Label = _dt("color calibration") .. ' ' .. _dt("illuminant"),
       Tooltip = wordwrap(_(
         "Perform color space corrections in color calibration module. Select the illuminant. The type of illuminant assumed to have lit the scene. By default unchanged for the legacy workflow."))
     }
@@ -1761,17 +1771,17 @@ function StepColorCalibrationIlluminant:Init()
   self.ComboBoxValues =
   {
     _("unchanged"), -- additional value
-    _("same as pipeline (D50)"),
-    _("A (incandescent)"),
-    _("D (daylight)"),
-    _("E (equi-energy)"),
-    _("F (fluorescent)"),
-    _("LED (LED light)"),
-    _("Planckian (black body)"),
-    _("custom"),
-    _("(AI) detect from image surfaces..."),
-    _("(AI) detect from image edges..."),
-    _("as shot in camera")
+    _dt("same as pipeline (D50)"),
+    _dt("A (incandescent)"),
+    _dt("D (daylight)"),
+    _dt("E (equi-energy)"),
+    _dt("F (fluorescent)"),
+    _dt("LED (LED light)"),
+    _dt("Planckian (black body)"),
+    _dt("custom"),
+    _dt("(AI) detect from image surfaces..."),
+    _dt("(AI) detect from image edges..."),
+    _dt("as shot in camera")
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -1800,7 +1810,7 @@ function StepColorCalibrationIlluminant:Run()
   local adaptationSelection = StepColorCalibrationAdaptation:GetComboBoxValueFromSelectionIndex(adaptationSelectionIndex)
 
   LogInfo(indent .. string.format(_("color calibration adaption = %s"), adaptationSelection))
-  if (adaptationSelection == _("none (bypass)")) then
+  if (adaptationSelection == _dt("none (bypass)")) then
     LogInfo(indent .. _("illuminant cannot be set"))
     return
   else
@@ -1828,7 +1838,7 @@ StepColorCalibrationAdaptation = WorkflowStepCombobox:new():new
       OperationNameInternal = 'channelmixerrgb',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 3,
-      Label = _("color calibration adaptation"),
+      Label = _dt("color calibration") .. ' ' .. _dt("adaptation"),
       Tooltip = wordwrap(_(
         "Perform color space corrections in color calibration module. Select the adaptation. The working color space in which the module will perform its chromatic adaptation transform and channel mixing."))
     }
@@ -1844,11 +1854,11 @@ function StepColorCalibrationAdaptation:Init()
   self.ComboBoxValues =
   {
     _("unchanged"), -- additional value
-    _("linear Bradford (ICC v4)"),
-    _("CAT16 (CIECAM16)"),
-    _("non-linear Bradford"),
-    _("XYZ"),
-    _("none (bypass)")
+    _dt("linear Bradford (ICC v4)"),
+    _dt("CAT16 (CIECAM16)"),
+    _dt("non-linear Bradford"),
+    _dt("XYZ"),
+    _dt("none (bypass)")
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -1891,7 +1901,7 @@ StepHighlightReconstruction = WorkflowStepCombobox:new():new
       OperationNameInternal = 'highlights',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
-      Label = _("highlight reconstruction"),
+      Label = _dt("highlight reconstruction"),
       Tooltip = wordwrap(_(
         "Reconstruct color information for clipped pixels. Select an appropriate reconstruction methods to reconstruct the missing data from unclipped channels and/or neighboring pixels."))
     }
@@ -1909,11 +1919,11 @@ function StepHighlightReconstruction:Init()
   self.ComboBoxValues =
   {
     _("unchanged"),
-    _("inpaint opposed"),
-    _("reconstruct in LCh"),
-    _("clip highlights"),
-    _("segmentation based"),
-    _("guided laplacians")
+    _dt("inpaint opposed"),
+    _dt("reconstruct in LCh"),
+    _dt("clip highlights"),
+    _dt("segmentation based"),
+    _dt("guided laplacians")
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -1958,7 +1968,7 @@ StepWhiteBalance = WorkflowStepCombobox:new():new
 
       -- see EnableDefaultStepConfiguation() override
       WidgetDefaultStepConfiguationValue = nil,
-      Label = _("white balance"),
+      Label = _dt("white balance"),
       Tooltip = wordwrap(_(
         "Adjust the white balance of the image by altering the temperature. By default unchanged for the legacy workflow."))
     }
@@ -1980,10 +1990,10 @@ function StepWhiteBalance:Init()
   self.ComboBoxValues =
   {
     _("unchanged"),
-    _("as shot"),
-    _("from image area"),
-    _("user modified"),
-    _("camera reference")
+    _dt("as shot"),
+    _dt("from image area"),
+    _dt("user modified"),
+    _dt("camera reference")
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -2028,7 +2038,7 @@ StepResetModuleHistory = WorkflowStepCombobox:new():new
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 1,
       Label = _("discard complete history"),
-      Tooltip = wordwrap(_("Reset all modules of the pixelpipe and discard complete history."))
+      Tooltip = wordwrap(_("Reset all modules of the whole pixelpipe and discard complete history."))
     }
 
 table.insert(WorkflowSteps, StepResetModuleHistory)
