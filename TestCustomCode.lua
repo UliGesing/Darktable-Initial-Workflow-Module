@@ -14,4 +14,5 @@ local log = require "lib/dtutils.log"
 local value
 
 value = dt.gui.action("iop/exposure/exposure",0,"button","on",1.0000)
+
 log.msg(log.info,value)
