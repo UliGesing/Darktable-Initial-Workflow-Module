@@ -910,7 +910,7 @@ StepDynamicRangeSceneToDisplay = WorkflowStepCombobox:new():new
       -- this step refers to different modules
       OperationNameInternal = 'Filmic or Sigmoid',
       WidgetDisableStepConfiguationValue = 1,
-      WidgetDefaultStepConfiguationValue = 2,
+      WidgetDefaultStepConfiguationValue = 3,
       Label = _dt("filmic rgb") .. ' / ' .. _dt("sigmoid"),
       Tooltip = _(
         "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others.")
@@ -919,6 +919,7 @@ StepDynamicRangeSceneToDisplay = WorkflowStepCombobox:new():new
 table.insert(WorkflowSteps, StepDynamicRangeSceneToDisplay)
 
 local filmicAutoTuneLevels = _dt("filmic") .. ' ' .. _dt("auto tune levels")
+local filmicHighlightReconstruction = _dt("filmic") .. ' + ' .. _dt("highlight reconstruction")
 local sigmoidColorPerChannel = _dt("sigmoid") .. ' ' .. _dt("per channel")
 local sigmoidColorRgbRatio = _dt("sigmoid") .. ' ' .. _dt("RGB ratio")
 local sigmoidAces100Preset = _dt("sigmoid") .. ' ' .. _dt("ACES 100-nit like")
@@ -931,6 +932,7 @@ function StepDynamicRangeSceneToDisplay:Init()
   {
     _("unchanged"),
     filmicAutoTuneLevels,
+    filmicHighlightReconstruction,
     sigmoidColorPerChannel,
     sigmoidColorRgbRatio,
     sigmoidAces100Preset
@@ -947,7 +949,8 @@ end
 
 function StepDynamicRangeSceneToDisplay:FilmicSelected()
   return contains(
-    { filmicAutoTuneLevels
+    { filmicAutoTuneLevels,
+      filmicHighlightReconstruction
     }, self.Widget.value)
 end
 
@@ -1009,6 +1012,15 @@ function StepDynamicRangeSceneToDisplay:Run()
 
   if (self:FilmicSelected()) then
     GuiActionButtonOffOn('iop/filmicrgb/auto tune levels')
+
+    if (selection == filmicHighlightReconstruction) then
+      local checkbox = GuiActionGetValue('iop/filmicrgb/enable highlight reconstruction', '')
+      if (checkbox == 0) then
+        GuiAction('iop/filmicrgb/enable highlight reconstruction', 0, '', 'on', 1.0)
+      else
+        LogInfo(indent .. _("checkbox already selected, nothing to do"))
+      end
+    end
   end
 
   if (self:SigmoidSelected()) then

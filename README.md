@@ -74,14 +74,6 @@ require "InitialWorkflowModule"</code>
 
 - On Linux, logging messages are written to your command line
 
-### Localisation
-
-- This script only works if darktable is used with an English or German user interface. The script uses the darktable Lua API to perform the configured settings. Some module presets and other settings are called via their name, as displayed within the darktable user interface. These names are changed, if you configure another language setting. 
-
-- Go to darktable preferences, choose page general and set the interface language to English (en) or German (de).
-
-- Do you want to translate script outputs into your language? Please let me know. Together we can do that. After a short training, it's fairly easy to deal with gettext tools, .po files, .mo files and to upload your translation to the Github repository. You don't have to be a programmer for this, the translation is done in separate text files.
-
 ## Usage
 
 ### New darktable module
@@ -90,7 +82,7 @@ require "InitialWorkflowModule"</code>
 
 >><img src="ReadmeImages/ScreenshotModuleDefaults.png" width=250>
 
-- In preparation for running the script, use the following buttons in darkroom view to rotate the image, adjust the perspective, crop the image and to adjust the exposure until the mid-tones are clear enough:<br>
+- In preparation for running the script, use the following buttons in darkroom view to rotate the image, adjust the perspective, crop the image and to adjust the exposure until the mid-tones are clear enough. These buttons activate and display the associated module. <br>
 >><img src="ReadmeImages/ScreenshotModulePreparingSteps.png" width=250>
 
 ### Configuration
@@ -98,7 +90,15 @@ require "InitialWorkflowModule"</code>
 - After the preparing steps choose your personal configuration for each step. Several steps and configurations are offered, see the tooltips within the module for more information. Your settings are saved in darktable preferences and restored after the next start of the application.<br>
 >><img src="ReadmeImages/ScreenshotModuleStepConfiguration.png" width=250>
 
-- Each step offers several choices, for example:<br>
+- Each step starts with a basic configuration. This basic preparation is done before actually performing the step. There are various possibilities:
+>><img src="ReadmeImages/ScreenshotModuleStepConfigurationBasic.png" width=75>
+>- The <code>default</code> value (one of the following) can be set.
+>- The workflow step can be <code>ignored</code> at all, the corresponding module remains unchanged.
+>- The module can first be <code>enabled</code> in order to apply the selected configuration afterwards, based on current module settings.
+>- A module <code>reset</code> can be carried out, the selected configuration is then applied based on default module settings.
+>- The module can be <code>disabled</code> and ignored during this workflow.
+
+- If the basic configuration is set to '<code>reset</code>' or '<code>enable</code>', the special configuration is applied. If you choose '<code>unchanged</code>', the corresponding module keeps unchanged (apart from the basic configuration above). Each step offers several choices, for example:<br>
 >><img src="ReadmeImages/ScreenshotModuleStepConfigurationFilmic.png" width=250>
 
 ### Execution
@@ -125,6 +125,12 @@ require "InitialWorkflowModule"</code>
 - Do you have any suggestions for further steps or options? Which darkroom modules do you use most often? With which settings does your own workflow start?
 
 - Just let me know or see the description below how to do it yourself.
+
+### Localisation
+
+- This script should work with different user interface languages, as configured in darktable preferences.
+
+- Do you want to translate script outputs into your language? Please let me know. Together we can do that. After a short training, it's fairly easy to deal with gettext tools, .po files, .mo files and to upload your translation to the Github repository. You don't have to be a programmer for this, the translation is done in separate text files.
 
 ### Add new or modify workflow steps
 
