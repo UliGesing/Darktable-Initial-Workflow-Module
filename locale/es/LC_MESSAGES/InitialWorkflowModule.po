@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-15 12:00+0200\n"
+"POT-Creation-Date: 2023-06-15 16:20+0200\n"
 "PO-Revision-Date: 2023-05-18 14:20+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -15,7 +15,8 @@ msgstr ""
 
 #: InitialWorkflowModule.lua:139
 msgid ""
-"script run without errors - there are no important messages and no timeouts"
+"OK - script run without errors - there are no important messages and no "
+"timeouts"
 msgstr ""
 
 #: InitialWorkflowModule.lua:141

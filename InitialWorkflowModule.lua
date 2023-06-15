@@ -136,7 +136,7 @@ local function LogSummary()
   LogInfo('==============================')
 
   if (#LogSummaryMessages == 0) then
-    LogInfo(_("script run without errors - there are no important messages and no timeouts"))
+    LogInfo(_("OK - script run without errors - there are no important messages and no timeouts"))
   else
     LogInfo(_("THERE ARE IMPORTANT MESSAGES:"))
 
