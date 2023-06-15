@@ -308,9 +308,6 @@ function WaitForEventBase:Do(embeddedFunction)
 
     if (duration >= durationMax) then
       local timeoutMessage = string.format(_("timeout after %d ms waiting for event %s"), durationMax, self.EventType)
-
-      StopScriptHere()
-
       LogInfo(timeoutMessage)
       LogSummaryMessage(timeoutMessage)
       break
