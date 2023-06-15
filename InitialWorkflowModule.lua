@@ -1279,7 +1279,7 @@ function StepContrastEqualizer:Init()
   self.clarity010 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.10"
   self.clarity025 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.25"
   self.clarity050 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.50"
-  
+
   self.denoise010 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.10"
   self.denoise025 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.25"
   self.denoise050 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.50"
@@ -1361,19 +1361,35 @@ function StepDiffuseOrSharpen:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
-  self.ComboBoxValues =
-  {
-    _("unchanged"),
-    _dt("dehaze"),
-    _dt("denoise: coarse"),
-    _dt("denoise: fine"),
-    _dt("denoise: medium"),
-    _dt("lens deblur: medium"),
-    _dt("local contrast"),
-    _dt("sharpen demosaicing: AA filter"),
-    _dt("sharpness")
-  }
-
+  -- workaround for dt4.2
+  if (CheckDarktable42()) then
+    self.ComboBoxValues =
+    {
+      _("unchanged"),
+      _dt("dehaze"),
+      _dt("denoise: coarse"),
+      _dt("denoise: fine"),
+      _dt("denoise: medium"),
+      _dt("lens deblur: medium"),
+      _dt("add local contrast"),
+      _dt("sharpen demosaicing (AA filter)"),
+      _dt("fast sharpness")
+    }
+  else
+    self.ComboBoxValues =
+    {
+      _("unchanged"),
+      _dt("dehaze"),
+      _dt("denoise: coarse"),
+      _dt("denoise: fine"),
+      _dt("denoise: medium"),
+      _dt("lens deblur: medium"),
+      _dt("local contrast"),
+      _dt("sharpen demosaicing: AA filter"),
+      _dt("sharpness")
+    }
+  end
+  
   self.Widget = dt.new_widget('combobox')
       {
         changed_callback = ComboBoxChangedCallback,
