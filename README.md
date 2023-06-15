@@ -103,12 +103,14 @@ require "InitialWorkflowModule"</code>
 
 ### Execution
 
-- Once the configuration is complete, execute the script using the "run" button. The other buttons can be used to select the standard configurations or to deactivate all steps. If you use it from lighttable view, you can select one or more images. Clicking the run button, selected image(s) are opened in darkroom and all steps are performed as configured. If you use it from darkroom view, the currently opened image is processed.<br>
+- Once the configuration is complete, execute the script using the "run" button. The other controls can be used to select the standard configurations or to deactivate all steps. If you use it from lighttable view, you can select one or more images. Clicking the run button, selected image(s) are opened in darkroom and all steps are performed as configured. If you use it from darkroom view, the currently opened image is processed.<br>
 >><img src="ReadmeImages/ScreenshotModuleRunDefaultNoneButtons.png" width=250>
 
-- Do you want to know more about what the individual steps of the workflow change? Deactivate all steps via the "select none" button. Then activate "show modules". Then activate the step that interests you and select one of the settings. With "run" only this one configuration is executed and the affected module is displayed. This way you will see the changes made.
+- Do you want to know more about what the individual steps of the workflow change? You can activate '<code>show modules</code>'. During script execution in darkroom view, modules are displayed as changes are made. This way you will see the changes made.
 
 >><img src="ReadmeImages/ScreenshotModuleStepConfigurationShowModules.png" width=250>
+
+>>Best practices: Select '<code>ignore</code>' for all steps. Then activate ('<code>enable</code>' or '<code>reset</code>') the step that interests you and configure it. With "run" only this one configuration is executed and the affected module is displayed.
 
 ### Timeouts
 
