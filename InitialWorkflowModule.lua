@@ -915,24 +915,24 @@ StepDynamicRangeSceneToDisplay = WorkflowStepCombobox:new():new
 
 table.insert(WorkflowSteps, StepDynamicRangeSceneToDisplay)
 
-local filmicAutoTuneLevels = _dt("filmic") .. ' ' .. _dt("auto tune levels")
-local filmicHighlightReconstruction = _dt("filmic") .. ' + ' .. _dt("highlight reconstruction")
-local sigmoidColorPerChannel = _dt("sigmoid") .. ' ' .. _dt("per channel")
-local sigmoidColorRgbRatio = _dt("sigmoid") .. ' ' .. _dt("RGB ratio")
-local sigmoidAces100Preset = _dt("sigmoid") .. ' ' .. _dt("ACES 100-nit like")
-
 function StepDynamicRangeSceneToDisplay:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
+  self.filmicAutoTuneLevels = _dt("filmic") .. ' ' .. _dt("auto tune levels")
+  self.filmicHighlightReconstruction = _dt("filmic") .. ' + ' .. _dt("highlight reconstruction")
+  self.sigmoidColorPerChannel = _dt("sigmoid") .. ' ' .. _dt("per channel")
+  self.sigmoidColorRgbRatio = _dt("sigmoid") .. ' ' .. _dt("RGB ratio")
+  self.sigmoidAces100Preset = _dt("sigmoid") .. ' ' .. _dt("ACES 100-nit like")
+
   self.ComboBoxValues =
   {
     _("unchanged"),
-    filmicAutoTuneLevels,
-    filmicHighlightReconstruction,
-    sigmoidColorPerChannel,
-    sigmoidColorRgbRatio,
-    sigmoidAces100Preset
+    self.filmicAutoTuneLevels,
+    self.filmicHighlightReconstruction,
+    self.sigmoidColorPerChannel,
+    self.sigmoidColorRgbRatio,
+    self.sigmoidAces100Preset
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -946,16 +946,16 @@ end
 
 function StepDynamicRangeSceneToDisplay:FilmicSelected()
   return contains(
-    { filmicAutoTuneLevels,
-      filmicHighlightReconstruction
+    { self.filmicAutoTuneLevels,
+      self.filmicHighlightReconstruction
     }, self.Widget.value)
 end
 
 function StepDynamicRangeSceneToDisplay:SigmoidSelected()
   return contains(
-    { sigmoidColorPerChannel,
-      sigmoidColorRgbRatio,
-      sigmoidAces100Preset
+    { self.sigmoidColorPerChannel,
+      self.sigmoidColorRgbRatio,
+      self.sigmoidAces100Preset
     }, self.Widget.value)
 end
 
@@ -1010,7 +1010,7 @@ function StepDynamicRangeSceneToDisplay:Run()
   if (self:FilmicSelected()) then
     GuiActionButtonOffOn('iop/filmicrgb/auto tune levels')
 
-    if (selection == filmicHighlightReconstruction) then
+    if (selection == self.filmicHighlightReconstruction) then
       local checkbox = GuiActionGetValue('iop/filmicrgb/enable highlight reconstruction', '')
       if (checkbox == 0) then
         GuiAction('iop/filmicrgb/enable highlight reconstruction', 0, '', 'on', 1.0)
@@ -1030,7 +1030,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     local currentSelectionIndex = GuiActionGetValue('iop/sigmoid/color processing', 'selection')
     local currentSelection = colorProcessingValues[-currentSelectionIndex]
 
-    if (selection == sigmoidColorPerChannel) then
+    if (selection == self.sigmoidColorPerChannel) then
       if (_dt("per channel") ~= currentSelection) then
         LogInfo(indent .. string.format(_("current color processing = %s"), quote(currentSelection)))
         GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:per channel', 1.0)
@@ -1039,7 +1039,7 @@ function StepDynamicRangeSceneToDisplay:Run()
       end
     end
 
-    if (selection == sigmoidColorRgbRatio) then
+    if (selection == self.sigmoidColorRgbRatio) then
       if (_dt("RGB ratio") ~= currentSelection) then
         LogInfo(indent .. string.format(_("current color processing = %s"), quote(currentSelection)))
         if (CheckDarktable42()) then
@@ -1052,7 +1052,7 @@ function StepDynamicRangeSceneToDisplay:Run()
       end
     end
 
-    if (selection == sigmoidAces100Preset) then
+    if (selection == self.sigmoidAces100Preset) then
       GuiActionButtonOffOn('iop/sigmoid/preset/' .. _dt("ACES 100-nit like"))
     end
   end
@@ -1272,27 +1272,27 @@ StepContrastEqualizer = WorkflowStepCombobox:new():new
 
 table.insert(WorkflowSteps, StepContrastEqualizer)
 
-local clarity010 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.10"
-local clarity025 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.25"
-local clarity050 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.50"
-
-local denoise010 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.10"
-local denoise025 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.25"
-local denoise050 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.50"
-
 function StepContrastEqualizer:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
+  self.clarity010 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.10"
+  self.clarity025 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.25"
+  self.clarity050 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.50"
+  
+  self.denoise010 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.10"
+  self.denoise025 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.25"
+  self.denoise050 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.50"
+
   self.ComboBoxValues =
   {
     _("unchanged"),
-    clarity010,
-    clarity025,
-    clarity050,
-    denoise010,
-    denoise025,
-    denoise050
+    self.clarity010,
+    self.clarity025,
+    self.clarity050,
+    self.denoise010,
+    self.denoise025,
+    self.denoise050
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -1316,27 +1316,27 @@ function StepContrastEqualizer:Run()
     return
   end
 
-  if (selection == clarity010) then
+  if (selection == self.clarity010) then
     GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
     --
-  elseif (selection == clarity025) then
+  elseif (selection == self.clarity025) then
     GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
     --
-  elseif (selection == clarity050) then
+  elseif (selection == self.clarity050) then
     GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
     --
-  elseif (selection == denoise010) then
+  elseif (selection == self.denoise010) then
     GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
     --
-  elseif (selection == denoise025) then
+  elseif (selection == self.denoise025) then
     GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
     --
-  elseif (selection == denoise050) then
+  elseif (selection == self.denoise050) then
     GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
     GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
   end
@@ -1612,16 +1612,16 @@ StepLensCorrection = WorkflowStepCombobox:new():new
 
 table.insert(WorkflowSteps, StepLensCorrection)
 
-local lensfunSelection = _dt("Lensfun database")
-
 function StepLensCorrection:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
+  self.lensfunSelection = _dt("Lensfun database")
+
   self.ComboBoxValues =
   {
     _("unchanged"),
-    lensfunSelection,
+    self.lensfunSelection,
   }
 
   self.Widget = dt.new_widget('combobox')
@@ -1654,13 +1654,13 @@ function StepLensCorrection:Run()
     local lensCorrectionValues =
     {
       _dt("embedded metadata"),
-      lensfunSelection
+      self.lensfunSelection
     }
 
     local currentSelectionIndex = GuiActionGetValue('iop/lens/correction method', 'selection')
     local currentSelection = lensCorrectionValues[-currentSelectionIndex]
 
-    if (lensfunSelection ~= currentSelection) then
+    if (self.lensfunSelection ~= currentSelection) then
       LogInfo(indent .. string.format(_("current correction method = %s"), quote(currentSelection)))
       if (CheckDarktable42()) then
         GuiAction('iop/lens/correction method', 0, 'selection', 'item:lensfun database', 1.0)
