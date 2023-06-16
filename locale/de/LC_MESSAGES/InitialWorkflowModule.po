@@ -61,7 +61,7 @@ msgstr "Skript wurde gestartet von Pfad %s"
 #: InitialWorkflowModule.lua:251
 #, lua-format
 msgid "script translation files in %s"
-msgstr "Skript-Übersetzungsdateien befinden sich in %s"
+msgstr "Skript-Lokalisierungsdateien befinden sich in %s"
 
 #: InitialWorkflowModule.lua:252
 msgid "script outputs are in English"
