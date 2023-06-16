@@ -260,8 +260,7 @@ msgid ""
 "to normalize the power setting in the 4 ways tab."
 msgstr ""
 "Passen Sie auf der Registerkarte Maskierung die Spitzenwerte der Weiss- und "
-"Grauluminanz automatisch an, um die Potenzfunktion auf der Registerkarte „4 "
-"HSL\" zu normalisieren."
+"Grauluminanz automatisch an, um die Potenzfunktion auf der Registerkarte 4 HSL zu normalisieren."
 
 #: InitialWorkflowModule.lua:1232 InitialWorkflowModule.lua:1256
 msgid "peak white & grey fulcrum"
@@ -358,8 +357,7 @@ msgid ""
 "bias, useful if you exposed the image to the right."
 msgstr ""
 "Passen Sie die Belichtungskorrektur automatisch an. Kompensieren Sie die "
-"Belichtungskorrektur der Kamera. Dies ist hilfreich, wenn Sie das Bild "
-"\"nach rechts\" belichtet haben."
+"Belichtungskorrektur der Kamera. Dies ist hilfreich, wenn Sie das Bild nach rechts belichtet haben."
 
 #: InitialWorkflowModule.lua:1633
 msgid "adjust exposure correction"
