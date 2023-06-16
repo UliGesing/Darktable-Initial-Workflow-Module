@@ -2264,7 +2264,7 @@ StepTimeout = WorkflowStepCombobox:new():new
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
       WidgetDisableStepConfiguationValue = 2,
-      WidgetDefaultStepConfiguationValue = 2,
+      WidgetDefaultStepConfiguationValue = 3,
       Label = _("timeout value"),
       Tooltip = _(
         "Some calculations take a certain amount of time. Depending on the hardware equipment also longer.This script waits and attempts to detect timeouts. If steps take much longer than expected, those steps will be aborted. You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status).")
