@@ -55,28 +55,74 @@ end
 
 local gettext = dt.gettext
 
+-- used to save translated words or sentences
+local TranslationIndex = {}
+
 -- used to get back the original text from translated text
--- used to address internal API values
+-- used to address internal darktable API values
 local ReverseTranslationIndex = {}
 
 local pathSeparator = dt.configuration.running_os == 'windows' and '\\' or '/'
 local localePath = ScriptFilePath() .. 'locale' .. pathSeparator
 gettext.bindtextdomain(ModuleName, localePath)
 
+-- return translation from given context
+local function GetTranslation(context, msgid)
+  if (msgid == nil or msgid == '') then
+    return ''
+  end
+
+  local translation = gettext.dgettext(context, msgid)
+
+  -- save translated words or sentences
+  -- save the other way round
+  TranslationIndex[msgid] = translation
+  ReverseTranslationIndex[translation] = msgid
+
+  return translation
+end
+
 -- return translation from local .po / .mo file
 local function _(msgid)
-  local translation = gettext.dgettext(ModuleName, msgid)
-  ReverseTranslationIndex[translation] = msgid
-  return translation
+  return GetTranslation(ModuleName, msgid)
 end
 
 -- return translation from darktable
 local function _dt(msgid)
-  local translation = gettext.dgettext('darktable', msgid)
-  ReverseTranslationIndex[translation] = msgid
+  return GetTranslation('darktable', msgid)
+end
+
+-- return concatenated translated words from darktable
+-- darktable provides many translated text elements
+-- combine these elements to new ones
+local function _dtConcat(msgids)
+  -- concat given message parts
+  local message = ''
+  for i, msgid in ipairs(msgids) do
+    message = message .. msgid
+  end
+
+  -- get already known translation
+  local translation = TranslationIndex[message]
+  if (translation ~= nil) then
+    return translation
+  end
+
+  -- concat previously unknown translation
+  translation = ''
+  for i, msgid in ipairs(msgids) do
+    translation = translation .. _dt(msgid)
+  end
+
+  -- save translated words or sentences
+  -- save the other way round
+  TranslationIndex[message] = translation
+  ReverseTranslationIndex[translation] = message
+
   return translation
 end
 
+-- return reverse translation, the other way round
 local function GetReverseTranslation(text)
   local reverse = ReverseTranslationIndex[text]
 
@@ -582,8 +628,8 @@ WorkflowStepCombobox = WorkflowStep:new():new
 
 -- create default basic widget of most workflow steps
 function WorkflowStepCombobox:CreateDefaultBasicWidget()
-  self.WidgetDisableBasicValue = 1
-  self.WidgetDefaultBasicValue = 4
+  self.WidgetBasicDisableValue = 1
+  self.WidgetBasicDefaultValue = 4
 
   self.BasicValues = { _("default"), _("ignore"), _("enable"), _("reset"), _("disable") }
 
@@ -617,8 +663,8 @@ end
 
 -- create simple basic widget of some workflow steps
 function WorkflowStepCombobox:CreateSimpleBasicWidget()
-  self.WidgetDisableBasicValue = 1
-  self.WidgetDefaultBasicValue = 2
+  self.WidgetBasicDisableValue = 1
+  self.WidgetBasicDefaultValue = 2
 
   self.BasicValues = { _("ignore"), _("enable") }
 
@@ -633,8 +679,8 @@ end
 
 -- create empty invisible basic widget
 function WorkflowStepCombobox:CreateEmptyBasicWidget()
-  self.WidgetDisableBasicValue = 1
-  self.WidgetDefaultBasicValue = 1
+  self.WidgetBasicDisableValue = 1
+  self.WidgetBasicDefaultValue = 1
 
   self.BasicValues = { '' }
 
@@ -712,12 +758,12 @@ end
 
 -- disable steps basic setting
 function WorkflowStepCombobox:DisableBasicConfiguation()
-  self.WidgetBasic.value = self.WidgetDisableBasicValue
+  self.WidgetBasic.value = self.WidgetBasicDisableValue
 end
 
 -- choose default basic setting
 function WorkflowStepCombobox:EnableDefaultBasicConfiguation()
-  self.WidgetBasic.value = self.WidgetDefaultBasicValue
+  self.WidgetBasic.value = self.WidgetBasicDefaultValue
 end
 
 -- returns internal operation name like 'colorbalancergb' or 'atrous'
@@ -730,24 +776,30 @@ function WorkflowStepCombobox:OperationPath()
   return 'iop/' .. self:OperationName()
 end
 
+local PreferencePresetName = "Current"
+local PreferencePrefixBasic = "Basic"
+local PreferencePrefixConfiguration = "Configuration"
+
 -- save current selections of this workflow step
 -- used to restore settings after starting darktable
 function WorkflowStepCombobox:SavePreferenceValue()
   -- check, if there are any changes
   -- preferences are saved with english names and values
   -- user interfase uses translated names and values
-
-  -- save any changes of this combobox value
-  local preferenceName = GetReverseTranslation(self.Label)
+  
+  -- save any changes of the configuration combobox value
+  local prefix = PreferencePresetName .. ":" .. PreferencePrefixConfiguration .. ":"
+  local preferenceName = prefix .. GetReverseTranslation(self.Label)
   local preferenceValue = dt.preferences.read(ModuleName, preferenceName, 'string')
-  local comboBoxValue = GetReverseTranslation(self.Widget.value)
+  local configurationValue = GetReverseTranslation(self.Widget.value)
 
-  if (preferenceValue ~= comboBoxValue) then
-    dt.preferences.write(ModuleName, preferenceName, 'string', comboBoxValue)
+  if (preferenceValue ~= configurationValue) then
+    dt.preferences.write(ModuleName, preferenceName, 'string', configurationValue)
   end
 
-  -- save any changes of this basic value
-  local preferenceBasicName = preferenceName .. "Basic"
+  -- save any changes of the basic combobox value
+  local prefixBasic = PreferencePresetName .. ":" .. PreferencePrefixBasic .. ":"
+  local preferenceBasicName = prefixBasic .. GetReverseTranslation(self.Label)
   local preferenceBasicValue = dt.preferences.read(ModuleName, preferenceBasicName, 'string')
   local basicValue = GetReverseTranslation(self.WidgetBasic.value)
 
@@ -761,12 +813,13 @@ end
 function WorkflowStepCombobox:ReadPreferenceComboBoxValue()
   -- preferences are saved with english names and values
   -- user intercase uses translated names and values
-  local preferenceName = GetReverseTranslation(self.Label)
+  local prefix = PreferencePresetName .. ":" .. PreferencePrefixConfiguration .. ":"
+  local preferenceName = prefix .. GetReverseTranslation(self.Label)
   local preferenceValue = _(dt.preferences.read(ModuleName, preferenceName, 'string'))
 
   -- get combo box index of saved preference value
-  for i, comboBoxValue in ipairs(self.ComboBoxValues) do
-    if (preferenceValue == comboBoxValue) then
+  for i, configurationValue in ipairs(self.ComboBoxValues) do
+    if (preferenceValue == configurationValue) then
       if (self.Widget.value ~= i) then
         self.Widget.value = i
       end
@@ -795,11 +848,11 @@ end
 -- read saved selection value from darktable preferences
 -- used to restore settings after starting darktable
 function WorkflowStepCombobox:ReadPreferenceBasicValue()
-  -- preferences are saved with english names and values
+  -- preferences are saved separately for each user interface language
   -- user intercase uses translated names and values
-  local preferenceBasicName = GetReverseTranslation(self.Label) .. "Basic"
+  local prefixBasic = PreferencePresetName .. ":" .. PreferencePrefixBasic .. ":"
+  local preferenceBasicName = prefixBasic .. GetReverseTranslation(self.Label)
   local preferenceBasicValue = _(dt.preferences.read(ModuleName, preferenceBasicName, 'string'))
-
   self:SetWidgetBasicValue(preferenceBasicValue)
 end
 
@@ -908,7 +961,7 @@ StepDynamicRangeSceneToDisplay = WorkflowStepCombobox:new():new
       OperationNameInternal = 'Filmic or Sigmoid',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 3,
-      Label = _dt("filmic rgb") .. ' / ' .. _dt("sigmoid"),
+      Label = _dtConcat({ "filmic rgb", ' / ', "sigmoid" }),
       Tooltip = _(
         "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others.")
     }
@@ -919,11 +972,11 @@ function StepDynamicRangeSceneToDisplay:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
-  self.filmicAutoTuneLevels = _dt("filmic") .. ' ' .. _dt("auto tune levels")
-  self.filmicHighlightReconstruction = _dt("filmic") .. ' + ' .. _dt("highlight reconstruction")
-  self.sigmoidColorPerChannel = _dt("sigmoid") .. ' ' .. _dt("per channel")
-  self.sigmoidColorRgbRatio = _dt("sigmoid") .. ' ' .. _dt("RGB ratio")
-  self.sigmoidAces100Preset = _dt("sigmoid") .. ' ' .. _dt("ACES 100-nit like")
+  self.filmicAutoTuneLevels = _dtConcat({ "filmic", ' ', "auto tune levels" })
+  self.filmicHighlightReconstruction = _dtConcat({ "filmic", ' + ', "highlight reconstruction" })
+  self.sigmoidColorPerChannel = _dtConcat({ "sigmoid", ' ', "per channel" })
+  self.sigmoidColorRgbRatio = _dtConcat({ "sigmoid", ' ', "RGB ratio" })
+  self.sigmoidAces100Preset = _dtConcat({ "sigmoid", ' ', "ACES 100-nit like" })
 
   self.ComboBoxValues =
   {
@@ -1066,7 +1119,7 @@ StepColorBalanceGlobalSaturation = WorkflowStepCombobox:new():new
       OperationNameInternal = 'colorbalancergb',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 7,
-      Label = _dt("color balance rgb") .. ' ' .. _dt("saturation"),
+      Label = _dtConcat({ "color balance rgb", ' ', "saturation" }),
       Tooltip = _("Adjust global saturation in color balance rgb module.")
     }
 
@@ -1113,7 +1166,7 @@ StepColorBalanceGlobalChroma = WorkflowStepCombobox:new():new
       OperationNameInternal = 'colorbalancergb',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 5,
-      Label = _dt("color balance rgb") .. ' ' .. _dt("chroma"),
+      Label = _dtConcat({ "color balance rgb", ' ', "chroma" }),
       Tooltip = _("Adjust global chroma in color balance rgb module.")
     }
 
@@ -1160,7 +1213,7 @@ StepColorBalanceRGBMasks = WorkflowStepCombobox:new():new
       OperationNameInternal = 'colorbalancergb',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
-      Label = _dt("color balance rgb") .. ' ' .. _dt("masks"),
+      Label = _dtConcat({ "color balance rgb", ' ', "masks" }),
       Tooltip = _(
         "Set auto pickers of the module mask and peak white and gray luminance value to normalize the power setting in the 4 ways tab.")
     }
@@ -1171,7 +1224,7 @@ function StepColorBalanceRGBMasks:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
-  self.WidgetDefaultBasicValue = 3 -- enable instead of reset
+  self.WidgetBasicDefaultValue = 3 -- enable instead of reset
 
   self.ComboBoxValues =
   {
@@ -1276,13 +1329,13 @@ function StepContrastEqualizer:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
-  self.clarity010 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.10"
-  self.clarity025 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.25"
-  self.clarity050 = _dt("clarity") .. ', ' .. _dt("mix") .. ' ' .. "0.50"
-  
-  self.denoise010 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.10"
-  self.denoise025 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.25"
-  self.denoise050 = _dt("denoise & sharpen") .. ', ' .. _dt("mix") .. ' ' .. "0.50"
+  self.clarity010 = _dtConcat({ "clarity", ', ', "mix", ' ', "0.10" })
+  self.clarity025 = _dtConcat({ "clarity", ', ', "mix", ' ', "0.25" })
+  self.clarity050 = _dtConcat({ "clarity", ', ', "mix", ' ', "0.50" })
+
+  self.denoise010 = _dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.10" })
+  self.denoise025 = _dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.25" })
+  self.denoise050 = _dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.50" })
 
   self.ComboBoxValues =
   {
@@ -1361,18 +1414,34 @@ function StepDiffuseOrSharpen:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
-  self.ComboBoxValues =
-  {
-    _("unchanged"),
-    _dt("dehaze"),
-    _dt("denoise: coarse"),
-    _dt("denoise: fine"),
-    _dt("denoise: medium"),
-    _dt("lens deblur: medium"),
-    _dt("local contrast"),
-    _dt("sharpen demosaicing: AA filter"),
-    _dt("sharpness")
-  }
+  -- workaround for dt4.2
+  if (CheckDarktable42()) then
+    self.ComboBoxValues =
+    {
+      _("unchanged"),
+      _dt("dehaze"),
+      _dt("denoise: coarse"),
+      _dt("denoise: fine"),
+      _dt("denoise: medium"),
+      _dt("lens deblur: medium"),
+      _dt("add local contrast"),
+      _dt("sharpen demosaicing (AA filter)"),
+      _dt("fast sharpness")
+    }
+  else
+    self.ComboBoxValues =
+    {
+      _("unchanged"),
+      _dt("dehaze"),
+      _dt("denoise: coarse"),
+      _dt("denoise: fine"),
+      _dt("denoise: medium"),
+      _dt("lens deblur: medium"),
+      _dt("local contrast"),
+      _dt("sharpen demosaicing: AA filter"),
+      _dt("sharpness")
+    }
+  end
 
   self.Widget = dt.new_widget('combobox')
       {
@@ -1406,7 +1475,7 @@ StepToneEqualizerMask = WorkflowStepCombobox:new():new
       OperationNameInternal = 'toneequal',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 4,
-      Label = _dt("tone equalizer") .. ' ' .. _dt("masking"),
+      Label = _dtConcat({ "tone equalizer", ' ', "masking" }),
       Tooltip = _(
         "Apply automatic mask contrast and exposure compensation. Auto adjust the contrast and average exposure.")
     }
@@ -1821,7 +1890,7 @@ StepColorCalibrationIlluminant = WorkflowStepCombobox:new():new
 
       -- see EnableDefaultStepConfiguation() override
       WidgetDefaultStepConfiguationValue = nil,
-      Label = _dt("color calibration") .. ' ' .. _dt("illuminant"),
+      Label = _dtConcat({ "color calibration", ' ', "illuminant" }),
       Tooltip = _(
         "Perform color space corrections in color calibration module. Select the illuminant. The type of illuminant assumed to have lit the scene. By default unchanged for the legacy workflow.")
     }
@@ -1914,7 +1983,7 @@ StepColorCalibrationAdaptation = WorkflowStepCombobox:new():new
       OperationNameInternal = 'channelmixerrgb',
       WidgetDisableStepConfiguationValue = 1,
       WidgetDefaultStepConfiguationValue = 3,
-      Label = _dt("color calibration") .. ' ' .. _dt("adaptation"),
+      Label = _dtConcat({ "color calibration", ' ', "adaptation" }),
       Tooltip = _(
         "Perform color space corrections in color calibration module. Select the adaptation. The working color space in which the module will perform its chromatic adaptation transform and channel mixing.")
     }
@@ -2195,7 +2264,7 @@ StepTimeout = WorkflowStepCombobox:new():new
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
       WidgetDisableStepConfiguationValue = 2,
-      WidgetDefaultStepConfiguationValue = 2,
+      WidgetDefaultStepConfiguationValue = 3,
       Label = _("timeout value"),
       Tooltip = _(
         "Some calculations take a certain amount of time. Depending on the hardware equipment also longer.This script waits and attempts to detect timeouts. If steps take much longer than expected, those steps will be aborted. You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status).")
