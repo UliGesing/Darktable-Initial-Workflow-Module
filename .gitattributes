@@ -1,8 +1,4 @@
-.gitattributes export-ignore
-.gitignore export-ignore
+Release export-ignore 
 TestFlag.txt export-ignore
-TestCustomCode.lua export-ignore
 main.lqa export-ignore
-InitialWorkflowModuleExtracted.po export-ignore
 *.po~ export-ignore
-GetTextExtractMessages.sh export-ignore

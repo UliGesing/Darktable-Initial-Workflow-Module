@@ -1,6 +1,9 @@
 # gettext backup file
 *.po~
 
+# Release folder
+Release
+
 # lokalize configuration
 main.lqa
 
