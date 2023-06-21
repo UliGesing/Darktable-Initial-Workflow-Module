@@ -29,7 +29,7 @@ rsync -rtv --delete --delete-excluded\
 
 
 # create git archive
-git archive --format=zip --output=$BaseFolder/Sources.zip HEAD
+git archive --format=zip --output=$BaseFolder/Sources.zip development
 
 # create release archive
 cd $BaseFolder
