@@ -1,19 +1,21 @@
 #!/bin/bash
 
-# create a release archive to be released on GitHub
-
 # archive is created in a separate folder
 BaseFolder=./Release
 
-# update gettext translation files
+echo -e "=================================================="
+echo -e "create a release archive and a git sources archive"
+echo -e "=================================================="
+
+echo -e "\nupdate gettext translation files"
 ./GetTextExtractMessages.sh
 
-# empty current Release folder recursively
+echo -e "\nempty current Release folder recursively"
 rm $BaseFolder/* -r -d -f
 
-# copy files using rsync
+echo -e "\ncopy files using rsync"
 # exclude files that are relevant for development only
-rsync -rtv --delete --delete-excluded\
+rsync -rtq --delete --delete-excluded\
  --exclude=Release/\
  --exclude=.git/\
  --exclude=*.po\
@@ -28,9 +30,11 @@ rsync -rtv --delete --delete-excluded\
  ./ $BaseFolder/InitialWorkflowModule
 
 
-# create git archive
-git archive --format=zip --output=$BaseFolder/Sources.zip development
+echo -e "\ncreate git archive"
+stashName=`git stash create`;
+git archive --format=zip --output=$BaseFolder/Sources.zip $stashName
+git gc --prune=now
 
-# create release archive
+echo -e "\ncreate release archive"
 cd $BaseFolder
-zip -r InitialWorkflowModule.zip InitialWorkflowModule/
+zip -rq InitialWorkflowModule.zip InitialWorkflowModule/
