@@ -1,4 +1,5 @@
 Release export-ignore 
 TestFlag.txt export-ignore
 main.lqa export-ignore
+InitialWorkflowModuleExtracted.po export-ignore
 *.po~ export-ignore
