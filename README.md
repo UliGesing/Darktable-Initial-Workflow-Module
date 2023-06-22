@@ -26,7 +26,11 @@
 
 ### Download Initial-Workflow-Script
 
-- Download the newest release archive from https://github.com/UliGesing/Darktable-Initial-Workflow-Module/releases. Extract the script archive and all contained folders to your darktable lua script example folder. Some examples and contributed scripts come with your darktable lua installation. The initial module script can be installed at the same place. After that, you have to integrate it into darktable (more precisely in the named luarc file), using one of the following methods.
+- Download the newest release archive <code>InitialWorkflowModule.zip</code> from https://github.com/UliGesing/Darktable-Initial-Workflow-Module/releases. Extract the release archive and all contained folders to your darktable lua script example folder. Some examples and contributed scripts come with your darktable lua installation. The initial module script can be installed at the same place. After that, you have to integrate it into darktable (more precisely in the named luarc file), using one of the following methods.
+
+- After installation, your folder structure could look like this:
+
+>><img src="ReadmeImages/ScreenshotInstallationFolder.png" width=250>
 
 - lua script folders on Linux: <br><code>/home/[user_name]/.config/darktable/lua/examples</code>
 
@@ -40,6 +44,10 @@
 - edit your luarc file to activate the script manager. The luarc file should contain the following line of code. Restart darktable and use darktable script manager to start the script, see https://docs.darktable.org/lua/stable/lua.scripts.manual/scripts/tools/script_manager/ for details
 
 - in luarc:<br><code>require "tools/script_manager"</code>
+
+- start it from darktable script manager examples:
+
+>><img src="ReadmeImages/ScreenshotInstallationScriptManager.png" width=250>
 
 ### Installation method 2: Require from luarc directly
 
@@ -112,7 +120,7 @@ require "InitialWorkflowModule"</code>
 
 ### Add new or modify workflow steps
 
-- You can easily customize steps or add new ones. See "IMPLEMENTATION OF WORKFLOW STEPS" within the module file.
+- To modify the script, clone the whole repository or download Source.zip archive. You can easily customize steps or add new ones. See "IMPLEMENTATION OF WORKFLOW STEPS" within the module file.
 
 - All steps are derived from a base class to offer common methods. You can easily customize steps or add new ones: Just copy an existing class and adapt the label, tooltip and function accordingly. Copy and adapt Constructor, Init and Run functions. Don't forget to customize the name of the class as well. Use the new class name for Constructor, Init and Run functions.
 

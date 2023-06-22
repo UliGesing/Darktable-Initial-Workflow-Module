@@ -1,8 +1,18 @@
 # gettext backup file
 *.po~
 
+# Release folder
+Release
+
 # lokalize configuration
 main.lqa
+
+# module test flag 
+TestFlag*.txt
+
+# auto generated gettext file
+InitialWorkflowModuleExtracted.po
+
 
 # Compiled Lua sources
 luac.out
@@ -44,5 +54,3 @@ luac.out
 *.i*86
 *.x86_64
 *.hex
-
-TestFlag*.txt
