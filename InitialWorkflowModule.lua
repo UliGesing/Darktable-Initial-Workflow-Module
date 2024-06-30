@@ -2105,7 +2105,7 @@ StepWhiteBalance = WorkflowStepConfiguration:new():new
 -- keep value unchanged, if using legacy workflow
 -- depends on darktable preference settings
 function StepWhiteBalance:EnableDefaultStepConfiguation()
-  self.Widget.value = CheckDarktableModernWorkflowPreference() and 2 or 1
+  self.Widget.value = CheckDarktableModernWorkflowPreference() and 6 or 1
 end
 
 table.insert(WorkflowSteps, StepWhiteBalance)
@@ -2120,7 +2120,8 @@ function StepWhiteBalance:Init()
     _dt("as shot"),
     _dt("from image area"),
     _dt("user modified"),
-    _dt("camera reference")
+    _dt("camera reference"),
+    _dt("as shot to reference")
   }
 
   self.Widget = dt.new_widget('combobox')

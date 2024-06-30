@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-17 16:31+0200\n"
+"POT-Creation-Date: 2024-06-30 19:48+0200\n"
 "PO-Revision-Date: 2023-05-18 14:20+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -132,32 +132,32 @@ msgid "module is already disabled, nothing to do"
 msgstr ""
 
 #: InitialWorkflowModule.lua:644 InitialWorkflowModule.lua:651
-#: InitialWorkflowModule.lua:2846 InitialWorkflowModule.lua:2861
-#: InitialWorkflowModule.lua:2874 InitialWorkflowModule.lua:2891
+#: InitialWorkflowModule.lua:2847 InitialWorkflowModule.lua:2862
+#: InitialWorkflowModule.lua:2875 InitialWorkflowModule.lua:2892
 msgid "default"
 msgstr ""
 
 #: InitialWorkflowModule.lua:644 InitialWorkflowModule.lua:678
 #: InitialWorkflowModule.lua:709 InitialWorkflowModule.lua:741
 #: InitialWorkflowModule.lua:1030 InitialWorkflowModule.lua:1838
-#: InitialWorkflowModule.lua:2861
+#: InitialWorkflowModule.lua:2862
 msgid "ignore"
 msgstr ""
 
 #: InitialWorkflowModule.lua:644 InitialWorkflowModule.lua:678
 #: InitialWorkflowModule.lua:720 InitialWorkflowModule.lua:747
-#: InitialWorkflowModule.lua:2702 InitialWorkflowModule.lua:2861
+#: InitialWorkflowModule.lua:2703 InitialWorkflowModule.lua:2862
 msgid "enable"
 msgstr ""
 
 #: InitialWorkflowModule.lua:644 InitialWorkflowModule.lua:725
-#: InitialWorkflowModule.lua:2861
+#: InitialWorkflowModule.lua:2862
 msgid "reset"
 msgstr ""
 
 #: InitialWorkflowModule.lua:644 InitialWorkflowModule.lua:715
 #: InitialWorkflowModule.lua:1034 InitialWorkflowModule.lua:1842
-#: InitialWorkflowModule.lua:2861
+#: InitialWorkflowModule.lua:2862
 msgid "disable"
 msgstr ""
 
@@ -203,8 +203,8 @@ msgstr ""
 #: InitialWorkflowModule.lua:1902 InitialWorkflowModule.lua:1933
 #: InitialWorkflowModule.lua:1985 InitialWorkflowModule.lua:2010
 #: InitialWorkflowModule.lua:2049 InitialWorkflowModule.lua:2074
-#: InitialWorkflowModule.lua:2119 InitialWorkflowModule.lua:2143
-#: InitialWorkflowModule.lua:2876 InitialWorkflowModule.lua:2891
+#: InitialWorkflowModule.lua:2119 InitialWorkflowModule.lua:2144
+#: InitialWorkflowModule.lua:2877 InitialWorkflowModule.lua:2892
 msgid "unchanged"
 msgstr ""
 
@@ -420,12 +420,12 @@ msgid ""
 "channels and/or neighboring pixels."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2082 InitialWorkflowModule.lua:2151
+#: InitialWorkflowModule.lua:2082 InitialWorkflowModule.lua:2152
 #, lua-format
 msgid "current value = %s"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2085 InitialWorkflowModule.lua:2154
+#: InitialWorkflowModule.lua:2085 InitialWorkflowModule.lua:2155
 #, lua-format
 msgid "nothing to do, value already = %s"
 msgstr ""
@@ -440,29 +440,29 @@ msgid ""
 "default unchanged for the legacy workflow."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2166
+#: InitialWorkflowModule.lua:2167
 msgid "discard complete history"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2167
+#: InitialWorkflowModule.lua:2168
 msgid "Reset all modules of the whole pixelpipe and discard complete history."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2215
+#: InitialWorkflowModule.lua:2216
 msgid "show modules"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2217
+#: InitialWorkflowModule.lua:2218
 msgid ""
 "Show darkroom modules for enabled workflow steps during execution of this "
 "initial workflow. This makes the changes easier to understand."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2249
+#: InitialWorkflowModule.lua:2250
 msgid "timeout value"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2251
+#: InitialWorkflowModule.lua:2252
 msgid ""
 "Some calculations take a certain amount of time. Depending on the hardware "
 "equipment also longer.This script waits and attempts to detect timeouts. If "
@@ -472,94 +472,94 @@ msgid ""
 "(loading an image) or a fraction (querying a status)."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2280
+#: InitialWorkflowModule.lua:2281
 #, lua-format
 msgid "step timeout = %s ms"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2300
+#: InitialWorkflowModule.lua:2301
 msgid "process workflow steps"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2338
+#: InitialWorkflowModule.lua:2339
 msgid "process selected images"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2343
+#: InitialWorkflowModule.lua:2344
 msgid "no image selected"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2354
+#: InitialWorkflowModule.lua:2355
 msgid "switch to darkroom view"
-msgstr ""
-
-#: InitialWorkflowModule.lua:2368
-#, lua-format
-msgid "load image number %s of %s"
 msgstr ""
 
 #: InitialWorkflowModule.lua:2369
 #, lua-format
+msgid "load image number %s of %s"
+msgstr ""
+
+#: InitialWorkflowModule.lua:2370
+#, lua-format
 msgid "image file = %s"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2373
+#: InitialWorkflowModule.lua:2374
 msgid "load new image into darkroom view"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2384
+#: InitialWorkflowModule.lua:2385
 msgid "switch to lighttable view"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2402
+#: InitialWorkflowModule.lua:2403
 msgid "run"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2404
+#: InitialWorkflowModule.lua:2405
 msgid ""
 "Perform all configured steps in darkroom for an initial workflow. Perform "
 "the steps from bottom to top along the pixel pipeline."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2442
+#: InitialWorkflowModule.lua:2443
 msgid ""
 "Activate the module to rotate the image and adjust the perspective. Enabled "
 "in darkroom view."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2468
+#: InitialWorkflowModule.lua:2469
 msgid "Activate the module to crop the image. Enabled in darkroom view."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2495
+#: InitialWorkflowModule.lua:2496
 msgid ""
 "Show exposure module to adjust the exposure until the mid-tones are clear "
 "enough. Enabled in darkroom view."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2635 InitialWorkflowModule.lua:2798
+#: InitialWorkflowModule.lua:2636 InitialWorkflowModule.lua:2799
 msgid "module tests must be started from darkroom view"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2641
+#: InitialWorkflowModule.lua:2642
 msgid "module test started"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2761
+#: InitialWorkflowModule.lua:2762
 msgid "module test finished"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2776
+#: InitialWorkflowModule.lua:2777
 msgid ""
 "Execute module tests. Used during development and deployment. Enabled in "
 "darkroom view."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2791
+#: InitialWorkflowModule.lua:2792
 msgid "Custom Code"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2793
+#: InitialWorkflowModule.lua:2794
 msgid ""
 "Execute code from TestCustomCode.lua: This file contains some custom debug "
 "code. It can be changed without restarting darktable. Just edit, save and "
@@ -567,12 +567,12 @@ msgid ""
 "action commands. Enabled in darkroom view."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2805
+#: InitialWorkflowModule.lua:2806
 #, lua-format
 msgid "module test file not found: %s"
 msgstr ""
 
-#: InitialWorkflowModule.lua:2860
+#: InitialWorkflowModule.lua:2861
 msgid ""
 "Configure all basic settings of this inital workflow module: a) Select "
 "default value. b) Ignore this step / module and do nothing at all. c) Enable "
@@ -581,22 +581,22 @@ msgid ""
 "unchanged."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2890
+#: InitialWorkflowModule.lua:2891
 msgid ""
 "Configure all settings of this inital workflow module: Keep all modules "
 "unchanged or enable all default configurations. These configurations are "
 "set, if you choose 'reset' or 'enable' as basic setting."
 msgstr ""
 
-#: InitialWorkflowModule.lua:2913
+#: InitialWorkflowModule.lua:2914
 msgid "insert test button widget"
 msgstr ""
 
-#: InitialWorkflowModule.lua:3019
+#: InitialWorkflowModule.lua:3020
 #, lua-format
 msgid "view changed to %s"
 msgstr ""
 
-#: InitialWorkflowModule.lua:3030
+#: InitialWorkflowModule.lua:3031
 msgid "create widget in lighttable and darkroom panels"
 msgstr ""
