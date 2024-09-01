@@ -153,6 +153,13 @@ local Env =
   InstallModuleDone = false,
 }
 
+local WidgetStack =
+{
+  Modules = 1,
+  Settings = 2,
+  Stack = dt.new_widget("stack"){},
+}
+
 ---------------------------------------------------------------
 -- some helper methods to log information messages
 
@@ -631,10 +638,10 @@ end
 WorkflowStepConfiguration = WorkflowStep:new():new
     {
       OperationNameInternal = nil,
-
+      WidgetStackValue = nil,
       ConfigurationValues = nil,
       WidgetUnchangedStepConfigurationValue = nil,
-      WidgetDefaultStepConfiguationValue = nil
+      WidgetDefaultStepConfiguationValue = nil,
     }
 
 -- create default basic widget of most workflow steps
@@ -914,6 +921,7 @@ StepCompressHistoryStack = WorkflowStepConfiguration:new():new
     {
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
+      WidgetStackValue = WidgetStack.Settings,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
       Label = _dt("compress history stack"),
@@ -956,6 +964,7 @@ StepDynamicRangeSceneToDisplay = WorkflowStepConfiguration:new():new
     {
       -- this step refers to different modules
       OperationNameInternal = 'Filmic or Sigmoid',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 3,
       Label = _dtConcat({ "filmic rgb", ' / ', "sigmoid" }),
@@ -1113,6 +1122,7 @@ end
 StepColorBalanceGlobalSaturation = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'colorbalancergb',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 7,
       Label = _dtConcat({ "color balance rgb", ' ', "saturation" }),
@@ -1159,6 +1169,7 @@ end
 StepColorBalanceGlobalChroma = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'colorbalancergb',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 5,
       Label = _dtConcat({ "color balance rgb", ' ', "chroma" }),
@@ -1205,6 +1216,7 @@ end
 StepColorBalanceRGBMasks = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'colorbalancergb',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
       Label = _dtConcat({ "color balance rgb", ' ', "masks" }),
@@ -1258,6 +1270,7 @@ end
 StepColorBalanceRGB = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'colorbalancergb',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 5,
       Label = _dt("color balance rgb"),
@@ -1308,6 +1321,7 @@ end
 StepContrastEqualizer = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'atrous',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
       Label = _dt("contrast equalizer"),
@@ -1392,6 +1406,7 @@ end
 StepDiffuseOrSharpen = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'diffuse',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 8,
       Label = _dt("diffuse or sharpen"),
@@ -1463,6 +1478,7 @@ end
 StepToneEqualizerMask = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'toneequal',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 4,
       Label = _dtConcat({ "tone equalizer", ' ', "masking" }),
@@ -1534,6 +1550,7 @@ end
 StepToneEqualizer = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'toneequal',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 1,
       Label = _dt("tone equalizer"),
@@ -1602,6 +1619,7 @@ end
 StepExposureCorrection = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'exposure',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 3,
       Label = _dt("exposure"),
@@ -1660,6 +1678,7 @@ end
 StepLensCorrection = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'lens',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
       Label = _dt("lens correction"),
@@ -1734,6 +1753,7 @@ end
 StepDenoiseProfiled = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'denoiseprofile',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 1,
       Label = _dt("denoise (profiled)"),
@@ -1776,6 +1796,7 @@ end
 StepChromaticAberrations = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'cacorrect',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
       Label = _dt("chromatic aberrations"),
@@ -1870,6 +1891,7 @@ end
 StepColorCalibrationIlluminant = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'channelmixerrgb',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
 
       -- see EnableDefaultStepConfiguation() override
@@ -1965,6 +1987,7 @@ end
 StepColorCalibrationAdaptation = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'channelmixerrgb',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 3,
       Label = _dtConcat({ "color calibration", ' ', "adaptation" }),
@@ -2027,6 +2050,7 @@ end
 StepHighlightReconstruction = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'highlights',
+      WidgetStackValue = WidgetStack.Modules,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 2,
       Label = _dt("highlight reconstruction"),
@@ -2092,6 +2116,7 @@ StepWhiteBalance = WorkflowStepConfiguration:new():new
     {
       OperationNameInternal = 'temperature',
       WidgetUnchangedStepConfigurationValue = 1,
+      WidgetStackValue = WidgetStack.Modules,
 
       -- see EnableDefaultStepConfiguation() override
       WidgetDefaultStepConfiguationValue = nil,
@@ -2162,6 +2187,7 @@ StepResetModuleHistory = WorkflowStepConfiguration:new():new
     {
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
+      WidgetStackValue = WidgetStack.Settings,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 1,
       Label = _("discard complete history"),
@@ -2211,6 +2237,7 @@ StepShowModulesDuringExecution = WorkflowStepConfiguration:new():new
     {
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
+      WidgetStackValue = WidgetStack.Settings,
       WidgetUnchangedStepConfigurationValue = 1,
       WidgetDefaultStepConfiguationValue = 1,
       Label = _("show modules"),
@@ -2245,6 +2272,7 @@ StepTimeout = WorkflowStepConfiguration:new():new
     {
       -- operation = nil: ignore this module during module reset
       OperationNameInternal = nil,
+      WidgetStackValue = WidgetStack.Settings,
       WidgetUnchangedStepConfigurationValue = 2,
       WidgetDefaultStepConfiguationValue = 3,
       Label = _("timeout value"),
@@ -2396,6 +2424,8 @@ WorkflowStepButton = WorkflowStep:new():new
     {
     }
 
+---------------------------------------------------------------
+
 ButtonRunSelectedSteps = WorkflowStepButton:new():new
     {
       Widget = dt.new_widget('button')
@@ -2421,16 +2451,41 @@ table.insert(WorkflowButtons, ButtonRunSelectedSteps)
 
 ---------------------------------------------------------------
 
--- select default basic configuration for each step
--- called via module reset control
-local function SetAllDefaultModuleConfigurations()
-  for i, step in ipairs(WorkflowSteps) do
-    if (step ~= StepTimeout) then
-      step:EnableDefaultBasicConfiguation()
-      step:EnableDefaultStepConfiguation()
-    end
-  end
-end
+ButtonShowWidgetStackModules = WorkflowStepButton:new():new
+    {
+      Widget = dt.new_widget('button')
+          {
+            label = _("show modules"),
+            tooltip = wordwrap(_(
+              "Show the subpage with the configuration of the modules.")),
+
+            clicked_callback = function()
+              WidgetStack.Stack.active = WidgetStack.Modules
+              return
+            end
+          }
+    }
+
+table.insert(WorkflowButtons, ButtonShowWidgetStackModules)
+
+---------------------------------------------------------------
+
+ButtonShowWidgetStackSettings = WorkflowStepButton:new():new
+    {
+      Widget = dt.new_widget('button')
+          {
+            label = _("show settings"),
+            tooltip = wordwrap(_(
+              "Show the subpage with common settings.")),
+
+            clicked_callback = function()
+              WidgetStack.Stack.active = WidgetStack.Settings
+              return
+            end
+          }
+    }
+
+table.insert(WorkflowButtons, ButtonShowWidgetStackSettings)
 
 ---------------------------------------------------------------
 
@@ -2511,6 +2566,19 @@ function ButtonMidToneExposure:InitDependingOnCurrentView()
 end
 
 table.insert(WorkflowButtons, ButtonMidToneExposure)
+
+---------------------------------------------------------------
+
+-- select default basic configuration for each step
+-- called via module reset control
+local function SetAllDefaultModuleConfigurations()
+  for i, step in ipairs(WorkflowSteps) do
+    if (step ~= StepTimeout) then
+      step:EnableDefaultBasicConfiguation()
+      step:EnableDefaultStepConfiguation()
+    end
+  end
+end
 
 ---------------------------------------------------------------
 
@@ -2841,7 +2909,7 @@ AllStepsBasicWidget = dt.new_widget('combobox')
       changed_callback = function()
         local selection = AllStepsBasicWidget.value
 
-        if (selection ~= _dt("all")) then
+        if (selection ~= _dt("reset basic steps")) then
           for i, step in ipairs(WorkflowSteps) do
             if (step ~= StepTimeout) then
               if (selection == _("default")) then
@@ -2858,8 +2926,8 @@ AllStepsBasicWidget = dt.new_widget('combobox')
       end,
       label = ' ',
       tooltip = wordwrap(_(
-        "Configure all basic settings of this inital workflow module: a) Select default value. b) Ignore this step / module and do nothing at all. c) Enable corresponding module and set selected module configuration. d) Reset the module and set selected module configuration. e) Disable module and keep it unchanged.")),
-      table.unpack({ _dt("all"), _("default"), _("ignore"), _("enable"), _("reset"), _("disable") })
+        "All Modules and Settings: Configure all basic settings of this inital workflow module: a) Select default value. b) Ignore this step / module and do nothing at all. c) Enable corresponding module and set selected module configuration. d) Reset the module and set selected module configuration. e) Disable module and keep it unchanged.")),
+      table.unpack({ _dt("reset basic steps"), _("default"), _("ignore"), _("enable"), _("reset"), _("disable") })
     }
 
 local AllStepsConfigurationWidget
@@ -2869,7 +2937,7 @@ AllStepsConfigurationWidget = dt.new_widget('combobox')
       changed_callback = function()
         local selection = AllStepsConfigurationWidget.value
 
-        if (selection ~= _dt("all")) then
+        if (selection ~= _dt("reset configurations")) then
           for i, step in ipairs(WorkflowSteps) do
             if (step ~= StepTimeout) then
               if (selection == _("default")) then
@@ -2888,26 +2956,16 @@ AllStepsConfigurationWidget = dt.new_widget('combobox')
       end,
       label = ' ',
       tooltip = wordwrap(_(
-        "Configure all settings of this inital workflow module: Keep all modules unchanged or enable all default configurations. These configurations are set, if you choose 'reset' or 'enable' as basic setting.")),
-      table.unpack({ _dt("all"), _("default"), _("unchanged") })
+        "All Modules and Settings: Configure all settings of this inital workflow module: Keep all modules unchanged or enable all default configurations. These configurations are set, if you choose 'reset' or 'enable' as basic setting.")),
+      table.unpack({ _dt("reset configurations"), _("default"), _("unchanged") })
     }
 
 
 -- collect all widgets to be displayed within the module
+-- collect buttons and comboboxes (basic and configuration)
+-- the order in the GUI is the same as the order of declaration in this function.
 local function GetWidgets()
-  local widgets =
-  {
-    dt.new_widget('box') {
-      orientation = 'horizontal',
-
-      -- buttons to simplify some manual steps
-      ButtonEnableRotateAndPerspective.Widget,
-      ButtonEnableCrop.Widget,
-      ButtonMidToneExposure.Widget,
-    },
-
-    dt.new_widget('label') { label = ' ' },
-  }
+  local widgets = {}
 
   -- TEST button: Special buttons, used to perform module tests.
   if (ButtonModuleTest) then
@@ -2922,31 +2980,25 @@ local function GetWidgets()
     )
   end
 
-  -- collect step comboboxes (basic and configuration)
-  -- the order in the GUI is the same as the order of declaration in the code.
-  local labelWidgets = {}
-  local basicWidgets = {}
-  local comboBoxWidgets = {}
+  ----------------------------------------------------------
+  -- add buttons to simplify some manual steps
+  local buttonColumn1 = {}
+  local buttonColumn2 = {}
+  local buttonColumn3 = {}
 
-  -- add overall comboboxes to first row
-  table.insert(labelWidgets, ButtonRunSelectedSteps.Widget)
-  table.insert(labelWidgets, dt.new_widget('label') { label = ' ' })
-  table.insert(basicWidgets, AllStepsBasicWidget)
-  table.insert(basicWidgets, dt.new_widget('label') { label = ' ' })
-  table.insert(comboBoxWidgets, AllStepsConfigurationWidget)
-  table.insert(comboBoxWidgets, dt.new_widget('label') { label = ' ' })
+  -- add overall function buttons, first column
+  table.insert(buttonColumn1, ButtonEnableRotateAndPerspective.Widget)
+  table.insert(buttonColumn1, ButtonRunSelectedSteps.Widget)
+  table.insert(buttonColumn1, dt.new_widget('label') { label = ' ' })
 
-  -- add basic widgets and comboboxes
-  for i, step in ipairs(WorkflowSteps) do
-    table.insert(labelWidgets, step.WidgetLabel)
-    table.insert(basicWidgets, step.WidgetBasic)
-    table.insert(comboBoxWidgets, step.Widget)
-  end
+  -- ... second column
+  table.insert(buttonColumn2, ButtonEnableCrop.Widget)
+  table.insert(buttonColumn2, ButtonShowWidgetStackModules.Widget)
 
-  -- insert boxes, arranged as columns
-  -- first column: label widgets
-  -- second column: basic widgets (reset, enable, ignore...)
-  -- third column: step configuration combobox widgets
+  -- ... third column
+  table.insert(buttonColumn3, ButtonMidToneExposure.Widget)
+  table.insert(buttonColumn3, ButtonShowWidgetStackSettings.Widget)
+
   table.insert(widgets,
     dt.new_widget('box')
     {
@@ -2954,20 +3006,119 @@ local function GetWidgets()
 
       dt.new_widget('box') {
         orientation = 'vertical',
-        table.unpack(labelWidgets),
+        table.unpack(buttonColumn1),
       },
 
       dt.new_widget('box') {
         orientation = 'vertical',
-        table.unpack(basicWidgets),
+        table.unpack(buttonColumn2),
       },
 
       dt.new_widget('box') {
         orientation = 'vertical',
-        table.unpack(comboBoxWidgets),
+        table.unpack(buttonColumn3),
       },
     }
   )
+
+  ----------------------------------------------------------
+  -- add comboboxes to configure workflow steps
+
+  -- collect basic widgets and comboboxes, arranged as columns
+  -- first column: label widgets
+  -- second column: basic widgets (reset, enable, ignore...)
+  -- third column: step configuration combobox widgets
+
+  ----------------------------------------------------------
+  -- add workflow steps controls
+
+  local labelWidgetsModules = {}
+  local basicWidgetsModules = {}
+  local comboBoxWidgetsModules = {}
+
+  for i, step in ipairs(WorkflowSteps) do
+    if step.WidgetStackValue == WidgetStack.Modules then
+      table.insert(labelWidgetsModules, step.WidgetLabel)
+      table.insert(basicWidgetsModules, step.WidgetBasic)
+      table.insert(comboBoxWidgetsModules, step.Widget)
+    end
+  end
+
+  local boxModules = dt.new_widget('box')
+      {
+        orientation = 'horizontal',
+
+        dt.new_widget('box') {
+          orientation = 'vertical',
+          table.unpack(labelWidgetsModules),
+        },
+
+        dt.new_widget('box') {
+          orientation = 'vertical',
+          table.unpack(basicWidgetsModules),
+        },
+
+        dt.new_widget('box') {
+          orientation = 'vertical',
+          table.unpack(comboBoxWidgetsModules),
+        },
+      }
+
+  ----------------------------------------------------------
+  -- add setting controls
+
+  local labelWidgetsSettings = {}
+  local basicWidgetsSettings = {}
+  local comboBoxWidgetsSettings = {}
+
+  -- add comboboxes to configure or reset all configurations
+
+  table.insert(labelWidgetsSettings, dt.new_widget('label') { label = 'all modules + settings', halign = "start" })
+  table.insert(basicWidgetsSettings, AllStepsBasicWidget)
+  table.insert(comboBoxWidgetsSettings, AllStepsConfigurationWidget)
+
+  table.insert(labelWidgetsSettings, dt.new_widget('label') { label = ' ' })
+  table.insert(basicWidgetsSettings, dt.new_widget('label') { label = ' ' })
+  table.insert(comboBoxWidgetsSettings, dt.new_widget('label') { label = ' ' })
+
+  -- add setting controls
+
+  for i, step in ipairs(WorkflowSteps) do
+    if step.WidgetStackValue == WidgetStack.Settings then
+      table.insert(labelWidgetsSettings, step.WidgetLabel)
+      table.insert(basicWidgetsSettings, step.WidgetBasic)
+      table.insert(comboBoxWidgetsSettings, step.Widget)
+    end
+  end
+
+  local boxSettings = dt.new_widget('box')
+      {
+        orientation = 'horizontal',
+
+        dt.new_widget('box') {
+          orientation = 'vertical',
+          table.unpack(labelWidgetsSettings),
+        },
+
+        dt.new_widget('box') {
+          orientation = 'vertical',
+          table.unpack(basicWidgetsSettings),
+        },
+
+        dt.new_widget('box') {
+          orientation = 'vertical',
+          table.unpack(comboBoxWidgetsSettings),
+        },
+      }
+
+  ----------------------------------------------------------
+  -- create widget stack
+
+  WidgetStack.Stack[WidgetStack.Modules] = boxModules
+  WidgetStack.Stack[WidgetStack.Settings] = boxSettings
+  WidgetStack.Stack.active = WidgetStack.Modules
+
+  table.insert(widgets, WidgetStack.Stack)
 
   return widgets
 end
