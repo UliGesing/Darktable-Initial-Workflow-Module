@@ -157,7 +157,7 @@ local WidgetStack =
 {
   Modules = 1,
   Settings = 2,
-  Stack = dt.new_widget("stack"){},
+  Stack = dt.new_widget("stack") {},
 }
 
 ---------------------------------------------------------------
@@ -2323,10 +2323,19 @@ end
     ]]
 ---------------------------------------------------------------
 
+
+-- stop running thumbnail creation
+local function stop_job(job)
+  job.valid = false
+end
+
 -- process all configured workflow steps
 local function ProcessWorkflowSteps()
   LogInfo('==============================')
   LogInfo(_("process workflow steps"))
+
+  -- create a new progress_bar displayed in darktable.gui.libs.backgroundjobs
+  local job = dt.gui.create_job("process workflow steps", true, stop_job)
 
   ThreadSleep(StepTimeout:Value())
 
@@ -2335,11 +2344,35 @@ local function ProcessWorkflowSteps()
   for i = 1, #WorkflowSteps do
     local step = WorkflowSteps[#WorkflowSteps + 1 - i]
     LogCurrentStep = step.Label
+
+    -- execute workflow step
     step:Run()
+
+    -- sleep for a short moment to give stop_job callback function a chance to run
+    dt.control.sleep(10)
+
+    -- stop workflow if the cancel button of the progress bar is pressed
+    if not job.valid then
+      LogSummaryMessage(_("workflow canceled"))
+      break
+    end
+
+    -- stop workflow if darktable is shutting down
+    if dt.control.ending then
+      job.valid = false
+      LogSummaryMessage(_("workflow canceled - darktable shutting down"))
+      break
+    end
+
+    -- update progress_bar
+    job.percent = i / #WorkflowSteps
   end
 
   LogCurrentStep = ''
   ThreadSleep(StepTimeout:Value())
+
+  return not job.valid
+
 end
 
 -- process current image in darkroom view
@@ -2406,7 +2439,12 @@ local function ProcessSelectedImagesInLighttableView()
       end)
     end
 
-    ProcessWorkflowSteps()
+    local workflowCanceled = ProcessWorkflowSteps()
+
+    if workflowCanceled then
+      break
+    end
+
   end
 
   -- switch to lighttable view
@@ -2690,9 +2728,12 @@ local function ModuleTestIterateConfigurationValues()
     LogMajorMax = configurationValuesMax
     LogMajorNr = configurationValue
     LogCurrentStep = ''
+
     ProcessWorkflowSteps()
+
     moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename,
       '_' .. moduleTestBasicSetting .. '_' .. configurationValue, moduleTestXmpModified)
+
   end
 end
 
@@ -2738,6 +2779,7 @@ local function ModuleTest()
   -- basic widgets are configured to 'reset' modules first
   moduleTestBasicSetting = 'Default'
   SetAllDefaultModuleConfigurations()
+
   ProcessWorkflowSteps()
 
   -- copy xmp file (with 'default' history stack)
@@ -2818,7 +2860,9 @@ local function ModuleTest()
     LogMajorMax = basicValuesMax
     LogMajorNr = basicValue
     LogCurrentStep = ''
+    
     ProcessWorkflowSteps()
+    
     moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename,
       '_BasicIterate_' .. basicValue, moduleTestXmpModified)
   end
