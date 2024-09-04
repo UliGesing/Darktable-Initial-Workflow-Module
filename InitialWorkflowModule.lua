@@ -202,24 +202,16 @@ local function LogSummary()
   LogInfo('==============================')
 
   if (#LogSummaryMessages == 0) then
-    LogInfo(_("OK - script run without errors - there are no important messages and no timeouts"))
+    LogInfo(_("OK - script run without errors"))
+    LogScreen(_("initial workflow done"))
   else
-    LogInfo(_("THERE ARE IMPORTANT MESSAGES:"))
-
     for index, message in ipairs(LogSummaryMessages) do
       LogInfo(message)
+      LogScreen(_(message))
     end
-
-    LogInfo(_("if you detect timeouts, you can increase the timeout value and try again"))
   end
 
-  if (#LogSummaryMessages == 0) then
-    LogScreen(_("initial workflow - image processing has been completed"))
-  else
-    LogScreen(_("THERE ARE IMPORTANT MESSAGES - see log for details / increase timeout value"))
-  end
-
-  LogInfo(_("initial workflow - image processing has been completed"))
+  LogInfo(_("initial workflow done"))
   LogInfo('==============================')
 end
 
@@ -370,7 +362,7 @@ function WaitForEventBase:Do(embeddedFunction)
     duration = duration + period
 
     if (duration >= durationMax) then
-      local timeoutMessage = string.format(_("timeout after %d ms waiting for event %s"), durationMax, self.EventType)
+      local timeoutMessage = string.format(_("timeout after %d ms waiting for event %s - increase timeout setting and try again"), durationMax, self.EventType)
       LogInfo(timeoutMessage)
       LogSummaryMessage(timeoutMessage)
       break
@@ -2344,6 +2336,8 @@ local function ProcessWorkflowSteps()
   for i = 1, #WorkflowSteps do
     local step = WorkflowSteps[#WorkflowSteps + 1 - i]
     LogCurrentStep = step.Label
+
+    LogScreen(step.Label) -- instead of dt.print()
 
     -- execute workflow step
     step:Run()
