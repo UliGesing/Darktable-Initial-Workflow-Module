@@ -362,7 +362,9 @@ function WaitForEventBase:Do(embeddedFunction)
     duration = duration + period
 
     if (duration >= durationMax) then
-      local timeoutMessage = string.format(_("timeout after %d ms waiting for event %s - increase timeout setting and try again"), durationMax, self.EventType)
+      local timeoutMessage = string.format(
+        _("timeout after %d ms waiting for event %s - increase timeout setting and try again"), durationMax, self
+        .EventType)
       LogInfo(timeoutMessage)
       LogSummaryMessage(timeoutMessage)
       break
@@ -925,7 +927,7 @@ table.insert(WorkflowSteps, StepCompressHistoryStack)
 
 function StepCompressHistoryStack:Init()
   self:CreateLabelWidget()
-  self:CreateSimpleBasicWidget()
+  self:CreateEmptyBasicWidget()
 
   self.ConfigurationValues = { _dt("no"), _dt("yes") }
   self.Widget = dt.new_widget('combobox')
@@ -1759,7 +1761,7 @@ function StepDenoiseProfiled:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
-  self.ConfigurationValues = { '-' }
+  self.ConfigurationValues = { _("unchanged") }
 
   self.Widget = dt.new_widget('combobox')
       {
@@ -2190,7 +2192,7 @@ table.insert(WorkflowSteps, StepResetModuleHistory)
 
 function StepResetModuleHistory:Init()
   self:CreateLabelWidget()
-  self:CreateSimpleBasicWidget()
+  self:CreateEmptyBasicWidget()
 
   self.ConfigurationValues =
   {
@@ -2348,7 +2350,7 @@ local function ProcessWorkflowSteps()
 
     -- stop workflow if the cancel button of the progress bar is pressed
     workflowCanceled = not job.valid
-    if  workflowCanceled then
+    if workflowCanceled then
       LogSummaryMessage(_("workflow canceled"))
       break
     end
@@ -2373,7 +2375,6 @@ local function ProcessWorkflowSteps()
   end
 
   return workflowCanceled
-
 end
 
 -- process current image in darkroom view
@@ -2445,7 +2446,6 @@ local function ProcessSelectedImagesInLighttableView()
     if workflowCanceled then
       break
     end
-
   end
 
   -- switch to lighttable view
@@ -2734,7 +2734,6 @@ local function ModuleTestIterateConfigurationValues()
 
     moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename,
       '_' .. moduleTestBasicSetting .. '_' .. configurationValue, moduleTestXmpModified)
-
   end
 end
 
@@ -2861,9 +2860,9 @@ local function ModuleTest()
     LogMajorMax = basicValuesMax
     LogMajorNr = basicValue
     LogCurrentStep = ''
-    
+
     ProcessWorkflowSteps()
-    
+
     moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename,
       '_BasicIterate_' .. basicValue, moduleTestXmpModified)
   end
@@ -2947,72 +2946,98 @@ end
     ]]
 ---------------------------------------------------------------
 
-local AllStepsBasicWidget
-
-AllStepsBasicWidget = dt.new_widget('combobox')
+local ResetAllCommonMainSettingsWidget
+ResetAllCommonMainSettingsWidget = dt.new_widget('combobox')
     {
       changed_callback = function()
-        local selection = AllStepsBasicWidget.value
+        local selection = ResetAllCommonMainSettingsWidget.value
 
-        if (selection ~= _dt("reset basic steps")) then
+        if (selection ~= _dt("all common settings")) then
           for i, step in ipairs(WorkflowSteps) do
-            if (step ~= StepTimeout) then
-              if (selection == _("default")) then
-                step:EnableDefaultBasicConfiguation()
-              else
-                step:SetWidgetBasicValue(selection)
+            if step.WidgetStackValue == WidgetStack.Settings then
+              if (step ~= StepTimeout) then
+                if (selection == _("default")) then
+                  LogInfo(step.Label)
+                  step:EnableDefaultStepConfiguation()
+                end
               end
             end
           end
 
-          -- reset to 'all steps...'
-          AllStepsBasicWidget.value = 1
+          -- reset to default selection
+          ResetAllCommonMainSettingsWidget.value = 1
         end
       end,
       label = ' ',
       tooltip = wordwrap(_(
-        "All Modules and Settings: Configure all basic settings of this inital workflow module: a) Select default value. b) Ignore this step / module and do nothing at all. c) Enable corresponding module and set selected module configuration. d) Reset the module and set selected module configuration. e) Disable module and keep it unchanged.")),
-      table.unpack({ _dt("reset basic steps"), _("default"), _("ignore"), _("enable"), _("reset"), _("disable") })
+        "Configure all following common settings: Reset all steps to default configurations. These settings are applied during script run, if corresponding step is enabled.")),
+      table.unpack({ _dt("all common settings"), _("default") })
     }
 
-local AllStepsConfigurationWidget
-
-AllStepsConfigurationWidget = dt.new_widget('combobox')
+local ResetAllModuleBasicSettingsWidget
+ResetAllModuleBasicSettingsWidget = dt.new_widget('combobox')
     {
       changed_callback = function()
-        local selection = AllStepsConfigurationWidget.value
+        local selection = ResetAllModuleBasicSettingsWidget.value
 
-        if (selection ~= _dt("reset configurations")) then
+        if (selection ~= _dt("all module basics")) then
           for i, step in ipairs(WorkflowSteps) do
-            if (step ~= StepTimeout) then
-              if (selection == _("default")) then
-                step:EnableDefaultStepConfiguation()
-              elseif (selection == _("unchanged")) then
-                -- choose 'unchanged' step setting
-                -- configuration keeps unchanged during script execution
-                step.Widget.value = step.WidgetUnchangedStepConfigurationValue
+            if step.WidgetStackValue == WidgetStack.Modules then
+              if (step ~= StepTimeout) then
+                if (selection == _("default")) then
+                  step:EnableDefaultBasicConfiguation()
+                else
+                  step:SetWidgetBasicValue(selection)
+                end
               end
             end
           end
 
-          -- reset to 'all steps...'
-          AllStepsConfigurationWidget.value = 1
+          -- reset to default selection
+          ResetAllModuleBasicSettingsWidget.value = 1
         end
       end,
       label = ' ',
       tooltip = wordwrap(_(
-        "All Modules and Settings: Configure all settings of this inital workflow module: Keep all modules unchanged or enable all default configurations. These configurations are set, if you choose 'reset' or 'enable' as basic setting.")),
-      table.unpack({ _dt("reset configurations"), _("default"), _("unchanged") })
+        "Configure all module settings: a) Select default value. b) Ignore this step / module and do nothing at all. c) Enable corresponding module and set selected module configuration. d) Reset the module and set selected module configuration. e) Disable module and keep it unchanged.")),
+      table.unpack({ _dt("all module basics"), _("default"), _("ignore"), _("enable"), _("reset"), _("disable") })
     }
 
+local ResetAllModuleMainSettingsWidget
+ResetAllModuleMainSettingsWidget = dt.new_widget('combobox')
+    {
+      changed_callback = function()
+        local selection = ResetAllModuleMainSettingsWidget.value
 
--- collect all widgets to be displayed within the module
--- collect buttons and comboboxes (basic and configuration)
--- the order in the GUI is the same as the order of declaration in this function.
-local function GetWidgets()
-  local widgets = {}
+        if (selection ~= _dt("all module settings")) then
+          for i, step in ipairs(WorkflowSteps) do
+            if step.WidgetStackValue == WidgetStack.Modules then
+              if (step ~= StepTimeout) then
+                if (selection == _("default")) then
+                  step:EnableDefaultStepConfiguation()
+                elseif (selection == _("unchanged")) then
+                  -- choose 'unchanged' step setting
+                  -- configuration keeps unchanged during script execution
+                  step.Widget.value = step.WidgetUnchangedStepConfigurationValue
+                end
+              end
+            end
+          end
 
-  -- TEST button: Special buttons, used to perform module tests.
+          -- reset to default selection
+          ResetAllModuleMainSettingsWidget.value = 1
+        end
+      end,
+      label = ' ',
+      tooltip = wordwrap(_(
+        "Configure all module settings: Keep all modules unchanged or enable all default configurations. These configurations are set, if you choose 'reset' or 'enable' as basic setting.")),
+      table.unpack({ _dt("all module settings"), _("default"), _("unchanged") })
+    }
+
+----------------------------------------------------------
+
+-- TEST button: Special buttons, used to perform module tests.
+local function GetWidgetTestButtons(widgets)
   if (ButtonModuleTest) then
     LogInfo(_("insert test button widget"))
     table.insert(widgets,
@@ -3024,9 +3049,10 @@ local function GetWidgets()
       }
     )
   end
+end
 
-  ----------------------------------------------------------
-  -- add buttons to simplify some manual steps
+-- add buttons to simplify some manual steps
+local function GetWidgetOverallButtons(widgets)
   local buttonColumn1 = {}
   local buttonColumn2 = {}
   local buttonColumn3 = {}
@@ -3034,7 +3060,6 @@ local function GetWidgets()
   -- add overall function buttons, first column
   table.insert(buttonColumn1, ButtonEnableRotateAndPerspective.Widget)
   table.insert(buttonColumn1, ButtonRunSelectedSteps.Widget)
-  table.insert(buttonColumn1, dt.new_widget('label') { label = ' ' })
 
   -- ... second column
   table.insert(buttonColumn2, ButtonEnableCrop.Widget)
@@ -3065,21 +3090,28 @@ local function GetWidgets()
       },
     }
   )
+end
 
-  ----------------------------------------------------------
-  -- add comboboxes to configure workflow steps
-
-  -- collect basic widgets and comboboxes, arranged as columns
+-- add comboboxes to configure workflow steps
+local function GetWidgetModulesBox()
+  -- add workflow step controls
   -- first column: label widgets
   -- second column: basic widgets (reset, enable, ignore...)
   -- third column: step configuration combobox widgets
 
-  ----------------------------------------------------------
-  -- add workflow steps controls
-
   local labelWidgetsModules = {}
   local basicWidgetsModules = {}
   local comboBoxWidgetsModules = {}
+
+  -- add comboboxes to configure or reset all configurations
+
+  table.insert(labelWidgetsModules, dt.new_widget('label') { label = ' ' })
+  table.insert(basicWidgetsModules, ResetAllModuleBasicSettingsWidget)
+  table.insert(comboBoxWidgetsModules, ResetAllModuleMainSettingsWidget)
+
+  table.insert(labelWidgetsModules, dt.new_widget('label') { label = ' ' })
+  table.insert(basicWidgetsModules, dt.new_widget('label') { label = ' ' })
+  table.insert(comboBoxWidgetsModules, dt.new_widget('label') { label = ' ' })
 
   for i, step in ipairs(WorkflowSteps) do
     if step.WidgetStackValue == WidgetStack.Modules then
@@ -3089,7 +3121,7 @@ local function GetWidgets()
     end
   end
 
-  local boxModules = dt.new_widget('box')
+  local box = dt.new_widget('box')
       {
         orientation = 'horizontal',
 
@@ -3109,7 +3141,11 @@ local function GetWidgets()
         },
       }
 
-  ----------------------------------------------------------
+  return box
+end
+
+-- add comboboxes to configure workflow steps
+local function GetWidgetSettingsBox()
   -- add setting controls
 
   local labelWidgetsSettings = {}
@@ -3118,9 +3154,9 @@ local function GetWidgets()
 
   -- add comboboxes to configure or reset all configurations
 
-  table.insert(labelWidgetsSettings, dt.new_widget('label') { label = 'all modules + settings', halign = "start" })
-  table.insert(basicWidgetsSettings, AllStepsBasicWidget)
-  table.insert(comboBoxWidgetsSettings, AllStepsConfigurationWidget)
+  table.insert(labelWidgetsSettings, dt.new_widget('label') { label = ' ' })
+  table.insert(basicWidgetsSettings, dt.new_widget('label') { label = ' ' })
+  table.insert(comboBoxWidgetsSettings, ResetAllCommonMainSettingsWidget)
 
   table.insert(labelWidgetsSettings, dt.new_widget('label') { label = ' ' })
   table.insert(basicWidgetsSettings, dt.new_widget('label') { label = ' ' })
@@ -3136,7 +3172,7 @@ local function GetWidgets()
     end
   end
 
-  local boxSettings = dt.new_widget('box')
+  local box = dt.new_widget('box')
       {
         orientation = 'horizontal',
 
@@ -3156,9 +3192,21 @@ local function GetWidgets()
         },
       }
 
-  ----------------------------------------------------------
-  -- create widget stack
+  return box
+end
 
+-- collect all widgets to be displayed within the module
+-- collect buttons and comboboxes (basic and configuration)
+-- the order in the GUI is the same as the order of declaration in this function.
+local function GetWidgets()
+  local widgets = {}
+
+  GetWidgetTestButtons(widgets)
+  GetWidgetOverallButtons(widgets)
+  local boxModules = GetWidgetModulesBox()
+  local boxSettings = GetWidgetSettingsBox()
+
+  -- create widget stack
   WidgetStack.Stack[WidgetStack.Modules] = boxModules
   WidgetStack.Stack[WidgetStack.Settings] = boxSettings
   WidgetStack.Stack.active = WidgetStack.Modules
