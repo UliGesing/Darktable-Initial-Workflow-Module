@@ -2326,8 +2326,9 @@ local function ProcessWorkflowSteps()
   LogInfo('==============================')
   LogInfo(_("process workflow steps"))
 
-  -- create a new progress_bar displayed in darktable.gui.libs.backgroundjobs
+  -- create a progress bar
   local job = dt.gui.create_job("process workflow steps", true, stop_job)
+  local workflowCanceled = false
 
   ThreadSleep(StepTimeout:Value())
 
@@ -2346,7 +2347,8 @@ local function ProcessWorkflowSteps()
     dt.control.sleep(10)
 
     -- stop workflow if the cancel button of the progress bar is pressed
-    if not job.valid then
+    workflowCanceled = not job.valid
+    if  workflowCanceled then
       LogSummaryMessage(_("workflow canceled"))
       break
     end
@@ -2354,6 +2356,7 @@ local function ProcessWorkflowSteps()
     -- stop workflow if darktable is shutting down
     if dt.control.ending then
       job.valid = false
+      workflowCanceled = true
       LogSummaryMessage(_("workflow canceled - darktable shutting down"))
       break
     end
@@ -2365,7 +2368,11 @@ local function ProcessWorkflowSteps()
   LogCurrentStep = ''
   ThreadSleep(StepTimeout:Value())
 
-  return not job.valid
+  if not workflowCanceled then
+    job.valid = false
+  end
+
+  return workflowCanceled
 
 end
 
