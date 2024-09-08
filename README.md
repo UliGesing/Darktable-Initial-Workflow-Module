@@ -10,15 +10,74 @@
 
 - Do you use darktable to develop your raw images? Do you often follow the same initial steps for new images? Do you often use the same modules in the darkroom and configure them in the same way before going into the details? Then this script can save you work.
 
->><img src="ReadmeImages/ScreenshotModuleIntroduction.png" width=250>
+>><img src="ReadmeImages/ScreenshotModuleIntroduction.png" width=450>
 
 - It offers a new "inital workflow" module both in lighttable and darkroom view. It can be used to do some configuration for an initial image workflow. It calls some automatisms of different modules in the darkroom view, enables your preferred modules and configures some default settings. If this suits your workflow, the script saves some clicks and time.
+
+- This script performs tasks that are comparable to those of the module presets. Depending on the use case, one or the other is more suitable. Presets are faster, but more static. The script uses some algorithms in darktable, so it takes more time. It mimics manual editing by the user and therefore "reacts" more to the specific photo.
+
+## Usage
+
+### New darktable module
+
+- This chapter describes how to use the script. Detailed installation instructions follow below.
+
+- This script offers a new "inital workflow" module both in lighttable and darkroom view. It executes some automatic functions that can also be accessed via the GUI (e.g. magic wand controls). It provides several workflow steps like "lens correction" or "adapt exposure".
+
+- In preparation for running the script, use the following buttons in darkroom view to rotate the image, adjust the perspective, crop the image and to adjust the exposure until the mid-tones are clear enough. These buttons activate and display the associated module. <br>
+>><img src="ReadmeImages/ScreenshotModulePreparingSteps.png" width=250>
+
+### Configuration
+
+#### Subpages "Modules" and "Settings"
+
+- The new module offers two subpages: First of all a list of supported modules and secondly a list of some common settings. You can switch between these subpages by selecting one of the buttons "show modules" or "show settings".
+
+>><img src="ReadmeImages/ScreenshotModuleSettingsSubpages.png" width=450>
+
+#### Subpage "Modules"
+
+- Choose "show modules" and adapt your personal configuration for each step of the entire workflow. Several steps and configurations are offered, see the tooltips within the module for more information. Each step of the workflow addresses a module of the pipeline in the darktable darkroom view. Your settings are saved in darktable preferences and restored after the next start of the application
+
+>><img src="ReadmeImages/ScreenshotModuleDefaults.png" width=450>
+
+- Every step provides two configurations: The first one is a basic configuration that is applied before actually performing the main configuration. There are various possibilities:
+>><img src="ReadmeImages/ScreenshotModuleStepConfigurationBasic.png" width=100>
+>- The predefined <code>default</code> value (one of the following) can be set.
+>- The workflow step can be <code>ignored</code> at all, the corresponding module remains unchanged, regardless of the second setting.
+>- The module can first be <code>enabled</code> in order to apply the selected configuration afterwards, based on current module settings.
+>- A module <code>reset</code> can be carried out, the selected configuration is then applied based on default module settings.
+>- The module can be <code>disabled</code> without making any further changes and regardless of the second setting.
+
+- If the basic configuration is set to '<code>reset</code>' or '<code>enable</code>', the second configuration is applied. If you choose '<code>unchanged</code>', the corresponding module keeps unchanged (apart from the basic configuration above). Each step offers several choices, for example:<br>
+>><img src="ReadmeImages/ScreenshotModuleStepConfigurationFilmic.png" width=250>
+
+
+#### Subpage "Settings"
+
+- Choose "show settings" and adapt the common settings. Several common settings are offered, see the tooltips for more information. Your settings are saved in darktable preferences and restored after the next start of the application.
+
+>><img src="ReadmeImages/ScreenshotCommonSettingsSubpage.png" width=450>
+
+- Do you want to know more about what the individual steps of the workflow change? You can activate '<code>show modules</code>'. During script execution in darkroom view, modules are displayed as changes are made. This way you will see the changes made. Best practices: Select '<code>ignore</code>' for all steps. Then activate ('<code>enable</code>' or '<code>reset</code>') the step that interests you and configure it. With "run" only this one configuration is executed and the affected module is displayed.
+
+### Execution
+
+- Once the configuration is complete, execute the script using the <code>run</code> button. The other controls ('<code>all</code>') can be used to select the standard configurations for all steps or to deactivate all steps. If you use it from lighttable view, you can select one or more images. Clicking the run button, selected image(s) are opened in darkroom and all steps are performed as configured. If you use it from darkroom view, the currently opened image is processed. The order during execution is from bottom to top, along the darktable pixel pipeline.<br>
+>><img src="ReadmeImages/ScreenshotModuleRunDefaultNoneButtons.png" width=450>
+
+
+### Timeouts
+
+- Some calculations take a certain amount of time. Depending on the hardware equipment also longer. This script waits and attempts to detect timeouts.If steps take much longer than expected, those steps will be aborted. You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status).<br>
+
+>><img src="ReadmeImages/ScreenshotModuleStepConfigurationTimeout.png" width=250>
 
 ## Installation
 
 ### Prerequisites
 
-- This script requires darktable 4.2.1 or 4.4. The script was developed and tested on Linux (Arch-based EndeavourOs). Individual tests were also carried out with Windows 10 (virtual machine).You need darktable and Lua installed on your machine. See darktable documentation for your first steps: https://docs.darktable.org/usermanual/4.2/en/lua/. At startup, darktable will automatically run the Lua script called luarc. All lua scripts are integrated and started from this file. You can find it here:<br>
+- This script requires darktable 4.8. The script was developed and tested on Linux (Arch-based EndeavourOs). You need darktable and Lua installed on your machine. See darktable documentation for your first steps: https://docs.darktable.org/usermanual/4.8/en/lua/. At startup, darktable will automatically run the Lua script called luarc. All lua scripts are integrated and started from this file. You can find it here:<br>
 
 - luarc directory on Linux: <br> <code>/home/[user_name]/.config/darktable</code>
 
@@ -65,48 +124,6 @@ require "InitialWorkflowModule"</code>
 ### Logging
 
 - You can execute darktable with additional parameters <code>darktable -d lua</code> or <code>darktable.exe -d lua</code> to get some loggings. This is very helpful to see what is going on during script execution and to identify errors. On Windows, logging messages are written to a logfile, see https://www.darktable.org/about/faq/#faq-windows-logs. On Linux, logging messages are written to your command line.
-
-## Usage
-
-### New darktable module
-
-- This script offers a new "inital workflow" module both in lighttable and darkroom view. It executes some automatic functions that can also be accessed via the GUI (e.g. magic wand controls). It provides several workflow steps like "lens correction" or "adapt exposure".
-
->><img src="ReadmeImages/ScreenshotModuleDefaults.png" width=250>
-
-- In preparation for running the script, use the following buttons in darkroom view to rotate the image, adjust the perspective, crop the image and to adjust the exposure until the mid-tones are clear enough. These buttons activate and display the associated module. <br>
->><img src="ReadmeImages/ScreenshotModulePreparingSteps.png" width=250>
-
-### Configuration
-
-- Choose your personal configuration for each step of the entire workflow. Several steps and configurations are offered, see the tooltips within the module for more information. Each step of the workflow addresses a module of the pipeline in the darktable darkroom view. Your settings are saved in darktable preferences and restored after the next start of the application.<br>
->><img src="ReadmeImages/ScreenshotModuleStepConfiguration.png" width=250>
-
-- Every step provides two configurations: The first one is a basic configuration that is applied before actually performing the main configuration. There are various possibilities:
->><img src="ReadmeImages/ScreenshotModuleStepConfigurationBasic.png" width=75>
->- The predefined <code>default</code> value (one of the following) can be set.
->- The workflow step can be <code>ignored</code> at all, the corresponding module remains unchanged, regardless of the second setting.
->- The module can first be <code>enabled</code> in order to apply the selected configuration afterwards, based on current module settings.
->- A module <code>reset</code> can be carried out, the selected configuration is then applied based on default module settings.
->- The module can be <code>disabled</code> without making any further changes and regardless of the second setting.
-
-- If the basic configuration is set to '<code>reset</code>' or '<code>enable</code>', the second configuration is applied. If you choose '<code>unchanged</code>', the corresponding module keeps unchanged (apart from the basic configuration above). Each step offers several choices, for example:<br>
->><img src="ReadmeImages/ScreenshotModuleStepConfigurationFilmic.png" width=250>
-
-### Execution
-
-- Once the configuration is complete, execute the script using the <code>run</code> button. The other controls ('<code>all</code>') can be used to select the standard configurations for all steps or to deactivate all steps. If you use it from lighttable view, you can select one or more images. Clicking the run button, selected image(s) are opened in darkroom and all steps are performed as configured. If you use it from darkroom view, the currently opened image is processed. The order during execution is from bottom to top, along the darktable pixel pipeline.<br>
->><img src="ReadmeImages/ScreenshotModuleRunDefaultNoneButtons.png" width=250>
-
-- Do you want to know more about what the individual steps of the workflow change? You can activate '<code>show modules</code>'. During script execution in darkroom view, modules are displayed as changes are made. This way you will see the changes made. Best practices: Select '<code>ignore</code>' for all steps. Then activate ('<code>enable</code>' or '<code>reset</code>') the step that interests you and configure it. With "run" only this one configuration is executed and the affected module is displayed.
-
->><img src="ReadmeImages/ScreenshotModuleStepConfigurationShowModules.png" width=250>
-
-### Timeouts
-
-- Some calculations take a certain amount of time. Depending on the hardware equipment also longer. This script waits and attempts to detect timeouts.If steps take much longer than expected, those steps will be aborted. You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status).<br>
-
->><img src="ReadmeImages/ScreenshotModuleStepConfigurationTimeout.png" width=250>
 
 ## Request for Change
 

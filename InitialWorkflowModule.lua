@@ -13,7 +13,7 @@
   copyright (c) 2022 Ulrich Gesing
 
   USAGE: See Darktable documentation for your first steps:
-  https://docs.darktable.org/usermanual/4.2/en/lua/
+  https://docs.darktable.org/usermanual/4.8/en/lua/
 
   For more details see Readme.md in
   https://github.com/UliGesing/Darktable-Initial-Workflow-Module
@@ -248,12 +248,12 @@ local function wordwrap(str, limit)
 end
 
 -- check Darktable API version
--- new API of DT 4.2 is needed to use pixelpipe-processing-complete event
-local apiCheck, err = pcall(function() du.check_min_api_version('9.0.0', ModuleName) end)
+-- new API of DT 4.8 is needed to use pixelpipe-processing-complete event
+local apiCheck, err = pcall(function() du.check_min_api_version('9.3.0', ModuleName) end)
 if (apiCheck) then
   LogInfo(string.format(_("darktable version with appropriate lua API detected: %s"), 'dt' .. dt.configuration.version))
 else
-  LogInfo(_("this script needs at least darktable 4.2 API to run"))
+  LogInfo(_("this script needs at least darktable 4.8 API to run"))
   return
 end
 
@@ -273,12 +273,6 @@ local function DumpPreferenceKeys()
   end
 end
 
--- check current darktable version
--- used to handle different behavior of dt 4.2 and following versions
-local function CheckDarktable42()
-  return contains({ '4.2', '4.2.0', '4.2.1' }, dt.configuration.version)
-end
-
 -- get Darktable workflow setting
 -- read preference 'auto-apply chromatic adaptation defaults'
 local function CheckDarktableModernWorkflowPreference()
@@ -289,15 +283,7 @@ local function CheckDarktableModernWorkflowPreference()
     _dt("modern")
   }
 
-  local workflow
-
-  if CheckDarktable42() then
-    -- use old dt 4.2 preference setting
-    workflow = dt.preferences.read('darktable', 'plugins/darkroom/chromatic-adaptation', 'string')
-  else
-    -- use new dt 4.4 preference setting
-    workflow = dt.preferences.read('darktable', 'plugins/darkroom/workflow', 'string')
-  end
+  local workflow = dt.preferences.read('darktable', 'plugins/darkroom/workflow', 'string')
 
   return contains(modernWorkflows, _(workflow))
 end
@@ -377,7 +363,6 @@ function WaitForEventBase:Do(embeddedFunction)
 end
 
 -- wait for new pixelpipe-processing-complete event
--- this event is new in DT 4.2
 WaitForPixelPipe = WaitForEventBase:new():new
     {
       EventType = 'pixelpipe-processing-complete'
@@ -1095,11 +1080,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     if (selection == self.sigmoidColorRgbRatio) then
       if (_dt("RGB ratio") ~= currentSelection) then
         LogInfo(indent .. string.format(_("current color processing = %s"), quote(currentSelection)))
-        if (CheckDarktable42()) then
-          GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:rgb ratio', 1.0)
-        else
           GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:RGB ratio', 1.0)
-        end
       else
         LogInfo(indent .. string.format(_("nothing to do, color processing already = %s"), quote(currentSelection)))
       end
@@ -1414,34 +1395,19 @@ function StepDiffuseOrSharpen:Init()
   self:CreateLabelWidget()
   self:CreateDefaultBasicWidget()
 
-  -- workaround for dt4.2
-  if (CheckDarktable42()) then
-    self.ConfigurationValues =
-    {
-      _("unchanged"),
-      _dt("dehaze"),
-      _dt("denoise: coarse"),
-      _dt("denoise: fine"),
-      _dt("denoise: medium"),
-      _dt("lens deblur: medium"),
-      _dt("add local contrast"),
-      _dt("sharpen demosaicing (AA filter)"),
-      _dt("fast sharpness")
-    }
-  else
-    self.ConfigurationValues =
-    {
-      _("unchanged"),
-      _dt("dehaze"),
-      _dt("denoise: coarse"),
-      _dt("denoise: fine"),
-      _dt("denoise: medium"),
-      _dt("lens deblur: medium"),
-      _dt("local contrast"),
-      _dt("sharpen demosaicing: AA filter"),
-      _dt("sharpness")
-    }
-  end
+
+  self.ConfigurationValues =
+  {
+    _("unchanged"),
+    _dt("dehaze"),
+    _dt("denoise: coarse"),
+    _dt("denoise: fine"),
+    _dt("denoise: medium"),
+    _dt("lens deblur: medium"),
+    _dt("local contrast"),
+    _dt("sharpen demosaicing: AA filter"),
+    _dt("sharpness")
+  }
 
   self.Widget = dt.new_widget('combobox')
       {
@@ -1587,25 +1553,8 @@ function StepToneEqualizer:Run()
     return
   end
 
-  if (CheckDarktable42()) then
-    -- workaround to deal with bug in dt 4.2.x
-    -- dt 4.2 uses special characters
-    -- darktable 4.4 uses some capital letters
-    -- DT42: prefix is removed during script run
-    if (selection == _("compress shadows-highlights (eigf): medium")) then
-      GuiActionButtonOffOn('iop/toneequal/preset/' ..
-        _("DT42:compress shadows-highlights (eigf): medium"):gsub("DT42:", ""))
-    elseif (selection == _("compress shadows-highlights (eigf): soft")) then
-      GuiActionButtonOffOn('iop/toneequal/preset/' .. _("DT42:compress shadows-highlights (eigf): soft"):gsub("DT42:",
-        ""))
-    elseif (selection == _("compress shadows-highlights (eigf): strong")) then
-      GuiActionButtonOffOn('iop/toneequal/preset/' ..
-        _("DT42:compress shadows-highlights (eigf): strong"):gsub("DT42:", ""))
-    end
-  else
-    -- dt 4.4
-    GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
-  end
+
+  GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
 end
 
 ---------------------------------------------------------------
@@ -1715,11 +1664,6 @@ function StepLensCorrection:Run()
   end
 
   if (selection == _dt("Lensfun database")) then
-    -- 4.2.1 de: lensfun Datenbank
-    -- 4.2.1 en: lensfun database
-    -- 4.4.0 de: Lensfun database
-    -- 4.4.0 en: Lensfun database
-
     local lensCorrectionValues =
     {
       _dt("embedded metadata"),
@@ -1731,11 +1675,7 @@ function StepLensCorrection:Run()
 
     if (self.lensfunSelection ~= currentSelection) then
       LogInfo(indent .. string.format(_("current correction method = %s"), quote(currentSelection)))
-      if (CheckDarktable42()) then
-        GuiAction('iop/lens/correction method', 0, 'selection', 'item:lensfun database', 1.0)
-      else
         GuiAction('iop/lens/correction method', 0, 'selection', 'item:Lensfun database', 1.0)
-      end
     else
       LogInfo(indent .. string.format(_("nothing to do, correction method already = %s"), quote(currentSelection)))
     end
@@ -2052,11 +1992,7 @@ StepHighlightReconstruction = WorkflowStepConfiguration:new():new
         "Reconstruct color information for clipped pixels. Select an appropriate reconstruction methods to reconstruct the missing data from unclipped channels and/or neighboring pixels.")
     }
 
--- we have to wait for a darktable bugfix (dt4.4)
--- do not add this step to the widget if you are using darktable 4.2
-if (not CheckDarktable42()) then
-  table.insert(WorkflowSteps, StepHighlightReconstruction)
-end
+table.insert(WorkflowSteps, StepHighlightReconstruction)
 
 function StepHighlightReconstruction:Init()
   self:CreateLabelWidget()
