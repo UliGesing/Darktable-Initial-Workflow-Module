@@ -52,6 +52,8 @@
 - If the basic configuration is set to '<code>reset</code>' or '<code>enable</code>', the second configuration is applied. If you choose '<code>unchanged</code>', the corresponding module keeps unchanged (apart from the basic configuration above). Each step offers several choices, for example:<br>
 >><img src="ReadmeImages/ScreenshotModuleStepConfigurationFilmic.png" width=250>
 
+<br>
+- Via ('<code>all module basics</code>') and ('<code>all module settings</code>') you can select standard configurations for steps.
 
 #### Subpage "Settings"
 
@@ -61,9 +63,11 @@
 
 - Do you want to know more about what the individual steps of the workflow change? You can activate '<code>show modules</code>'. During script execution in darkroom view, modules are displayed as changes are made. This way you will see the changes made. Best practices: Select '<code>ignore</code>' for all steps. Then activate ('<code>enable</code>' or '<code>reset</code>') the step that interests you and configure it. With "run" only this one configuration is executed and the affected module is displayed.
 
+- Via ('<code>all common settings</code>') you can select standard configurations for these settings. You can activate or deactive all common settings. 
+
 ### Execution
 
-- Once the configuration is complete, execute the script using the <code>run</code> button. The other controls ('<code>all</code>') can be used to select the standard configurations for all steps or to deactivate all steps. If you use it from lighttable view, you can select one or more images. Clicking the run button, selected image(s) are opened in darkroom and all steps are performed as configured. If you use it from darkroom view, the currently opened image is processed. The order during execution is from bottom to top, along the darktable pixel pipeline.<br>
+- Once the configuration is complete, execute the script using the <code>run</code> button. If you use it from lighttable view, you can select one or more images. Clicking the run button, selected image(s) are opened in darkroom and all steps are performed as configured. If you use it from darkroom view, the currently opened image is processed. The order during execution is from bottom to top, along the darktable pixel pipeline.<br>
 >><img src="ReadmeImages/ScreenshotModuleRunDefaultNoneButtons.png" width=450>
 
 
