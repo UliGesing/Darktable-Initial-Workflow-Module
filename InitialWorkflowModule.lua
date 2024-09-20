@@ -73,6 +73,11 @@ local function _ReverseTranslation(msgid)
   return TranslationHelper.GetReverseTranslation(msgid)
 end
 
+-- init ./Modules/EventHelper.lua
+local EventHelper = require 'EventHelper'
+EventHelper.Init(dt, LogHelper, Helper, TranslationHelper, ModuleName)
+
+
 ---------------------------------------------------------------
 -- declare some variables to install the module
 
@@ -122,211 +127,7 @@ local function CheckDarktableModernWorkflowPreference()
   return Helper.Contains(modernWorkflows, _(workflow))
 end
 
----------------------------------------------------------------
--- Event handling helper functions used during dt.gui.action
-
--- base class to handle events
-local WaitForEventBase =
-{
-  ModuleName = ModuleName,
-  EventType = nil,
-  EventReceivedFlag = nil
-}
-
--- base class constructor
-function WaitForEventBase:new(obj)
-  -- create object if user does not provide one
-  obj = obj or {}
-  -- define inheritance
-  setmetatable(obj, self)
-  self.__index = self
-  -- return new object
-  return obj
-end
-
-function WaitForEventBase:EventReceivedFlagReset()
-  self.EventReceivedFlag = nil
-end
-
-function WaitForEventBase:EventReceivedFlagSet()
-  self.EventReceivedFlag = 1
-  -- LogHelper.Info(indent .. string.format(_("received event %s"), self.EventType))
-end
-
--- execute embedded function and wait for given EventType
-function WaitForEventBase:Do(embeddedFunction)
-  -- register event
-  self:EventReceivedFlagReset()
-
-  dt.destroy_event(self.ModuleName, self.EventType)
-  dt.register_event(self.ModuleName, self.EventType, self.EventReceivedFunction)
-
-  -- LogHelper.Info(indent .. string.format(_("wait for event %s"), self.EventType))
-
-  -- execute given function
-  embeddedFunction()
-
-  -- wait for registered event
-  local duration = 0
-  local durationMax = StepTimeout:Value() * 5
-  local period = StepTimeout:Value() / 10
-  local output = '..'
-
-  while (not self.EventReceivedFlag) or (duration < period) do
-    if ((duration > 0) and (duration % 500 == 0)) then
-      LogHelper.Info(output)
-      output = output .. '.'
-    end
-
-    dt.control.sleep(period)
-    duration = duration + period
-
-    if (duration >= durationMax) then
-      local timeoutMessage = string.format(
-        _("timeout after %d ms waiting for event %s - increase timeout setting and try again"), durationMax, self
-        .EventType)
-      LogHelper.Info(timeoutMessage)
-      LogHelper.SummaryMessage(timeoutMessage)
-      break
-    end
-  end
-
-  -- unregister event
-  dt.destroy_event(self.ModuleName, self.EventType)
-  self:EventReceivedFlagReset()
-end
-
--- wait for new pixelpipe-processing-complete event
-WaitForPixelPipe = WaitForEventBase:new():new
-    {
-      EventType = 'pixelpipe-processing-complete'
-    }
-
--- called as callback function
-function WaitForPixelPipe:EventReceivedFunction(event)
-  WaitForPixelPipe:EventReceivedFlagSet()
-end
-
--- wait for image loaded event
-WaitForImageLoaded = WaitForEventBase:new():new
-    {
-      EventType = 'darkroom-image-loaded'
-    }
-
--- wait for image loaded event and reload it, if necessary.
--- 'clean' flag indicates, if the load was clean (got pixel pipe locks) or not.
-function WaitForImageLoaded:EventReceivedFunction(event, clean, image)
-  if not clean then
-    local message = _("loading image failed, reload is performed (this could indicate a timing problem)")
-    LogHelper.Info(message)
-    LogHelper.SummaryMessage(message)
-
-    Helper.ThreadSleep(StepTimeout:Value() * 2)
-    dt.gui.views.darkroom.display_image(image)
-  else
-    WaitForImageLoaded:EventReceivedFlagSet()
-  end
-end
-
----------------------------------------------------------------
--- helper functions to access darktable feature via user interface
-
--- convert values to boolean, consider not a number and nil
-local function convertGuiActionValueToBoolean(value)
-  -- NaN
-  if (value ~= value) then
-    return false
-  end
-
-  -- nil
-  if (value == nil) then
-    return false
-  end
-
-  return value ~= 0
-end
-
--- perform the specified effect on the path and element of an action
--- see https://docs.darktable.org/lua/stable/lua.api.manual/darktable/gui/action/
-local function GuiActionInternal(path, instance, element, effect, speed, waitForPipeline)
-  LogHelper.Info('dt.gui.action(' ..
-    Helper.Quote(path) ..
-    ',' ..
-    instance .. ',' .. Helper.Quote(element) .. ',' .. Helper.Quote(effect) .. ',' .. Helper.NumberToString(speed) .. ')')
-
-  local result
-
-  if (waitForPipeline) then
-    WaitForPixelPipe:Do(function()
-      result = dt.gui.action(path, instance, element, effect, speed)
-    end)
-  else
-    result = dt.gui.action(path, instance, element, effect, speed)
-    -- wait a bit...
-    Helper.ThreadSleep(StepTimeout:Value() / 2)
-  end
-
-  return result
-end
-
--- wait for 'pixelpipe-processing-complete'
-local function GuiAction(path, instance, element, effect, speed)
-  return GuiActionInternal(path, instance, element, effect, speed, true)
-end
-
--- 'pixelpipe-processing-complete' is not expected
-local function GuiActionWithoutEvent(path, instance, element, effect, speed)
-  return GuiActionInternal(path, instance, element, effect, speed, false)
-end
-
--- get current value
-local function GuiActionGetValue(path, element)
-  -- use 0/0 == NaN as parameter to indicate this read-action
-  local value = GuiActionWithoutEvent(path, 0, element, '', 0 / 0)
-
-  LogHelper.Info(indent ..
-    'get ' .. Helper.Quote(path) .. ' ' .. element .. ' = ' .. Helper.NumberToString(value, 'NaN', 'nil'))
-
-  return value
-end
-
--- Set given value, compare it with the current value to avoid
--- unnecessary set commands. There is no “pixelpipe-processing-complete”,
--- if the new value equals the current value.
-local function GuiActionSetValue(path, instance, element, effect, speed)
-  -- get current value
-  -- use 0/0 == NaN as parameter to indicate this read-action
-  local value = GuiActionWithoutEvent(path, 0, element, 'set', 0 / 0)
-
-  -- round the value to number of digits
-  local digits = 4
-  local digitsFactor = 10 ^ (digits or 0)
-  value = math.floor(value * digitsFactor + 0.5) / digitsFactor
-
-  LogHelper.Info(indent ..
-    'get ' .. Helper.Quote(path) .. ' ' .. element .. ' = ' .. Helper.NumberToString(value, 'NaN', 'nil'))
-
-  if (value ~= speed) then
-    GuiAction(path, instance, element, effect, speed)
-  else
-    LogHelper.Info(indent ..
-      string.format(_("nothing to do, value already equals to %s"), Helper.Quote(Helper.NumberToString(value))))
-  end
-end
-
--- Push the button  addressed by the path. Turn it off, if necessary.
-local function GuiActionButtonOffOn(path)
-  LogHelper.Info(string.format(_("push button off and on: %s"), Helper.Quote(path)))
-
-  local buttonState = GuiActionGetValue(path, 'button')
-  if (convertGuiActionValueToBoolean(buttonState)) then
-    GuiActionWithoutEvent(path, 0, 'button', 'off', 1.0)
-  else
-    LogHelper.Info(indent .. _("nothing to do, button is already inactive"))
-  end
-
-  GuiAction(path, 0, 'button', 'on', 1.0)
-end
+-- EventHelper
 
 ---------------------------------------------------------------
 -- base class of workflow steps
@@ -369,7 +170,7 @@ function WorkflowStep:ShowDarkroomModule(moduleName)
   -- check if the module is already displayed
   LogHelper.Info(string.format(_("show module if not visible: %s"), moduleName))
   local visible = GuiActionGetValue(moduleName, 'show')
-  if (not convertGuiActionValueToBoolean(visible)) then
+  if (not EventHelper.ConvertGuiActionValueToBoolean(visible)) then
     dt.gui.panel_show('DT_UI_PANEL_RIGHT')
     Helper.ThreadSleep(StepTimeout:Value() / 2)
     GuiActionWithoutEvent(moduleName, 0, 'show', '', 1.0)
@@ -383,7 +184,7 @@ function WorkflowStep:HideDarkroomModule(moduleName)
   -- check if the module is already hidden
   LogHelper.Info(string.format(_("hide module if visible: %s"), moduleName))
   local visible = GuiActionGetValue(moduleName, 'show')
-  if (convertGuiActionValueToBoolean(visible)) then
+  if (EventHelper.ConvertGuiActionValueToBoolean(visible)) then
     GuiActionWithoutEvent(moduleName, 0, 'show', '', 1.0)
   else
     LogHelper.Info(indent .. _("module is already hidden, nothing to do"))
@@ -395,7 +196,7 @@ function WorkflowStep:EnableDarkroomModule(moduleName)
   -- check if the module is already activated
   LogHelper.Info(string.format(_("enable module if disabled: %s"), moduleName))
   local status = GuiActionGetValue(moduleName, 'enable')
-  if (not convertGuiActionValueToBoolean(status)) then
+  if (not EventHelper.ConvertGuiActionValueToBoolean(status)) then
     GuiAction(moduleName, 0, 'enable', '', 1.0)
   else
     LogHelper.Info(indent .. _("module is already enabled, nothing to do"))
@@ -411,7 +212,7 @@ function WorkflowStep:DisableDarkroomModule(moduleName)
   -- check if the module is already activated
   LogHelper.Info(string.format(_("disable module if enabled: %s"), moduleName))
   local status = GuiActionGetValue(moduleName, 'enable')
-  if (convertGuiActionValueToBoolean(status)) then
+  if (EventHelper.ConvertGuiActionValueToBoolean(status)) then
     GuiAction(moduleName, 0, 'enable', '', 1.0)
   else
     LogHelper.Info(indent .. _("module is already disabled, nothing to do"))
@@ -2194,7 +1995,7 @@ local function ProcessSelectedImagesInLighttableView()
 
   -- switch to darkroom view
   LogHelper.Info(_("switch to darkroom view"))
-  WaitForPixelPipe:Do(function()
+  EventHelper.WaitForPixelPipe:Do(function()
     dt.gui.current_view(dt.gui.views.darkroom)
   end)
 
@@ -2211,9 +2012,9 @@ local function ProcessSelectedImagesInLighttableView()
     LogHelper.Info(string.format(_("image file = %s"), newImage.filename))
 
     if (oldImage ~= newImage) then
-      WaitForPixelPipe:Do(function()
-        LogHelper.Info(_("load new image into darkroom view"))
-        WaitForImageLoaded:Do(function()
+      EventHelper.WaitForPixelPipe:Do(function()
+        LogHelper.Info(_("load new image intoEventHelper. darkroom view"))
+        EventHelper.WaitForImageLoaded:Do(function()
           dt.gui.views.darkroom.display_image(newImage)
         end)
       end)

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-20 10:34+0200\n"
+"POT-Creation-Date: 2024-09-20 11:42+0200\n"
 "PO-Revision-Date: 2023-05-18 14:20+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -36,30 +36,30 @@ msgstr ""
 msgid "script outputs are in English"
 msgstr ""
 
-#: InitialWorkflowModule.lua:186
+#: InitialWorkflowModule.lua:186 Modules/EventHelper.lua:62
 #, lua-format
 msgid ""
 "timeout after %d ms waiting for event %s - increase timeout setting and try "
 "again"
 msgstr ""
 
-#: InitialWorkflowModule.lua:220
+#: InitialWorkflowModule.lua:220 Modules/EventHelper.lua:96
 msgid ""
 "loading image failed, reload is performed (this could indicate a timing "
 "problem)"
 msgstr ""
 
-#: InitialWorkflowModule.lua:313
+#: InitialWorkflowModule.lua:313 Modules/EventHelper.lua:189
 #, lua-format
 msgid "nothing to do, value already equals to %s"
 msgstr ""
 
-#: InitialWorkflowModule.lua:319
+#: InitialWorkflowModule.lua:319 Modules/EventHelper.lua:195
 #, lua-format
 msgid "push button off and on: %s"
 msgstr ""
 
-#: InitialWorkflowModule.lua:325
+#: InitialWorkflowModule.lua:325 Modules/EventHelper.lua:201
 msgid "nothing to do, button is already inactive"
 msgstr ""
 
