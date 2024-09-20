@@ -1,14 +1,22 @@
+local du = require 'lib/dtutils'
+
 local Helper = {}
 
-function Helper.Init(_dt, _LogHelper)
+function Helper.Init(_dt, _LogHelper, _TranslationHelper, _ModuleName)
   Helper.dt = _dt
   Helper.LogHelper = _LogHelper
+  Helper.TranslationHelper = _TranslationHelper
+  Helper.ModuleName = _ModuleName
 end
 
--- get path, where the main script was started from
-function Helper.ScriptFilePath()
-    local str = debug.getinfo(2, 'S').source:sub(2)
-    return str:match('(.*[/\\])')
+-- return translation from local .po / .mo file
+local function _(msgid)
+  return Helper.TranslationHelper.t(msgid)
+end
+
+-- return translation from darktable
+local function _dt(msgid)
+  return Helper.TranslationHelper.tdt(msgid)
 end
 
 -- add quote marks
@@ -19,6 +27,38 @@ end
 function Helper.ThreadSleep(milliseconds)
   Helper.dt.control.sleep(milliseconds)
 end
+
+function Helper.CheckApiVersion()
+  -- check Darktable API version
+  -- new API of DT 4.8 is needed to use pixelpipe-processing-complete event
+  local apiCheck, err = pcall(function() du.check_min_api_version('9.3.0', Helper.ModuleName) end)
+  if (apiCheck) then
+    Helper.LogHelper.Info(string.format(_("darktable version with appropriate lua API detected: %s"),
+      'dt' .. Helper.dt.configuration.version))
+  else
+    Helper.LogHelper.Info(_("this script needs at least darktable 4.8 API to run"))
+    return false
+  end
+
+  return true
+end
+
+
+-- get Darktable workflow setting
+-- read preference 'auto-apply chromatic adaptation defaults'
+function Helper.CheckDarktableModernWorkflowPreference()
+  local modernWorkflows =
+  {
+    _dt("scene-referred (filmic)"),
+    _dt("scene-referred (sigmoid)"),
+    _dt("modern")
+  }
+
+  local workflow = Helper.dt.preferences.read('darktable', 'plugins/darkroom/workflow', 'string')
+
+  return Helper.Contains(modernWorkflows, _(workflow))
+end
+
 
 -- check, if given array contains a certain value
 function Helper.Contains(table, value)
@@ -74,6 +114,5 @@ function Helper.NumberToString(number, nilReplacement, nanReplacement)
 
   return result
 end
-
 
 return Helper

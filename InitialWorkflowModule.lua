@@ -37,22 +37,18 @@
 local ModuleName = 'InitialWorkflowModule'
 
 local dt = require 'darktable'
-local du = require 'lib/dtutils'
 
 package.path = package.path .. ";./Modules/?.lua"
 
--- init ./Modules/LogHelper.lua
-local LogHelper = require 'LogHelper'
-LogHelper.Init(dt, LogHelper)
-local indent = '. '
-
--- init ./Modules/Helper.lua
-local Helper = require 'Helper'
-Helper.Init(dt, LogHelper)
+-- get path, where the main script was started from
+local function ScriptFilePath()
+  local str = debug.getinfo(1, 'S').source:sub(2)
+  return str:match('(.*[/\\])')
+end
 
 -- set locales directory
 local pathSeparator = dt.configuration.running_os == 'windows' and '\\' or '/'
-local localePath = Helper.ScriptFilePath() .. 'locale' .. pathSeparator
+local localePath = ScriptFilePath() .. 'locale' .. pathSeparator
 
 -- init ./Modules/TranslationHelper.lua
 local TranslationHelper = require 'TranslationHelper'
@@ -73,10 +69,19 @@ local function _ReverseTranslation(msgid)
   return TranslationHelper.GetReverseTranslation(msgid)
 end
 
+-- init ./Modules/LogHelper.lua
+local LogHelper = require 'LogHelper'
+LogHelper.Init(dt, LogHelper)
+
+local indent = '. '
+
+-- init ./Modules/Helper.lua
+local Helper = require 'Helper'
+Helper.Init(dt, LogHelper, TranslationHelper, ModuleName)
+
 -- init ./Modules/EventHelper.lua
 local EventHelper = require 'EventHelper'
 EventHelper.Init(dt, LogHelper, Helper, TranslationHelper, ModuleName)
-
 
 ---------------------------------------------------------------
 -- declare some variables to install the module
@@ -95,39 +100,14 @@ local WidgetStack =
 }
 
 ---------------------------------------------------------------
--- check Darktable API version
--- new API of DT 4.8 is needed to use pixelpipe-processing-complete event
-local apiCheck, err = pcall(function() du.check_min_api_version('9.3.0', ModuleName) end)
-if (apiCheck) then
-  LogHelper.Info(string.format(_("darktable version with appropriate lua API detected: %s"),
-    'dt' .. dt.configuration.version))
-else
-  LogHelper.Info(_("this script needs at least darktable 4.8 API to run"))
+
+if not Helper.CheckApiVersion() then
   return
 end
 
-LogHelper.Info(string.format(_("script executed from path %s"), Helper.ScriptFilePath()))
+LogHelper.Info(string.format(_("script executed from path %s"), ScriptFilePath()))
 LogHelper.Info(string.format(_("script translation files in %s"), localePath))
 LogHelper.Info(_("script outputs are in English"))
-
----------------------------------------------------------------
-
--- get Darktable workflow setting
--- read preference 'auto-apply chromatic adaptation defaults'
-local function CheckDarktableModernWorkflowPreference()
-  local modernWorkflows =
-  {
-    _dt("scene-referred (filmic)"),
-    _dt("scene-referred (sigmoid)"),
-    _dt("modern")
-  }
-
-  local workflow = dt.preferences.read('darktable', 'plugins/darkroom/workflow', 'string')
-
-  return Helper.Contains(modernWorkflows, _(workflow))
-end
-
--- EventHelper
 
 ---------------------------------------------------------------
 -- base class of workflow steps
@@ -1461,7 +1441,7 @@ StepColorCalibrationIlluminant = WorkflowStepConfiguration:new():new
 -- keep value unchanged, if using legacy workflow
 -- depends on darktable preference settings
 function StepColorCalibrationIlluminant:EnableDefaultStepConfiguation()
-  self.Widget.value = CheckDarktableModernWorkflowPreference() and 2 or 1
+  self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 2 or 1
 end
 
 table.insert(WorkflowSteps, StepColorCalibrationIlluminant)
@@ -1682,7 +1662,7 @@ StepWhiteBalance = WorkflowStepConfiguration:new():new
 -- keep value unchanged, if using legacy workflow
 -- depends on darktable preference settings
 function StepWhiteBalance:EnableDefaultStepConfiguation()
-  self.Widget.value = CheckDarktableModernWorkflowPreference() and 6 or 1
+  self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 6 or 1
 end
 
 table.insert(WorkflowSteps, StepWhiteBalance)
@@ -2454,7 +2434,7 @@ end
 -- To enable it, create a file named 'TestFlag.txt' in the same
 -- directory as this script file.
 
-if (FileExists(Helper.ScriptFilePath() .. 'TestFlag.txt')) then
+if (FileExists(ScriptFilePath() .. 'TestFlag.txt')) then
   ButtonModuleTest = WorkflowStepButton:new():new
       {
         Widget = dt.new_widget('button')
