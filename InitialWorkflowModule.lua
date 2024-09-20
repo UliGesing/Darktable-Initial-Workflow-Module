@@ -2401,7 +2401,7 @@ end
 
 -- MODULE TEST IMPLEMENTATION.
 
--- This section Helper.Contains some functions to perform module tests.
+-- This section contains some functions to perform module tests.
 -- The following functions are used during development and deployment.
 
 local moduleTestImage
@@ -2677,7 +2677,7 @@ if (FileExists(Helper.ScriptFilePath() .. 'TestFlag.txt')) then
             {
               label = _("Custom Code"),
               tooltip = Helper.Wordwrap(_(
-                "Execute code from TestCustomCode.lua: This file Helper.Contains some custom debug code. It can be changed without restarting darktable. Just edit, save and execute it. You can use it to try some lua commands on the fly, e.g. dt.gui.action commands. Enabled in darkroom view.")),
+                "Execute code from TestCustomCode.lua: This file contains some custom debug code. It can be changed without restarting darktable. Just edit, save and execute it. You can use it to try some lua commands on the fly, e.g. dt.gui.action commands. Enabled in darkroom view.")),
 
               clicked_callback = function()
                 local currentView = dt.gui.current_view()
