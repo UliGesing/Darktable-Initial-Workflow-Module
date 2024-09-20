@@ -1,7 +1,8 @@
 local Helper = {}
 
-function Helper.Init(_dt)
+function Helper.Init(_dt, _LogHelper)
   Helper.dt = _dt
+  Helper.LogHelper = _LogHelper
 end
 
 -- get path, where the main script was started from
@@ -47,10 +48,10 @@ end
 -- helps you to find out strings like plugins/darkroom/chromatic-adaptation
 -- darktable -d lua > ~/keys.txt
 -- local function DumpPreferenceKeys()
---   local keys = dt.preferences.get_keys()
---   LogHelper.Info(string.format(_.t("number of %d preference keys retrieved"), #keys))
+--   local keys = Helper.dt.preferences.get_keys()
+--   Helper.LogHelper.Info(string.format(_.t("number of %d preference keys retrieved"), #keys))
 --   for _, key in ipairs(keys) do
---     LogHelper.Info(key .. ' = ' .. dt.preferences.read('darktable', key, 'string'))
+--     Helper.LogHelper.Info(key .. ' = ' .. Helper.dt.preferences.read('darktable', key, 'string'))
 --   end
 -- end
 

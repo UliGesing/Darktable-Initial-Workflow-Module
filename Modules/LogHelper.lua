@@ -1,12 +1,19 @@
 local LogHelper = {}
 
 local log = require 'lib/dtutils.log'
-log.log_level(log.info) -- log.info or log.warn or log.debug
 
-LogHelper.SummaryMessages = {}
-LogHelper.MajorMax = 1
-LogHelper.MajorNr = 1
-LogHelper.CurrentStep = ''
+function LogHelper.Init(_dt, _LogHelper)
+    LogHelper.dt = _dt
+    LogHelper.LogHelper = _LogHelper
+
+    log.log_level(log.info) -- log.info or log.warn or log.debug
+
+    LogHelper.SummaryMessages = {}
+
+    LogHelper.CurrentStep = ''
+    LogHelper.MajorNr = 0
+    LogHelper.MajorMax = 0
+end
 
 function LogHelper.GetLogInfoText(text)
     return '[' .. LogHelper.MajorNr .. '/' .. LogHelper.MajorMax .. '] ' .. LogHelper.CurrentStep .. ': ' .. text
