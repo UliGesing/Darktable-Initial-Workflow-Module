@@ -4,7 +4,7 @@
 # execute the following commands from the directory that contains the script
 
 # extract messages from source code into InitialWorkflowModuleExtracted.po
-xgettext InitialWorkflowModule.lua ./Modules/Helper.lua ./Modules/EventHelper.lua ./Modules/GuiAction.lua ./Modules/ModuleTestHelper.lua -d InitialWorkflowModuleExtracted --from-code=UTF-8 --language=Lua
+xgettext InitialWorkflowModule.lua ./Modules/Helper.lua ./Modules/EventHelper.lua ./Modules/GuiAction.lua ./Modules/ModuleTestHelper.lua ./Modules/Workflow.lua -d InitialWorkflowModuleExtracted --from-code=UTF-8 --language=Lua
 
 
 # GERMAN de
