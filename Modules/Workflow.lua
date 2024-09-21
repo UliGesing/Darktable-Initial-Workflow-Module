@@ -5,27 +5,28 @@ local Workflow = {}
 
 local indent = '. '
 
-function Workflow.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper)
+function Workflow.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _GuiAction)
     dt = _dt
     LogHelper = _LogHelper
     Helper = _Helper
     EventHelper = _EventHelper
-    TranslationHelper = _TranslationHelper
+    GuiTranslation = _TranslationHelper
+    GuiAction = _GuiAction
 end
 
 -- return translation from local .po / .mo file
 local function _(msgid)
-    return TranslationHelper.t(msgid)
+    return GuiTranslation.t(msgid)
 end
 
 -- return translation from darktable
 local function _dt(msgid)
-    return TranslationHelper.tdt(msgid)
+    return GuiTranslation.tdt(msgid)
 end
 
 -- return reverse translation
 local function _ReverseTranslation(msgid)
-    return TranslationHelper.GetReverseTranslation(msgid)
+    return GuiTranslation.GetReverseTranslation(msgid)
   end
   
 

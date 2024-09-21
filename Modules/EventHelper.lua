@@ -7,13 +7,13 @@ function EventHelper.Init(_dt, _LogHelper, _Helper, _TranslationHelper, _ModuleN
     dt = _dt
     LogHelper = _LogHelper
     Helper = _Helper
-    TranslationHelper = _TranslationHelper
+    GuiTranslation = _TranslationHelper
     ModuleName = _ModuleName
 end
 
 -- return translation from local .po / .mo file
 local function _(msgid)
-    return TranslationHelper.t(msgid)
+    return GuiTranslation.t(msgid)
 end
 
 -- base class to handle events

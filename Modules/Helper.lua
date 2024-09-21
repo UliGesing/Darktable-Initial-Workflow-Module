@@ -5,18 +5,18 @@ local Helper = {}
 function Helper.Init(_dt, _LogHelper, _TranslationHelper, _ModuleName)
   dt = _dt
   LogHelper = _LogHelper
-  TranslationHelper = _TranslationHelper
+  GuiTranslation = _TranslationHelper
   ModuleName = _ModuleName
 end
 
 -- return translation from local .po / .mo file
 local function _(msgid)
-  return TranslationHelper.t(msgid)
+  return GuiTranslation.t(msgid)
 end
 
 -- return translation from darktable
 local function _dt(msgid)
-  return TranslationHelper.tdt(msgid)
+  return GuiTranslation.tdt(msgid)
 end
 
 -- add quote marks

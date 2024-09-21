@@ -2,13 +2,13 @@
 -- This helper module contains some functions to perform module tests.
 -- The following functions are used during development and deployment.
 
-local ModuleTestHelper = {}
+local ModuleTests = {}
 
-function ModuleTestHelper.Init(_dt, _LogHelper, _Helper, _TranslationHelper, _GuiAction, _WorkflowSteps, _ProcessWorkflowSteps, _SetAllDefaultModuleConfigurations)
+function ModuleTests.Init(_dt, _LogHelper, _Helper, _TranslationHelper, _GuiAction, _WorkflowSteps, _ProcessWorkflowSteps, _SetAllDefaultModuleConfigurations)
     dt = _dt
     LogHelper = _LogHelper
     Helper = _Helper
-    TranslationHelper = _TranslationHelper
+    GuiTranslation = _TranslationHelper
     GuiAction = _GuiAction
     WorkflowSteps = _WorkflowSteps
     ProcessWorkflowSteps = _ProcessWorkflowSteps
@@ -17,7 +17,7 @@ end
 
 -- return translation from local .po / .mo file
 local function _(msgid)
-    return TranslationHelper.t(msgid)
+    return GuiTranslation.t(msgid)
 end
 
 local moduleTestImage
@@ -132,7 +132,7 @@ local function ModuleTestIterateConfigurationValues()
 end
 
 -- called to perform module tests
-function ModuleTestHelper.ModuleTest()
+function ModuleTests.ModuleTest()
   -- check darkroom view
   local currentView = dt.gui.current_view()
   if (currentView ~= dt.gui.views.darkroom) then
@@ -264,4 +264,4 @@ function ModuleTestHelper.ModuleTest()
   LogHelper.Info(_("module test finished"))
 end
 
-return ModuleTestHelper
+return ModuleTests

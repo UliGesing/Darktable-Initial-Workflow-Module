@@ -10,12 +10,12 @@ function GuiAction.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelp
     LogHelper = _LogHelper
     Helper = _Helper
     EventHelper = _EventHelper
-    TranslationHelper = _TranslationHelper
+    GuiTranslation = _TranslationHelper
 end
 
 -- return translation from local .po / .mo file
 local function _(msgid)
-    return TranslationHelper.t(msgid)
+    return GuiTranslation.t(msgid)
 end
 
 -- convert values to boolean, consider not a number and nil
