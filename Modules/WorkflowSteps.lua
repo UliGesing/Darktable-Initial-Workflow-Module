@@ -1,11 +1,6 @@
---[[
-
-      IMPLEMENTATION OF WORKFLOW STEPS
-
-      For more details see Readme.md in
-      https://github.com/UliGesing/Darktable-Initial-Workflow-Module
-     ]]
-
+-- Implementation of workflow steps.
+-- For more details see Readme.md in
+-- https://github.com/UliGesing/Darktable-Initial-Workflow-Module
 
 local WorkflowSteps = {}
 

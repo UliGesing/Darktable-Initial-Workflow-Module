@@ -1,4 +1,3 @@
----------------------------------------------------------------
 -- base class of workflow steps
 
 local Workflow = {}

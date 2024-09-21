@@ -1,3 +1,5 @@
+-- helper functions to show some information during script run
+
 local LogHelper = {}
 
 local log = require 'lib/dtutils.log'

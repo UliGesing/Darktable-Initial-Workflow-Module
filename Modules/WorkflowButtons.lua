@@ -1,4 +1,4 @@
--- IMPLEMENTATION OF BUTTON FUNCTIONALITY
+-- Implementation of button controls
 -- These are buttons to start the execution of the steps or e.g. to set default values.
 
 local WorkflowButtons = {}

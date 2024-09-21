@@ -1,3 +1,5 @@
+-- some common helper functions
+
 local du = require 'lib/dtutils'
 
 local Helper = {}

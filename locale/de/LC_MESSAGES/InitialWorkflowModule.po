@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-21 18:59+0200\n"
+"POT-Creation-Date: 2024-09-21 19:42+0200\n"
 "PO-Revision-Date: 2023-06-10 10:27+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -14,128 +14,39 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 23.04.1\n"
 
-#: InitialWorkflowModule.lua:83
+#: InitialWorkflowModule.lua:77
 #, lua-format
 msgid "script executed from path %s"
 msgstr "Skript wurde gestartet von Pfad %s"
 
-#: InitialWorkflowModule.lua:84
+#: InitialWorkflowModule.lua:78
 #, lua-format
 msgid "script translation files in %s"
 msgstr "Skript-Lokalisierungsdateien befinden sich in %s"
 
-#: InitialWorkflowModule.lua:85
+#: InitialWorkflowModule.lua:79
 msgid "script outputs are in English"
 msgstr "Skriptausgaben erfolgen in Deutsch"
 
-#: InitialWorkflowModule.lua:141 InitialWorkflowModule.lua:156
-#: InitialWorkflowModule.lua:169 InitialWorkflowModule.lua:185
-#: InitialWorkflowModule.lua:198 InitialWorkflowModule.lua:216
-#: Modules/Workflow.lua:147 Modules/Workflow.lua:154
-msgid "default"
-msgstr "standard"
-
-#: InitialWorkflowModule.lua:155
-msgid ""
-"Configure all following common settings: Reset all steps to default "
-"configurations. These settings are applied during script run, if "
-"corresponding step is enabled."
-msgstr ""
-"Konfiguration für alle diese allgemeinen Einstellungen: Setze für alle "
-"Einstellungen den Standardwert. Diese Einstellungen werden während der "
-"Ausführung des Skripts angewendet, falls der zugehörige Schritt aktiviert "
-"ist."
-
-#: InitialWorkflowModule.lua:184
-msgid ""
-"Configure all module settings: a) Select default value. b) Ignore this "
-"step / module and do nothing at all. c) Enable corresponding module and set "
-"selected module configuration. d) Reset the module and set selected module "
-"configuration. e) Disable module and keep it unchanged."
-msgstr ""
-"Konfiguration für alle Module: a) Setze den Standardwert. b) Ignoriere "
-"diesen Schritt / dieses Modul und modifiziere nichts. c) Aktiviere das Modul "
-"und wende die selektierte Konfiguration an. d) Setze die Standardwerte "
-"dieses Moduls und wende die Konfiguration an. e) Deaktiviere das Modul und "
-"modifiziere die Einstellungen nicht."
-
-#: InitialWorkflowModule.lua:185 Modules/Workflow.lua:147
-#: Modules/Workflow.lua:181 Modules/Workflow.lua:212 Modules/Workflow.lua:244
-#: Modules/WorkflowSteps.lua:161 Modules/WorkflowSteps.lua:942
-msgid "ignore"
-msgstr "ignorieren"
-
-#: InitialWorkflowModule.lua:185 Modules/ModuleTests.lua:203
-#: Modules/Workflow.lua:147 Modules/Workflow.lua:181 Modules/Workflow.lua:223
-#: Modules/Workflow.lua:250
-msgid "enable"
-msgstr "aktivieren"
-
-#: InitialWorkflowModule.lua:185 Modules/Workflow.lua:147
-#: Modules/Workflow.lua:228
-msgid "reset"
-msgstr "zuruecksetzen"
-
-#: InitialWorkflowModule.lua:185 Modules/Workflow.lua:147
-#: Modules/Workflow.lua:218 Modules/WorkflowSteps.lua:165
-#: Modules/WorkflowSteps.lua:946
-msgid "disable"
-msgstr "deaktivieren"
-
-#: InitialWorkflowModule.lua:200 InitialWorkflowModule.lua:216
-#: Modules/WorkflowSteps.lua:111 Modules/WorkflowSteps.lua:187
-#: Modules/WorkflowSteps.lua:262 Modules/WorkflowSteps.lua:282
-#: Modules/WorkflowSteps.lua:309 Modules/WorkflowSteps.lua:329
-#: Modules/WorkflowSteps.lua:359 Modules/WorkflowSteps.lua:380
-#: Modules/WorkflowSteps.lua:410 Modules/WorkflowSteps.lua:434
-#: Modules/WorkflowSteps.lua:470 Modules/WorkflowSteps.lua:496
-#: Modules/WorkflowSteps.lua:548 Modules/WorkflowSteps.lua:576
-#: Modules/WorkflowSteps.lua:604 Modules/WorkflowSteps.lua:627
-#: Modules/WorkflowSteps.lua:676 Modules/WorkflowSteps.lua:699
-#: Modules/WorkflowSteps.lua:728 Modules/WorkflowSteps.lua:750
-#: Modules/WorkflowSteps.lua:788 Modules/WorkflowSteps.lua:809
-#: Modules/WorkflowSteps.lua:853 Modules/WorkflowSteps.lua:872
-#: Modules/WorkflowSteps.lua:898 Modules/WorkflowSteps.lua:967
-#: Modules/WorkflowSteps.lua:1007 Modules/WorkflowSteps.lua:1038
-#: Modules/WorkflowSteps.lua:1092 Modules/WorkflowSteps.lua:1117
-#: Modules/WorkflowSteps.lua:1154 Modules/WorkflowSteps.lua:1179
-#: Modules/WorkflowSteps.lua:1226 Modules/WorkflowSteps.lua:1251
-msgid "unchanged"
-msgstr "unveraendert"
-
-#: InitialWorkflowModule.lua:215
-msgid ""
-"Configure all module settings: Keep all modules unchanged or enable all "
-"default configurations. These configurations are set, if you choose 'reset' "
-"or 'enable' as basic setting."
-msgstr ""
-"Konfiguration für alle Module: Erhalte alle Module unveraendert oder setze "
-"alle Standardeinstellungen. Diese Einstellungen werden angewendet, falls "
-"'standard' oder 'aktivieren' als Grundeinstellung selektiert wird."
-
-#: InitialWorkflowModule.lua:224
-msgid "insert test button widget"
-msgstr "Test-Button erzeugen"
-
-#: InitialWorkflowModule.lua:446
+#: InitialWorkflowModule.lua:172
 #, lua-format
 msgid "view changed to %s"
 msgstr "Ansicht gewechselt zu %s"
 
-#: InitialWorkflowModule.lua:457
+#: InitialWorkflowModule.lua:183
 msgid "create widget in lighttable and darkroom panels"
 msgstr "Modul in Leuchttisch- und Dunkelkammer-Ansicht erstellen"
 
-#: Modules/Helper.lua:36
+#: Modules/Helper.lua:38
 #, lua-format
 msgid "darktable version with appropriate lua API detected: %s"
 msgstr "darktable-Version mit passender Lua-API erkannt: %s"
 
-#: Modules/Helper.lua:39
+#: Modules/Helper.lua:41
 msgid "this script needs at least darktable 4.8 API to run"
 msgstr "Dieses Skript erfordert mindestens darktable 4.8 API"
 
-#: Modules/EventHelper.lua:76
+#: Modules/EventHelper.lua:75
 #, lua-format
 msgid ""
 "timeout after %d ms waiting for event %s - increase timeout setting and try "
@@ -144,7 +55,7 @@ msgstr ""
 "Timeout nach %d ms beim Warten auf das Event %s - evtl. sollten Sie die "
 "Einstellung des Timeout-Werts anpassen."
 
-#: Modules/EventHelper.lua:110
+#: Modules/EventHelper.lua:109
 msgid ""
 "loading image failed, reload is performed (this could indicate a timing "
 "problem)"
@@ -152,74 +63,103 @@ msgstr ""
 "Laden des Bildes ist fehlgeschlagen. Das Bild wird erneut geladen (dies kann "
 "auf ein Timing-Problem hinweisen)."
 
-#: Modules/GuiAction.lua:107
+#: Modules/GuiAction.lua:106
 #, lua-format
 msgid "nothing to do, value already equals to %s"
 msgstr "Es gibt nichts zu tun, der Wert ist bereits %s"
 
-#: Modules/GuiAction.lua:114
+#: Modules/GuiAction.lua:113
 #, lua-format
 msgid "push button off and on: %s"
 msgstr "Funktion (Button, Zauberstab) aus- und einschalten: %s"
 
-#: Modules/GuiAction.lua:120
+#: Modules/GuiAction.lua:119
 msgid "nothing to do, button is already inactive"
 msgstr "Es gibt nichts zu tun, die Funktion ist bereits inaktiv"
 
-#: Modules/ModuleTests.lua:139 Modules/WorkflowButtons.lua:393
+#: Modules/ModuleTests.lua:138 Modules/WorkflowButtons.lua:393
 msgid "module tests must be started from darkroom view"
 msgstr "Modultests bitte in der Dunkelkammer-Ansicht starten"
 
-#: Modules/ModuleTests.lua:145
+#: Modules/ModuleTests.lua:144
 msgid "module test started"
 msgstr "Modultest gestartet"
 
-#: Modules/ModuleTests.lua:264
+#: Modules/ModuleTests.lua:202 Modules/Workflow.lua:146
+#: Modules/Workflow.lua:180 Modules/Workflow.lua:222 Modules/Workflow.lua:249
+#: Modules/GuiWidgets.lua:83
+msgid "enable"
+msgstr "aktivieren"
+
+#: Modules/ModuleTests.lua:263
 msgid "module test finished"
 msgstr "Modultest abgeschlossen"
 
-#: Modules/Workflow.lua:63
+#: Modules/Workflow.lua:62
 #, lua-format
 msgid "selection = %s - %s"
 msgstr "Auswahl = %s - %s"
 
-#: Modules/Workflow.lua:69
+#: Modules/Workflow.lua:68
 #, lua-format
 msgid "show module if not visible: %s"
 msgstr "Modul anzeigen, falls nicht sichtbar: %s"
 
-#: Modules/Workflow.lua:76
+#: Modules/Workflow.lua:75
 msgid "module is already visible, nothing to do"
 msgstr "Modul ist bereits sichtbar, es gibt nichts zu tun"
 
-#: Modules/Workflow.lua:83
+#: Modules/Workflow.lua:82
 #, lua-format
 msgid "hide module if visible: %s"
 msgstr "Modul ausblenden, falls sichtbar: %s"
 
-#: Modules/Workflow.lua:88
+#: Modules/Workflow.lua:87
 msgid "module is already hidden, nothing to do"
 msgstr "Modul ist bereits ausgeblendet, es gibt nichts zu tun"
 
-#: Modules/Workflow.lua:95
+#: Modules/Workflow.lua:94
 #, lua-format
 msgid "enable module if disabled: %s"
 msgstr "Modul aktivieren, falls deaktiviert: %s"
 
-#: Modules/Workflow.lua:100
+#: Modules/Workflow.lua:99
 msgid "module is already enabled, nothing to do"
 msgstr "Modul ist bereits aktiviert, es gibt nichts zu tun"
 
-#: Modules/Workflow.lua:111
+#: Modules/Workflow.lua:110
 #, lua-format
 msgid "disable module if enabled: %s"
 msgstr "Modul deaktivieren, falls aktiviert: %s"
 
-#: Modules/Workflow.lua:116
+#: Modules/Workflow.lua:115
 msgid "module is already disabled, nothing to do"
 msgstr "Modul ist bereits deaktiviert, es gibt nichts zu tun"
 
-#: Modules/Workflow.lua:163
+#: Modules/Workflow.lua:146 Modules/Workflow.lua:153 Modules/GuiWidgets.lua:39
+#: Modules/GuiWidgets.lua:54 Modules/GuiWidgets.lua:67
+#: Modules/GuiWidgets.lua:83 Modules/GuiWidgets.lua:96
+#: Modules/GuiWidgets.lua:114
+msgid "default"
+msgstr "standard"
+
+#: Modules/Workflow.lua:146 Modules/Workflow.lua:180 Modules/Workflow.lua:211
+#: Modules/Workflow.lua:243 Modules/WorkflowSteps.lua:156
+#: Modules/WorkflowSteps.lua:937 Modules/GuiWidgets.lua:83
+msgid "ignore"
+msgstr "ignorieren"
+
+#: Modules/Workflow.lua:146 Modules/Workflow.lua:227 Modules/GuiWidgets.lua:83
+msgid "reset"
+msgstr "zuruecksetzen"
+
+#: Modules/Workflow.lua:146 Modules/Workflow.lua:217
+#: Modules/WorkflowSteps.lua:160 Modules/WorkflowSteps.lua:941
+#: Modules/GuiWidgets.lua:83
+msgid "disable"
+msgstr "deaktivieren"
+
+#: Modules/Workflow.lua:162
 msgid ""
 "basic setting: a) Select default value. b) Ignore this step / module and do "
 "nothing at all. c) Enable corresponding module and set selected module "
@@ -232,13 +172,13 @@ msgstr ""
 "wende die Konfiguration an. e) Deaktiviere das Modul und modifiziere die "
 "Einstellungen nicht."
 
-#: Modules/Workflow.lua:187
+#: Modules/Workflow.lua:186
 msgid "basic setting: Ignore this module or do corresponding configuration."
 msgstr ""
 "Grundeinstellung: Ignoriere dieses Modul oder wende die entsprechende "
 "Konfiguration an."
 
-#: Modules/WorkflowSteps.lua:51
+#: Modules/WorkflowSteps.lua:46
 msgid ""
 "Generate the shortest history stack that reproduces the current image. This "
 "removes your current history snapshots."
@@ -246,7 +186,7 @@ msgstr ""
 "Generiert einen minimalen Verlaufsstapel, der das gleiche Bild erzeugt. "
 "Dadurch werden die aktuellen Snapshots des Verlaufs entfernt."
 
-#: Modules/WorkflowSteps.lua:94
+#: Modules/WorkflowSteps.lua:89
 msgid ""
 "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene "
 "to fit the dynamic range of the display. Auto tune filmic levels of black + "
@@ -260,29 +200,50 @@ msgstr ""
 "Voreinstellungen. Es wird nur eines der Module Filmic, Sigmoid oder "
 "Basiskurve zugleich aktiviert. Die jeweils anderen werden deaktiviert."
 
-#: Modules/WorkflowSteps.lua:199 Modules/WorkflowSteps.lua:761
+#: Modules/WorkflowSteps.lua:106 Modules/WorkflowSteps.lua:182
+#: Modules/WorkflowSteps.lua:257 Modules/WorkflowSteps.lua:277
+#: Modules/WorkflowSteps.lua:304 Modules/WorkflowSteps.lua:324
+#: Modules/WorkflowSteps.lua:354 Modules/WorkflowSteps.lua:375
+#: Modules/WorkflowSteps.lua:405 Modules/WorkflowSteps.lua:429
+#: Modules/WorkflowSteps.lua:465 Modules/WorkflowSteps.lua:491
+#: Modules/WorkflowSteps.lua:543 Modules/WorkflowSteps.lua:571
+#: Modules/WorkflowSteps.lua:599 Modules/WorkflowSteps.lua:622
+#: Modules/WorkflowSteps.lua:671 Modules/WorkflowSteps.lua:694
+#: Modules/WorkflowSteps.lua:723 Modules/WorkflowSteps.lua:745
+#: Modules/WorkflowSteps.lua:783 Modules/WorkflowSteps.lua:804
+#: Modules/WorkflowSteps.lua:848 Modules/WorkflowSteps.lua:867
+#: Modules/WorkflowSteps.lua:893 Modules/WorkflowSteps.lua:962
+#: Modules/WorkflowSteps.lua:1002 Modules/WorkflowSteps.lua:1033
+#: Modules/WorkflowSteps.lua:1087 Modules/WorkflowSteps.lua:1112
+#: Modules/WorkflowSteps.lua:1149 Modules/WorkflowSteps.lua:1174
+#: Modules/WorkflowSteps.lua:1221 Modules/WorkflowSteps.lua:1246
+#: Modules/GuiWidgets.lua:98 Modules/GuiWidgets.lua:114
+msgid "unchanged"
+msgstr "unveraendert"
+
+#: Modules/WorkflowSteps.lua:194 Modules/WorkflowSteps.lua:756
 msgid "checkbox already selected, nothing to do"
 msgstr "Einstellung bereits vorhanden, nichts zu tun"
 
-#: Modules/WorkflowSteps.lua:217 Modules/WorkflowSteps.lua:228
+#: Modules/WorkflowSteps.lua:212 Modules/WorkflowSteps.lua:223
 #, lua-format
 msgid "current color processing = %s"
 msgstr "aktuelle Farbbehandlung = %s"
 
-#: Modules/WorkflowSteps.lua:221 Modules/WorkflowSteps.lua:232
+#: Modules/WorkflowSteps.lua:216 Modules/WorkflowSteps.lua:227
 #, lua-format
 msgid "nothing to do, color processing already = %s"
 msgstr "Nichts zu tun, aktuelle Farbbehandlung ist bereits = %s"
 
-#: Modules/WorkflowSteps.lua:251
+#: Modules/WorkflowSteps.lua:246
 msgid "Adjust global saturation in color balance rgb module."
 msgstr "Passt die globale Saettigung im Farbbalance-RGB-Modul an."
 
-#: Modules/WorkflowSteps.lua:298
+#: Modules/WorkflowSteps.lua:293
 msgid "Adjust global chroma in color balance rgb module."
 msgstr "Passt die globale Chroma im Farbbalance-RGB-Modul an."
 
-#: Modules/WorkflowSteps.lua:346
+#: Modules/WorkflowSteps.lua:341
 msgid ""
 "Set auto pickers of the module mask and peak white and gray luminance value "
 "to normalize the power setting in the 4 ways tab."
@@ -291,15 +252,15 @@ msgstr ""
 "Grauluminanz automatisch an, um die Potenzfunktion auf der Registerkarte 4 "
 "HSL zu normalisieren."
 
-#: Modules/WorkflowSteps.lua:360 Modules/WorkflowSteps.lua:384
+#: Modules/WorkflowSteps.lua:355 Modules/WorkflowSteps.lua:379
 msgid "peak white & grey fulcrum"
 msgstr "max. Weiss- und Kontrast-Graupunkt"
 
-#: Modules/WorkflowSteps.lua:399
+#: Modules/WorkflowSteps.lua:394
 msgid "Choose a predefined preset for your color-grading."
 msgstr "Bestimmen Sie die Farbkorrektur mit einer vordefinierten Einstellung."
 
-#: Modules/WorkflowSteps.lua:451 Modules/WorkflowSteps.lua:536
+#: Modules/WorkflowSteps.lua:446 Modules/WorkflowSteps.lua:531
 msgid ""
 "Adjust luminance and chroma contrast. Apply choosen preset (clarity or "
 "denoise & sharpen). Choose different values to adjust the strength of the "
@@ -309,7 +270,7 @@ msgstr ""
 "Voreinstellung anwenden (Klarheit oder entrauschen & schaerfen). Stellen Sie "
 "verschiedene Werte ein, um die Staerke des Effekts anzupassen."
 
-#: Modules/WorkflowSteps.lua:593
+#: Modules/WorkflowSteps.lua:588
 msgid ""
 "Apply automatic mask contrast and exposure compensation. Auto adjust the "
 "contrast and average exposure."
@@ -317,19 +278,19 @@ msgstr ""
 "Automatische Anpassung der durchschnittlichen Belichtung und des Kontrasts "
 "der Maske."
 
-#: Modules/WorkflowSteps.lua:605 Modules/WorkflowSteps.lua:635
+#: Modules/WorkflowSteps.lua:600 Modules/WorkflowSteps.lua:630
 msgid "mask exposure compensation"
 msgstr "Maskenbelichtung kompensieren"
 
-#: Modules/WorkflowSteps.lua:606 Modules/WorkflowSteps.lua:639
+#: Modules/WorkflowSteps.lua:601 Modules/WorkflowSteps.lua:634
 msgid "mask contrast compensation"
 msgstr "Maskenkontrast kompensieren"
 
-#: Modules/WorkflowSteps.lua:607 Modules/WorkflowSteps.lua:643
+#: Modules/WorkflowSteps.lua:602 Modules/WorkflowSteps.lua:638
 msgid "exposure & contrast comp."
 msgstr "Belichtung & Kontrast komp."
 
-#: Modules/WorkflowSteps.lua:665
+#: Modules/WorkflowSteps.lua:660
 msgid ""
 "Use preset to compress shadows and highlights with exposure-independent "
 "guided filter (eigf) (soft, medium or strong)."
@@ -340,23 +301,23 @@ msgstr ""
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: Modules/WorkflowSteps.lua:677
+#: Modules/WorkflowSteps.lua:672
 msgid "compress shadows-highlights (eigf): medium"
 msgstr "komprimiert Schatten-Spitzlichter (EIGF): mittel"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: Modules/WorkflowSteps.lua:678
+#: Modules/WorkflowSteps.lua:673
 msgid "compress shadows-highlights (eigf): soft"
 msgstr "komprimiert Schatten-Spitzlichter (EIGF): gering"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: Modules/WorkflowSteps.lua:679
+#: Modules/WorkflowSteps.lua:674
 msgid "compress shadows-highlights (eigf): strong"
 msgstr "komprimiert Schatten-Spitzlichter (EIGF): stark"
 
-#: Modules/WorkflowSteps.lua:717
+#: Modules/WorkflowSteps.lua:712
 msgid ""
 "Automatically adjust the exposure correction. Remove the camera exposure "
 "bias, useful if you exposed the image to the right."
@@ -365,29 +326,29 @@ msgstr ""
 "Belichtungskorrektur der Kamera. Dies ist hilfreich, wenn Sie das Bild nach "
 "rechts belichtet haben."
 
-#: Modules/WorkflowSteps.lua:729
+#: Modules/WorkflowSteps.lua:724
 msgid "adjust exposure correction"
 msgstr "Belichtungskorrektur kompensieren"
 
-#: Modules/WorkflowSteps.lua:730 Modules/WorkflowSteps.lua:756
+#: Modules/WorkflowSteps.lua:725 Modules/WorkflowSteps.lua:751
 msgid "adjust & compensate bias"
 msgstr "Belichtung & BIAS anpassen"
 
-#: Modules/WorkflowSteps.lua:775
+#: Modules/WorkflowSteps.lua:770
 msgid "Enable and reset lens correction module."
 msgstr "Objektivkorrektur aktivieren und zuruecksetzen."
 
-#: Modules/WorkflowSteps.lua:825
+#: Modules/WorkflowSteps.lua:820
 #, lua-format
 msgid "current correction method = %s"
 msgstr "Aktuelle Anpassung = %s"
 
-#: Modules/WorkflowSteps.lua:829
+#: Modules/WorkflowSteps.lua:824
 #, lua-format
 msgid "nothing to do, correction method already = %s"
 msgstr "Nichts zu tun, Anpassung ist bereits = %s"
 
-#: Modules/WorkflowSteps.lua:844
+#: Modules/WorkflowSteps.lua:839
 msgid ""
 "Enable denoise (profiled) module. There is nothing to configure, just enable "
 "or reset this module."
@@ -396,7 +357,7 @@ msgstr ""
 "konfigurieren, das Modul kann aktiviert oder auch zuvor zurueckgesetzt "
 "werden."
 
-#: Modules/WorkflowSteps.lua:887
+#: Modules/WorkflowSteps.lua:882
 msgid ""
 "Correct chromatic aberrations. Distinguish between Bayer sensor and other "
 "camera sensors. This operation uses the corresponding correction module and "
@@ -407,15 +368,15 @@ msgstr ""
 "Konfiguration nutzt das passende Korrekturmodul und deaktiviert das jeweils "
 "andere."
 
-#: Modules/WorkflowSteps.lua:899 Modules/WorkflowSteps.lua:914
+#: Modules/WorkflowSteps.lua:894 Modules/WorkflowSteps.lua:909
 msgid "Bayer sensor"
 msgstr "Bayer-Sensor"
 
-#: Modules/WorkflowSteps.lua:900 Modules/WorkflowSteps.lua:920
+#: Modules/WorkflowSteps.lua:895 Modules/WorkflowSteps.lua:915
 msgid "other sensors"
 msgstr "andere Sensoren"
 
-#: Modules/WorkflowSteps.lua:984
+#: Modules/WorkflowSteps.lua:979
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "illuminant. The type of illuminant assumed to have lit the scene. By default "
@@ -426,30 +387,30 @@ msgstr ""
 "es die Szene beleuchtet hat. Als Standardvorgabe wird hier beim Legacy-"
 "Workflow keine Einstellung vorgenommen."
 
-#: Modules/WorkflowSteps.lua:1047
+#: Modules/WorkflowSteps.lua:1042
 #, lua-format
 msgid "color calibration adaption = %s"
 msgstr "Farbkalibrierung Anpassung = %s"
 
-#: Modules/WorkflowSteps.lua:1049
+#: Modules/WorkflowSteps.lua:1044
 msgid "illuminant cannot be set"
 msgstr "Leuchtmittel kann nicht eingestellt werden"
 
-#: Modules/WorkflowSteps.lua:1052
+#: Modules/WorkflowSteps.lua:1047
 msgid "illuminant can be set"
 msgstr "Leuchtmittel kann eingestellt werden"
 
-#: Modules/WorkflowSteps.lua:1061
+#: Modules/WorkflowSteps.lua:1056
 #, lua-format
 msgid "current illuminant = %s"
 msgstr "Aktuelles Leuchtmittel = %s"
 
-#: Modules/WorkflowSteps.lua:1065
+#: Modules/WorkflowSteps.lua:1060
 #, lua-format
 msgid "nothing to do, illuminant already = %s"
 msgstr "Nichts zu tun, Leuchtmittel bereits = %s"
 
-#: Modules/WorkflowSteps.lua:1079
+#: Modules/WorkflowSteps.lua:1074
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "adaptation. The working color space in which the module will perform its "
@@ -459,17 +420,17 @@ msgstr ""
 "die Art der Adaption. Der Farbraum, in dem das Modul seine chromatische "
 "Anpassung und Kanalmischung vornimmt."
 
-#: Modules/WorkflowSteps.lua:1125
+#: Modules/WorkflowSteps.lua:1120
 #, lua-format
 msgid "current adaptation = %s"
 msgstr "Aktuelle Anpassung = %s"
 
-#: Modules/WorkflowSteps.lua:1129
+#: Modules/WorkflowSteps.lua:1124
 #, lua-format
 msgid "nothing to do, adaptation already = %s"
 msgstr "Nichts zu tun, Anpassung bereits = %s"
 
-#: Modules/WorkflowSteps.lua:1143
+#: Modules/WorkflowSteps.lua:1138
 msgid ""
 "Reconstruct color information for clipped pixels. Select an appropriate "
 "reconstruction methods to reconstruct the missing data from unclipped "
@@ -479,21 +440,21 @@ msgstr ""
 "Sie eine geeignete Rekonstruktionsmethode, um die fehlenden Daten aus nicht "
 "abgeschnittenen Kanaelen und/oder benachbarten Pixeln zu rekonstruieren."
 
-#: Modules/WorkflowSteps.lua:1187 Modules/WorkflowSteps.lua:1259
+#: Modules/WorkflowSteps.lua:1182 Modules/WorkflowSteps.lua:1254
 #, lua-format
 msgid "current value = %s"
 msgstr "Aktueller Wert = %s"
 
-#: Modules/WorkflowSteps.lua:1191 Modules/WorkflowSteps.lua:1263
+#: Modules/WorkflowSteps.lua:1186 Modules/WorkflowSteps.lua:1258
 #, lua-format
 msgid "nothing to do, value already = %s"
 msgstr "Nichts zu tun, Wert ist bereits = %s"
 
-#: Modules/WorkflowSteps.lua:1205
+#: Modules/WorkflowSteps.lua:1200
 msgid "white balance"
 msgstr "Weissabgleich"
 
-#: Modules/WorkflowSteps.lua:1207
+#: Modules/WorkflowSteps.lua:1202
 msgid ""
 "Adjust the white balance of the image by altering the temperature. By "
 "default unchanged for the legacy workflow."
@@ -501,21 +462,21 @@ msgstr ""
 "Passen Sie den Weissabgleich des Bildes mit der passenden Temperatur an. Als "
 "Standardvorgabe wird hier beim Legacy-Workflow keine Einstellung vorgenommen."
 
-#: Modules/WorkflowSteps.lua:1276
+#: Modules/WorkflowSteps.lua:1271
 msgid "discard complete history"
 msgstr "Verlauf ganz verwerfen"
 
-#: Modules/WorkflowSteps.lua:1277
+#: Modules/WorkflowSteps.lua:1272
 msgid "Reset all modules of the whole pixelpipe and discard complete history."
 msgstr ""
 "Verwerfe alle Einstellungen der Module der gesamten Pixelpipeline und den "
 "kompletten Verlauf."
 
-#: Modules/WorkflowSteps.lua:1326 Modules/WorkflowButtons.lua:227
+#: Modules/WorkflowSteps.lua:1321 Modules/WorkflowButtons.lua:227
 msgid "show modules"
 msgstr "Module anzeigen"
 
-#: Modules/WorkflowSteps.lua:1328
+#: Modules/WorkflowSteps.lua:1323
 msgid ""
 "Show darkroom modules for enabled workflow steps during execution of this "
 "initial workflow. This makes the changes easier to understand."
@@ -523,11 +484,11 @@ msgstr ""
 "Module in der Dunkelkammer anzeigen, dabei die Konfigurationen im Initial-"
 "Workflow anwenden. Dadurch sind die Einstellungen leichter nachzuvollziehen."
 
-#: Modules/WorkflowSteps.lua:1361
+#: Modules/WorkflowSteps.lua:1356
 msgid "timeout value"
 msgstr "Zeitlimit / Timeout"
 
-#: Modules/WorkflowSteps.lua:1363
+#: Modules/WorkflowSteps.lua:1358
 msgid ""
 "Some calculations take a certain amount of time. Depending on the hardware "
 "equipment also longer.This script waits and attempts to detect timeouts. If "
@@ -544,7 +505,7 @@ msgstr ""
 "anderen Stellen auch ein Vielfaches (Laden eines Bildes) oder ein Bruchteil "
 "davon (Abfragen eines aktuellen Wertes)."
 
-#: Modules/WorkflowSteps.lua:1392
+#: Modules/WorkflowSteps.lua:1387
 #, lua-format
 msgid "step timeout = %s ms"
 msgstr "Zeitlimit / Timeout dieses Schritts = %s ms"
@@ -675,3 +636,41 @@ msgstr ""
 #, lua-format
 msgid "module test file not found: %s"
 msgstr "Modultest-Datei nicht gefunden: %s"
+
+#: Modules/GuiWidgets.lua:53
+msgid ""
+"Configure all following common settings: Reset all steps to default "
+"configurations. These settings are applied during script run, if "
+"corresponding step is enabled."
+msgstr ""
+"Konfiguration für alle diese allgemeinen Einstellungen: Setze für alle "
+"Einstellungen den Standardwert. Diese Einstellungen werden während der "
+"Ausführung des Skripts angewendet, falls der zugehörige Schritt aktiviert "
+"ist."
+
+#: Modules/GuiWidgets.lua:82
+msgid ""
+"Configure all module settings: a) Select default value. b) Ignore this "
+"step / module and do nothing at all. c) Enable corresponding module and set "
+"selected module configuration. d) Reset the module and set selected module "
+"configuration. e) Disable module and keep it unchanged."
+msgstr ""
+"Konfiguration für alle Module: a) Setze den Standardwert. b) Ignoriere "
+"diesen Schritt / dieses Modul und modifiziere nichts. c) Aktiviere das Modul "
+"und wende die selektierte Konfiguration an. d) Setze die Standardwerte "
+"dieses Moduls und wende die Konfiguration an. e) Deaktiviere das Modul und "
+"modifiziere die Einstellungen nicht."
+
+#: Modules/GuiWidgets.lua:113
+msgid ""
+"Configure all module settings: Keep all modules unchanged or enable all "
+"default configurations. These configurations are set, if you choose 'reset' "
+"or 'enable' as basic setting."
+msgstr ""
+"Konfiguration für alle Module: Erhalte alle Module unveraendert oder setze "
+"alle Standardeinstellungen. Diese Einstellungen werden angewendet, falls "
+"'standard' oder 'aktivieren' als Grundeinstellung selektiert wird."
+
+#: Modules/GuiWidgets.lua:122
+msgid "insert test button widget"
+msgstr "Test-Button erzeugen"

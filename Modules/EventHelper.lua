@@ -1,4 +1,3 @@
----------------------------------------------------------------
 -- Event handling helper functions used during dt.gui.action
 
 local EventHelper = {}

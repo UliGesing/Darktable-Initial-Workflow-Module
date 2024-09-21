@@ -1,4 +1,3 @@
--- MODULE TEST IMPLEMENTATION.
 -- This helper module contains some functions to perform module tests.
 -- The following functions are used during development and deployment.
 

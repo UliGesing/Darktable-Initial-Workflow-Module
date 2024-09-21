@@ -1,4 +1,3 @@
----------------------------------------------------------------
 -- helper functions to access darktable feature via user interface
 
 local GuiAction = {}
