@@ -2,10 +2,7 @@ local LogHelper = {}
 
 local log = require 'lib/dtutils.log'
 
-function LogHelper.Init(_dt, _LogHelper)
-    LogHelper.dt = _dt
-    LogHelper.LogHelper = _LogHelper
-
+function LogHelper.Init()
     log.log_level(log.info) -- log.info or log.warn or log.debug
 
     LogHelper.SummaryMessages = {}

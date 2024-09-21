@@ -83,6 +83,10 @@ Helper.Init(dt, LogHelper, TranslationHelper, ModuleName)
 local EventHelper = require 'EventHelper'
 EventHelper.Init(dt, LogHelper, Helper, TranslationHelper, ModuleName)
 
+-- init ./Modules/GuiActionHelper
+local GuiAction = require 'GuiAction'
+GuiAction.Init(dt, LogHelper, Helper, EventHelper, TranslationHelper)
+
 ---------------------------------------------------------------
 -- declare some variables to install the module
 
@@ -149,11 +153,11 @@ end
 function WorkflowStep:ShowDarkroomModule(moduleName)
   -- check if the module is already displayed
   LogHelper.Info(string.format(_("show module if not visible: %s"), moduleName))
-  local visible = GuiActionGetValue(moduleName, 'show')
-  if (not EventHelper.ConvertGuiActionValueToBoolean(visible)) then
+  local visible = GuiAction.GetValue(moduleName, 'show')
+  if (not GuiAction.ConvertValueToBoolean(visible)) then
     dt.gui.panel_show('DT_UI_PANEL_RIGHT')
     Helper.ThreadSleep(StepTimeout:Value() / 2)
-    GuiActionWithoutEvent(moduleName, 0, 'show', '', 1.0)
+    GuiAction.DoWithoutEvent(moduleName, 0, 'show', '', 1.0)
   else
     LogHelper.Info(indent .. _("module is already visible, nothing to do"))
   end
@@ -163,9 +167,9 @@ end
 function WorkflowStep:HideDarkroomModule(moduleName)
   -- check if the module is already hidden
   LogHelper.Info(string.format(_("hide module if visible: %s"), moduleName))
-  local visible = GuiActionGetValue(moduleName, 'show')
-  if (EventHelper.ConvertGuiActionValueToBoolean(visible)) then
-    GuiActionWithoutEvent(moduleName, 0, 'show', '', 1.0)
+  local visible = GuiAction.GetValue(moduleName, 'show')
+  if (GuiAction.ConvertValueToBoolean(visible)) then
+    GuiAction.DoWithoutEvent(moduleName, 0, 'show', '', 1.0)
   else
     LogHelper.Info(indent .. _("module is already hidden, nothing to do"))
   end
@@ -175,9 +179,9 @@ end
 function WorkflowStep:EnableDarkroomModule(moduleName)
   -- check if the module is already activated
   LogHelper.Info(string.format(_("enable module if disabled: %s"), moduleName))
-  local status = GuiActionGetValue(moduleName, 'enable')
-  if (not EventHelper.ConvertGuiActionValueToBoolean(status)) then
-    GuiAction(moduleName, 0, 'enable', '', 1.0)
+  local status = GuiAction.GetValue(moduleName, 'enable')
+  if (not GuiAction.ConvertValueToBoolean(status)) then
+    GuiAction.Do(moduleName, 0, 'enable', '', 1.0)
   else
     LogHelper.Info(indent .. _("module is already enabled, nothing to do"))
   end
@@ -191,9 +195,9 @@ end
 function WorkflowStep:DisableDarkroomModule(moduleName)
   -- check if the module is already activated
   LogHelper.Info(string.format(_("disable module if enabled: %s"), moduleName))
-  local status = GuiActionGetValue(moduleName, 'enable')
-  if (EventHelper.ConvertGuiActionValueToBoolean(status)) then
-    GuiAction(moduleName, 0, 'enable', '', 1.0)
+  local status = GuiAction.GetValue(moduleName, 'enable')
+  if (GuiAction.ConvertValueToBoolean(status)) then
+    GuiAction.Do(moduleName, 0, 'enable', '', 1.0)
   else
     LogHelper.Info(indent .. _("module is already disabled, nothing to do"))
   end
@@ -202,7 +206,7 @@ end
 -- reset given darkroom module
 function WorkflowStep:ResetDarkroomModule(moduleName)
   LogHelper.Info(_dt("reset parameters") .. ' (' .. moduleName .. ')')
-  GuiAction(moduleName, 0, 'reset', '', 1.0)
+  GuiAction.Do(moduleName, 0, 'reset', '', 1.0)
 end
 
 -- handle view changed event (lighttable / darkroom view)
@@ -532,7 +536,7 @@ function StepCompressHistoryStack:Run()
   local selection = self.Widget.value
 
   if (selection == _dt("yes")) then
-    GuiAction('lib/history/compress history stack', 0, '', '', 1.0)
+    GuiAction.Do('lib/history/compress history stack', 0, '', '', 1.0)
   end
 end
 
@@ -645,12 +649,12 @@ function StepDynamicRangeSceneToDisplay:Run()
   end
 
   if (self:FilmicSelected()) then
-    GuiActionButtonOffOn('iop/filmicrgb/auto tune levels')
+    GuiAction.ButtonOffOn('iop/filmicrgb/auto tune levels')
 
     if (selection == self.filmicHighlightReconstruction) then
-      local checkbox = GuiActionGetValue('iop/filmicrgb/enable highlight reconstruction', '')
+      local checkbox = GuiAction.GetValue('iop/filmicrgb/enable highlight reconstruction', '')
       if (checkbox == 0) then
-        GuiAction('iop/filmicrgb/enable highlight reconstruction', 0, '', 'on', 1.0)
+        GuiAction.Do('iop/filmicrgb/enable highlight reconstruction', 0, '', 'on', 1.0)
       else
         LogHelper.Info(indent .. _("checkbox already selected, nothing to do"))
       end
@@ -664,13 +668,13 @@ function StepDynamicRangeSceneToDisplay:Run()
       _dt("RGB ratio")
     }
 
-    local currentSelectionIndex = GuiActionGetValue('iop/sigmoid/color processing', 'selection')
+    local currentSelectionIndex = GuiAction.GetValue('iop/sigmoid/color processing', 'selection')
     local currentSelection = colorProcessingValues[-currentSelectionIndex]
 
     if (selection == self.sigmoidColorPerChannel) then
       if (_dt("per channel") ~= currentSelection) then
         LogHelper.Info(indent .. string.format(_("current color processing = %s"), Helper.Quote(currentSelection)))
-        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:per channel', 1.0)
+        GuiAction.Do('iop/sigmoid/color processing', 0, 'selection', 'item:per channel', 1.0)
       else
         LogHelper.Info(indent ..
           string.format(_("nothing to do, color processing already = %s"), Helper.Quote(currentSelection)))
@@ -680,7 +684,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     if (selection == self.sigmoidColorRgbRatio) then
       if (_dt("RGB ratio") ~= currentSelection) then
         LogHelper.Info(indent .. string.format(_("current color processing = %s"), Helper.Quote(currentSelection)))
-        GuiAction('iop/sigmoid/color processing', 0, 'selection', 'item:RGB ratio', 1.0)
+        GuiAction.Do('iop/sigmoid/color processing', 0, 'selection', 'item:RGB ratio', 1.0)
       else
         LogHelper.Info(indent ..
           string.format(_("nothing to do, color processing already = %s"), Helper.Quote(currentSelection)))
@@ -688,7 +692,7 @@ function StepDynamicRangeSceneToDisplay:Run()
     end
 
     if (selection == self.sigmoidAces100Preset) then
-      GuiActionButtonOffOn('iop/sigmoid/preset/' .. _dt("ACES 100-nit like"))
+      GuiAction.ButtonOffOn('iop/sigmoid/preset/' .. _dt("ACES 100-nit like"))
     end
   end
 end
@@ -737,7 +741,7 @@ function StepColorBalanceGlobalSaturation:Run()
     return
   end
 
-  GuiActionSetValue('iop/colorbalancergb/global saturation', 0, 'value', 'set', selection / 100)
+  GuiAction.SetValue('iop/colorbalancergb/global saturation', 0, 'value', 'set', selection / 100)
 end
 
 ---------------------------------------------------------------
@@ -784,7 +788,7 @@ function StepColorBalanceGlobalChroma:Run()
     return
   end
 
-  GuiActionSetValue('iop/colorbalancergb/global chroma', 0, 'value', 'set', selection / 100)
+  GuiAction.SetValue('iop/colorbalancergb/global chroma', 0, 'value', 'set', selection / 100)
 end
 
 ---------------------------------------------------------------
@@ -836,8 +840,8 @@ function StepColorBalanceRGBMasks:Run()
   end
 
   if (selection == _("peak white & grey fulcrum")) then
-    GuiActionButtonOffOn('iop/colorbalancergb/white fulcrum')
-    GuiActionButtonOffOn('iop/colorbalancergb/contrast gray fulcrum')
+    GuiAction.ButtonOffOn('iop/colorbalancergb/white fulcrum')
+    GuiAction.ButtonOffOn('iop/colorbalancergb/contrast gray fulcrum')
   end
 end
 
@@ -889,7 +893,7 @@ function StepColorBalanceRGB:Run()
     return
   end
 
-  GuiActionButtonOffOn('iop/colorbalancergb/preset/' .. selection)
+  GuiAction.ButtonOffOn('iop/colorbalancergb/preset/' .. selection)
 end
 
 ---------------------------------------------------------------
@@ -952,28 +956,28 @@ function StepContrastEqualizer:Run()
   end
 
   if (selection == self.clarity010) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
-    GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
+    GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
+    GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
     --
   elseif (selection == self.clarity025) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
-    GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
+    GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
+    GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
     --
   elseif (selection == self.clarity050) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
-    GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
+    GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
+    GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
     --
   elseif (selection == self.denoise010) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
-    GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
+    GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
+    GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
     --
   elseif (selection == self.denoise025) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
-    GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
+    GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
+    GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
     --
   elseif (selection == self.denoise050) then
-    GuiActionButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
-    GuiActionSetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
+    GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
+    GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
   end
 end
 
@@ -1031,7 +1035,7 @@ function StepDiffuseOrSharpen:Run()
     return
   end
 
-  GuiAction('iop/diffuse/preset/' .. _dt(selection), 0, '', '', 1.0)
+  GuiAction.Do('iop/diffuse/preset/' .. _dt(selection), 0, '', '', 1.0)
 end
 
 ---------------------------------------------------------------
@@ -1084,20 +1088,20 @@ function StepToneEqualizerMask:Run()
 
   -- workaround: show this module, otherwise the buttons will not be pressed
   self:ShowDarkroomModule('iop/toneequal')
-  GuiActionWithoutEvent('iop/toneequal/page', 0, 'masking', '', 1.0)
+  GuiAction.DoWithoutEvent('iop/toneequal/page', 0, 'masking', '', 1.0)
 
   if (selection == _("mask exposure compensation")) then
-    GuiAction('iop/toneequal/mask exposure compensation', 0, 'button', 'toggle', 1.0)
+    GuiAction.Do('iop/toneequal/mask exposure compensation', 0, 'button', 'toggle', 1.0)
     Helper.ThreadSleep(StepTimeout:Value())
     --
   elseif (selection == _("mask contrast compensation")) then
-    GuiAction('iop/toneequal/mask contrast compensation', 0, 'button', 'toggle', 1.0)
+    GuiAction.Do('iop/toneequal/mask contrast compensation', 0, 'button', 'toggle', 1.0)
     Helper.ThreadSleep(StepTimeout:Value())
     --
   elseif (selection == _("exposure & contrast comp.")) then
-    GuiAction('iop/toneequal/mask exposure compensation', 0, 'button', 'toggle', 1.0)
+    GuiAction.Do('iop/toneequal/mask exposure compensation', 0, 'button', 'toggle', 1.0)
     Helper.ThreadSleep(StepTimeout:Value())
-    GuiAction('iop/toneequal/mask contrast compensation', 0, 'button', 'toggle', 1.0)
+    GuiAction.Do('iop/toneequal/mask contrast compensation', 0, 'button', 'toggle', 1.0)
     Helper.ThreadSleep(StepTimeout:Value())
   end
 
@@ -1155,7 +1159,7 @@ function StepToneEqualizer:Run()
   end
 
 
-  GuiActionButtonOffOn('iop/toneequal/preset/' .. selection)
+  GuiAction.ButtonOffOn('iop/toneequal/preset/' .. selection)
 end
 
 ---------------------------------------------------------------
@@ -1205,12 +1209,12 @@ function StepExposureCorrection:Run()
     return
   end
 
-  GuiActionButtonOffOn('iop/exposure/exposure')
+  GuiAction.ButtonOffOn('iop/exposure/exposure')
 
   if (selection == _("adjust & compensate bias")) then
-    local checkbox = GuiActionGetValue('iop/exposure/compensate exposure bias', '')
+    local checkbox = GuiAction.GetValue('iop/exposure/compensate exposure bias', '')
     if (checkbox == 0) then
-      GuiAction('iop/exposure/compensate exposure bias', 0, '', 'on', 1.0)
+      GuiAction.Do('iop/exposure/compensate exposure bias', 0, '', 'on', 1.0)
     else
       LogHelper.Info(indent .. _("checkbox already selected, nothing to do"))
     end
@@ -1271,12 +1275,12 @@ function StepLensCorrection:Run()
       self.lensfunSelection
     }
 
-    local currentSelectionIndex = GuiActionGetValue('iop/lens/correction method', 'selection')
+    local currentSelectionIndex = GuiAction.GetValue('iop/lens/correction method', 'selection')
     local currentSelection = lensCorrectionValues[-currentSelectionIndex]
 
     if (self.lensfunSelection ~= currentSelection) then
       LogHelper.Info(indent .. string.format(_("current correction method = %s"), Helper.Quote(currentSelection)))
-      GuiAction('iop/lens/correction method', 0, 'selection', 'item:Lensfun database', 1.0)
+      GuiAction.Do('iop/lens/correction method', 0, 'selection', 'item:Lensfun database', 1.0)
     else
       LogHelper.Info(indent ..
         string.format(_("nothing to do, correction method already = %s"), Helper.Quote(currentSelection)))
@@ -1493,7 +1497,7 @@ function StepColorCalibrationIlluminant:Run()
   end
 
   -- ignore illuminant, if current adaptation is equal to bypass
-  local adaptationSelectionIndex = GuiActionGetValue('iop/channelmixerrgb/adaptation', 'selection')
+  local adaptationSelectionIndex = GuiAction.GetValue('iop/channelmixerrgb/adaptation', 'selection')
   local adaptationSelection = StepColorCalibrationAdaptation:GetConfigurationValueFromSelectionIndex(
     adaptationSelectionIndex)
 
@@ -1507,12 +1511,12 @@ function StepColorCalibrationIlluminant:Run()
 
   -- set illuminant
 
-  local currentSelectionIndex = GuiActionGetValue('iop/channelmixerrgb/illuminant', 'selection')
+  local currentSelectionIndex = GuiAction.GetValue('iop/channelmixerrgb/illuminant', 'selection')
   local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
   if (selection ~= currentSelection) then
     LogHelper.Info(indent .. string.format(_("current illuminant = %s"), Helper.Quote(currentSelection)))
-    GuiAction('iop/channelmixerrgb/illuminant', 0, 'selection', 'item:' .. _ReverseTranslation(selection), 1.0)
+    GuiAction.Do('iop/channelmixerrgb/illuminant', 0, 'selection', 'item:' .. _ReverseTranslation(selection), 1.0)
   else
     LogHelper.Info(indent .. string.format(_("nothing to do, illuminant already = %s"), Helper.Quote(currentSelection)))
   end
@@ -1570,12 +1574,12 @@ function StepColorCalibrationAdaptation:Run()
     return
   end
 
-  local currentSelectionIndex = GuiActionGetValue('iop/channelmixerrgb/adaptation', 'selection')
+  local currentSelectionIndex = GuiAction.GetValue('iop/channelmixerrgb/adaptation', 'selection')
   local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
   if (selection ~= currentSelection) then
     LogHelper.Info(indent .. string.format(_("current adaptation = %s"), Helper.Quote(currentSelection)))
-    GuiAction('iop/channelmixerrgb/adaptation', 0, 'selection', 'item:' .. _ReverseTranslation(selection), 1.0)
+    GuiAction.Do('iop/channelmixerrgb/adaptation', 0, 'selection', 'item:' .. _ReverseTranslation(selection), 1.0)
   else
     LogHelper.Info(indent .. string.format(_("nothing to do, adaptation already = %s"), Helper.Quote(currentSelection)))
   end
@@ -1631,12 +1635,12 @@ function StepHighlightReconstruction:Run()
     return
   end
 
-  local currentSelectionIndex = GuiActionGetValue('iop/highlights/method', 'selection')
+  local currentSelectionIndex = GuiAction.GetValue('iop/highlights/method', 'selection')
   local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
   if (selection ~= currentSelection) then
     LogHelper.Info(indent .. string.format(_("current value = %s"), Helper.Quote(currentSelection)))
-    GuiAction('iop/highlights/method', 0, 'selection', 'item:' .. _ReverseTranslation(selection), 1.0)
+    GuiAction.Do('iop/highlights/method', 0, 'selection', 'item:' .. _ReverseTranslation(selection), 1.0)
   else
     LogHelper.Info(indent .. string.format(_("nothing to do, value already = %s"), Helper.Quote(currentSelection)))
   end
@@ -1702,12 +1706,12 @@ function StepWhiteBalance:Run()
     return
   end
 
-  local currentSelectionIndex = GuiActionGetValue('iop/temperature/settings/settings', 'selection')
+  local currentSelectionIndex = GuiAction.GetValue('iop/temperature/settings/settings', 'selection')
   local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
   if (selection ~= currentSelection) then
     LogHelper.Info(indent .. string.format(_("current value = %s"), Helper.Quote(currentSelection)))
-    GuiAction('iop/temperature/settings/' .. _ReverseTranslation(selection), 0, '', '', 1.0)
+    GuiAction.Do('iop/temperature/settings/' .. _ReverseTranslation(selection), 0, '', '', 1.0)
   else
     LogHelper.Info(indent .. string.format(_("nothing to do, value already = %s"), Helper.Quote(currentSelection)))
   end
@@ -1759,7 +1763,7 @@ function StepResetModuleHistory:Run()
   end
 
   if (selection == _dt("yes")) then
-    GuiAction('lib/history', 0, 'reset', '', 1.0)
+    GuiAction.Do('lib/history', 0, 'reset', '', 1.0)
   end
 end
 
@@ -2319,7 +2323,7 @@ local function ModuleTest()
   -- reset current image history
   -- start with a well-defined state
   -- copy xmp file (with 'empty' history stack)
-  GuiAction('lib/history', 0, 'reset', '', 1.0)
+  GuiAction.Do('lib/history', 0, 'reset', '', 1.0)
   moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename, '_0_Reset',
     moduleTestXmpModified)
 

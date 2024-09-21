@@ -3,20 +3,20 @@ local du = require 'lib/dtutils'
 local Helper = {}
 
 function Helper.Init(_dt, _LogHelper, _TranslationHelper, _ModuleName)
-  Helper.dt = _dt
-  Helper.LogHelper = _LogHelper
-  Helper.TranslationHelper = _TranslationHelper
-  Helper.ModuleName = _ModuleName
+  dt = _dt
+  LogHelper = _LogHelper
+  TranslationHelper = _TranslationHelper
+  ModuleName = _ModuleName
 end
 
 -- return translation from local .po / .mo file
 local function _(msgid)
-  return Helper.TranslationHelper.t(msgid)
+  return TranslationHelper.t(msgid)
 end
 
 -- return translation from darktable
 local function _dt(msgid)
-  return Helper.TranslationHelper.tdt(msgid)
+  return TranslationHelper.tdt(msgid)
 end
 
 -- add quote marks
@@ -25,18 +25,18 @@ function Helper.Quote(text)
 end
 
 function Helper.ThreadSleep(milliseconds)
-  Helper.dt.control.sleep(milliseconds)
+  dt.control.sleep(milliseconds)
 end
 
 function Helper.CheckApiVersion()
   -- check Darktable API version
   -- new API of DT 4.8 is needed to use pixelpipe-processing-complete event
-  local apiCheck, err = pcall(function() du.check_min_api_version('9.3.0', Helper.ModuleName) end)
+  local apiCheck, err = pcall(function() du.check_min_api_version('9.3.0', ModuleName) end)
   if (apiCheck) then
-    Helper.LogHelper.Info(string.format(_("darktable version with appropriate lua API detected: %s"),
-      'dt' .. Helper.dt.configuration.version))
+    LogHelper.Info(string.format(_("darktable version with appropriate lua API detected: %s"),
+      'dt' .. dt.configuration.version))
   else
-    Helper.LogHelper.Info(_("this script needs at least darktable 4.8 API to run"))
+    LogHelper.Info(_("this script needs at least darktable 4.8 API to run"))
     return false
   end
 
@@ -54,7 +54,7 @@ function Helper.CheckDarktableModernWorkflowPreference()
     _dt("modern")
   }
 
-  local workflow = Helper.dt.preferences.read('darktable', 'plugins/darkroom/workflow', 'string')
+  local workflow = dt.preferences.read('darktable', 'plugins/darkroom/workflow', 'string')
 
   return Helper.Contains(modernWorkflows, _(workflow))
 end
@@ -88,10 +88,10 @@ end
 -- helps you to find out strings like plugins/darkroom/chromatic-adaptation
 -- darktable -d lua > ~/keys.txt
 -- local function DumpPreferenceKeys()
---   local keys = Helper.dt.preferences.get_keys()
---   Helper.LogHelper.Info(string.format(_.t("number of %d preference keys retrieved"), #keys))
+--   local keys = dt.preferences.get_keys()
+--   LogHelper.Info(string.format(_.t("number of %d preference keys retrieved"), #keys))
 --   for _, key in ipairs(keys) do
---     Helper.LogHelper.Info(key .. ' = ' .. Helper.dt.preferences.read('darktable', key, 'string'))
+--     LogHelper.Info(key .. ' = ' .. dt.preferences.read('darktable', key, 'string'))
 --   end
 -- end
 
