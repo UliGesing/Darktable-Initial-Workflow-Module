@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-21 14:11+0200\n"
+"POT-Creation-Date: 2024-09-21 14:57+0200\n"
 "PO-Revision-Date: 2023-06-10 10:27+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -70,33 +70,33 @@ msgid "module is already disabled, nothing to do"
 msgstr "Modul ist bereits deaktiviert, es gibt nichts zu tun"
 
 #: InitialWorkflowModule.lua:233 InitialWorkflowModule.lua:240
-#: InitialWorkflowModule.lua:2518 InitialWorkflowModule.lua:2533
-#: InitialWorkflowModule.lua:2546 InitialWorkflowModule.lua:2562
-#: InitialWorkflowModule.lua:2575 InitialWorkflowModule.lua:2593
+#: InitialWorkflowModule.lua:2271 InitialWorkflowModule.lua:2286
+#: InitialWorkflowModule.lua:2299 InitialWorkflowModule.lua:2315
+#: InitialWorkflowModule.lua:2328 InitialWorkflowModule.lua:2346
 msgid "default"
 msgstr "standard"
 
 #: InitialWorkflowModule.lua:233 InitialWorkflowModule.lua:267
 #: InitialWorkflowModule.lua:298 InitialWorkflowModule.lua:330
 #: InitialWorkflowModule.lua:621 InitialWorkflowModule.lua:1399
-#: InitialWorkflowModule.lua:2562
+#: InitialWorkflowModule.lua:2315
 msgid "ignore"
 msgstr "ignorieren"
 
 #: InitialWorkflowModule.lua:233 InitialWorkflowModule.lua:267
 #: InitialWorkflowModule.lua:309 InitialWorkflowModule.lua:336
-#: InitialWorkflowModule.lua:2372 InitialWorkflowModule.lua:2562
+#: InitialWorkflowModule.lua:2315 Modules/ModuleTestHelper.lua:203
 msgid "enable"
 msgstr "aktivieren"
 
 #: InitialWorkflowModule.lua:233 InitialWorkflowModule.lua:314
-#: InitialWorkflowModule.lua:2562
+#: InitialWorkflowModule.lua:2315
 msgid "reset"
 msgstr "zuruecksetzen"
 
 #: InitialWorkflowModule.lua:233 InitialWorkflowModule.lua:304
 #: InitialWorkflowModule.lua:625 InitialWorkflowModule.lua:1403
-#: InitialWorkflowModule.lua:2562
+#: InitialWorkflowModule.lua:2315
 msgid "disable"
 msgstr "deaktivieren"
 
@@ -158,7 +158,7 @@ msgstr ""
 #: InitialWorkflowModule.lua:1548 InitialWorkflowModule.lua:1573
 #: InitialWorkflowModule.lua:1609 InitialWorkflowModule.lua:1634
 #: InitialWorkflowModule.lua:1680 InitialWorkflowModule.lua:1705
-#: InitialWorkflowModule.lua:2577 InitialWorkflowModule.lua:2593
+#: InitialWorkflowModule.lua:2330 InitialWorkflowModule.lua:2346
 msgid "unchanged"
 msgstr "unveraendert"
 
@@ -549,19 +549,7 @@ msgstr ""
 "Das Belichtungsmodul anzeigen, um die Belichtung anzupassen, bis die "
 "Mitteltoene klar genug sind. In der Dunkelkammer-Ansicht anwendbar."
 
-#: InitialWorkflowModule.lua:2308 InitialWorkflowModule.lua:2470
-msgid "module tests must be started from darkroom view"
-msgstr "Modultests bitte in der Dunkelkammer-Ansicht starten"
-
-#: InitialWorkflowModule.lua:2314
-msgid "module test started"
-msgstr "Modultest gestartet"
-
-#: InitialWorkflowModule.lua:2433
-msgid "module test finished"
-msgstr "Modultest abgeschlossen"
-
-#: InitialWorkflowModule.lua:2448
+#: InitialWorkflowModule.lua:2203
 msgid ""
 "Execute module tests. Used during development and deployment. Enabled in "
 "darkroom view."
@@ -569,11 +557,11 @@ msgstr ""
 "Modultests durchfuehren. Dies wird waehrend der Entwicklung und "
 "Bereitstellung des Skripts verwendet. In Dunkelkammer-Ansicht anwendbar."
 
-#: InitialWorkflowModule.lua:2463
+#: InitialWorkflowModule.lua:2218
 msgid "Custom Code"
 msgstr "Custom Code"
 
-#: InitialWorkflowModule.lua:2465
+#: InitialWorkflowModule.lua:2220
 msgid ""
 "Execute code from TestCustomCode.lua: This file contains some custom debug "
 "code. It can be changed without restarting darktable. Just edit, save and "
@@ -586,12 +574,16 @@ msgstr ""
 "Probieren Sie damit einzelne Lua-Befehle im Handumdrehen aus, z.B. dt.gui."
 "action-Befehle. In der Dunkelkammer-Ansicht aktiviert."
 
-#: InitialWorkflowModule.lua:2477
+#: InitialWorkflowModule.lua:2225 Modules/ModuleTestHelper.lua:139
+msgid "module tests must be started from darkroom view"
+msgstr "Modultests bitte in der Dunkelkammer-Ansicht starten"
+
+#: InitialWorkflowModule.lua:2232
 #, lua-format
 msgid "module test file not found: %s"
 msgstr "Modultest-Datei nicht gefunden: %s"
 
-#: InitialWorkflowModule.lua:2532
+#: InitialWorkflowModule.lua:2285
 msgid ""
 "Configure all following common settings: Reset all steps to default "
 "configurations. These settings are applied during script run, if "
@@ -602,7 +594,7 @@ msgstr ""
 "Ausführung des Skripts angewendet, falls der zugehörige Schritt aktiviert "
 "ist."
 
-#: InitialWorkflowModule.lua:2561
+#: InitialWorkflowModule.lua:2314
 msgid ""
 "Configure all module settings: a) Select default value. b) Ignore this "
 "step / module and do nothing at all. c) Enable corresponding module and set "
@@ -615,7 +607,7 @@ msgstr ""
 "dieses Moduls und wende die Konfiguration an. e) Deaktiviere das Modul und "
 "modifiziere die Einstellungen nicht."
 
-#: InitialWorkflowModule.lua:2592
+#: InitialWorkflowModule.lua:2345
 msgid ""
 "Configure all module settings: Keep all modules unchanged or enable all "
 "default configurations. These configurations are set, if you choose 'reset' "
@@ -625,16 +617,16 @@ msgstr ""
 "alle Standardeinstellungen. Diese Einstellungen werden angewendet, falls "
 "'standard' oder 'aktivieren' als Grundeinstellung selektiert wird."
 
-#: InitialWorkflowModule.lua:2601
+#: InitialWorkflowModule.lua:2354
 msgid "insert test button widget"
 msgstr "Test-Button erzeugen"
 
-#: InitialWorkflowModule.lua:2823
+#: InitialWorkflowModule.lua:2576
 #, lua-format
 msgid "view changed to %s"
 msgstr "Ansicht gewechselt zu %s"
 
-#: InitialWorkflowModule.lua:2834
+#: InitialWorkflowModule.lua:2587
 msgid "create widget in lighttable and darkroom panels"
 msgstr "Modul in Leuchttisch- und Dunkelkammer-Ansicht erstellen"
 
@@ -677,3 +669,11 @@ msgstr "Funktion (Button, Zauberstab) aus- und einschalten: %s"
 #: Modules/GuiAction.lua:120
 msgid "nothing to do, button is already inactive"
 msgstr "Es gibt nichts zu tun, die Funktion ist bereits inaktiv"
+
+#: Modules/ModuleTestHelper.lua:145
+msgid "module test started"
+msgstr "Modultest gestartet"
+
+#: Modules/ModuleTestHelper.lua:264
+msgid "module test finished"
+msgstr "Modultest abgeschlossen"
