@@ -88,6 +88,7 @@ end
 -- message at the beginning of a step
 function Workflow.ModuleStep:LogStepMessage()
     LogHelper.Info('==============================')
+---@diagnostic disable-next-line: undefined-field
     LogHelper.Info(string.format(_("selection = %s - %s"), self.WidgetBasic.value, self.Widget.value))
 end
 

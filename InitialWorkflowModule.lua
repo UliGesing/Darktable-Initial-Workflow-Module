@@ -29,7 +29,19 @@
 
   See the GNU General Public License for more details
   at <http://www.gnu.org/licenses/>.
-  ]]
+]]
+
+
+--[[
+  This lua file contains the main entry point to install the 
+  Initial Workflow Module as a new module in darktable.
+
+  This file is executed during startup of darktable, loads other
+  modules from subfolder "Modules" and initializes them.
+
+  It registers the module and creates a new widget box in lighttable
+  and darkroom view.
+]]
 
 ---------------------------------------------------------------
 
@@ -208,6 +220,8 @@ local function InstallInitialWorkflowModule()
   return true
 end
 
+---------------------------------------------------------------
+
 -- start it!
 InstallInitialWorkflowModule()
 
@@ -232,5 +246,3 @@ script_data.destroy_method = 'hide'
 script_data.show = restart
 
 return script_data
-
----------------------------------------------------------------

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-22 12:29+0200\n"
+"POT-Creation-Date: 2024-09-22 13:08+0200\n"
 "PO-Revision-Date: 2023-06-10 10:27+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -14,26 +14,26 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 23.04.1\n"
 
-#: InitialWorkflowModule.lua:77
+#: InitialWorkflowModule.lua:89
 #, lua-format
 msgid "script executed from path %s"
 msgstr "Skript wurde gestartet von Pfad %s"
 
-#: InitialWorkflowModule.lua:78
+#: InitialWorkflowModule.lua:90
 #, lua-format
 msgid "script translation files in %s"
 msgstr "Skript-Lokalisierungsdateien befinden sich in %s"
 
-#: InitialWorkflowModule.lua:79
+#: InitialWorkflowModule.lua:91
 msgid "script outputs are in English"
 msgstr "Skriptausgaben erfolgen in Deutsch"
 
-#: InitialWorkflowModule.lua:172
+#: InitialWorkflowModule.lua:184
 #, lua-format
 msgid "view changed to %s"
 msgstr "Ansicht gewechselt zu %s"
 
-#: InitialWorkflowModule.lua:183
+#: InitialWorkflowModule.lua:195
 msgid "create widget in lighttable and darkroom panels"
 msgstr "Modul in Leuchttisch- und Dunkelkammer-Ansicht erstellen"
 
@@ -71,7 +71,7 @@ msgstr "Es gibt nichts zu tun, die Funktion ist bereits inaktiv"
 #: Modules/GuiWidgets.lua:58 Modules/GuiWidgets.lua:73
 #: Modules/GuiWidgets.lua:86 Modules/GuiWidgets.lua:102
 #: Modules/GuiWidgets.lua:115 Modules/GuiWidgets.lua:133
-#: Modules/Workflow.lua:175 Modules/Workflow.lua:182
+#: Modules/Workflow.lua:176 Modules/Workflow.lua:183
 msgid "default"
 msgstr "standard"
 
@@ -99,23 +99,23 @@ msgstr ""
 "dieses Moduls und wende die Konfiguration an. e) Deaktiviere das Modul und "
 "modifiziere die Einstellungen nicht."
 
-#: Modules/GuiWidgets.lua:102 Modules/Workflow.lua:175 Modules/Workflow.lua:209
-#: Modules/Workflow.lua:240 Modules/Workflow.lua:272
+#: Modules/GuiWidgets.lua:102 Modules/Workflow.lua:176 Modules/Workflow.lua:210
+#: Modules/Workflow.lua:241 Modules/Workflow.lua:273
 #: Modules/WorkflowSteps.lua:226 Modules/WorkflowSteps.lua:1007
 msgid "ignore"
 msgstr "ignorieren"
 
 #: Modules/GuiWidgets.lua:102 Modules/ModuleTests.lua:250
-#: Modules/Workflow.lua:175 Modules/Workflow.lua:209 Modules/Workflow.lua:251
-#: Modules/Workflow.lua:278
+#: Modules/Workflow.lua:176 Modules/Workflow.lua:210 Modules/Workflow.lua:252
+#: Modules/Workflow.lua:279
 msgid "enable"
 msgstr "aktivieren"
 
-#: Modules/GuiWidgets.lua:102 Modules/Workflow.lua:175 Modules/Workflow.lua:256
+#: Modules/GuiWidgets.lua:102 Modules/Workflow.lua:176 Modules/Workflow.lua:257
 msgid "reset"
 msgstr "zuruecksetzen"
 
-#: Modules/GuiWidgets.lua:102 Modules/Workflow.lua:175 Modules/Workflow.lua:246
+#: Modules/GuiWidgets.lua:102 Modules/Workflow.lua:176 Modules/Workflow.lua:247
 #: Modules/WorkflowSteps.lua:230 Modules/WorkflowSteps.lua:1011
 msgid "disable"
 msgstr "deaktivieren"
@@ -307,48 +307,48 @@ msgstr ""
 msgid "module test file not found: %s"
 msgstr "Modultest-Datei nicht gefunden: %s"
 
-#: Modules/Workflow.lua:91
+#: Modules/Workflow.lua:92
 #, lua-format
 msgid "selection = %s - %s"
 msgstr "Auswahl = %s - %s"
 
-#: Modules/Workflow.lua:97
+#: Modules/Workflow.lua:98
 #, lua-format
 msgid "show module if not visible: %s"
 msgstr "Modul anzeigen, falls nicht sichtbar: %s"
 
-#: Modules/Workflow.lua:104
+#: Modules/Workflow.lua:105
 msgid "module is already visible, nothing to do"
 msgstr "Modul ist bereits sichtbar, es gibt nichts zu tun"
 
-#: Modules/Workflow.lua:111
+#: Modules/Workflow.lua:112
 #, lua-format
 msgid "hide module if visible: %s"
 msgstr "Modul ausblenden, falls sichtbar: %s"
 
-#: Modules/Workflow.lua:116
+#: Modules/Workflow.lua:117
 msgid "module is already hidden, nothing to do"
 msgstr "Modul ist bereits ausgeblendet, es gibt nichts zu tun"
 
-#: Modules/Workflow.lua:123
+#: Modules/Workflow.lua:124
 #, lua-format
 msgid "enable module if disabled: %s"
 msgstr "Modul aktivieren, falls deaktiviert: %s"
 
-#: Modules/Workflow.lua:128
+#: Modules/Workflow.lua:129
 msgid "module is already enabled, nothing to do"
 msgstr "Modul ist bereits aktiviert, es gibt nichts zu tun"
 
-#: Modules/Workflow.lua:139
+#: Modules/Workflow.lua:140
 #, lua-format
 msgid "disable module if enabled: %s"
 msgstr "Modul deaktivieren, falls aktiviert: %s"
 
-#: Modules/Workflow.lua:144
+#: Modules/Workflow.lua:145
 msgid "module is already disabled, nothing to do"
 msgstr "Modul ist bereits deaktiviert, es gibt nichts zu tun"
 
-#: Modules/Workflow.lua:191
+#: Modules/Workflow.lua:192
 msgid ""
 "basic setting: a) Select default value. b) Ignore this step / module and do "
 "nothing at all. c) Enable corresponding module and set selected module "
@@ -361,7 +361,7 @@ msgstr ""
 "wende die Konfiguration an. e) Deaktiviere das Modul und modifiziere die "
 "Einstellungen nicht."
 
-#: Modules/Workflow.lua:215
+#: Modules/Workflow.lua:216
 msgid "basic setting: Ignore this module or do corresponding configuration."
 msgstr ""
 "Grundeinstellung: Ignoriere dieses Modul oder wende die entsprechende "
