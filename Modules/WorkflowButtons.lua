@@ -1,9 +1,30 @@
--- Implementation of button controls
--- These are buttons to start the execution of the steps or e.g. to set default values.
+--[[
+  This lua file is part of Darktable Initial Workflow Module
+
+  copyright (c) 2022 Ulrich Gesing
+
+  For more details see Readme.md in
+  https://github.com/UliGesing/Darktable-Initial-Workflow-Module
+
+  This script is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This script is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  See the GNU General Public License for more details
+  at <http://www.gnu.org/licenses/>.
+]]
+
+-- Implementation of button controls to start the execution of the steps
+-- or e.g. to set default values. Process all configured workflow steps.
+-- Process current image in darkroom view or process selected image(s)
+-- in lighttable view.
 
 local WorkflowButtons = {}
-
-local indent = '. '
 
 function WorkflowButtons.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _Workflow, _GuiAction, _WidgetStack,
                       _ScriptFilePath)

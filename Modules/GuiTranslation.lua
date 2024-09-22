@@ -1,7 +1,26 @@
----------------------------------------------------------------
--- Translations with gettext, see documentation for details:
--- https://docs.darktable.org/lua/stable/lua.api.manual/darktable/darktable.gettext/
+--[[
+  This lua file is part of Darktable Initial Workflow Module
 
+  copyright (c) 2022 Ulrich Gesing
+
+  For more details see Readme.md in
+  https://github.com/UliGesing/Darktable-Initial-Workflow-Module
+
+  This script is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This script is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  See the GNU General Public License for more details
+  at <http://www.gnu.org/licenses/>.
+]]
+
+-- Translate user visible script outputs gettext, see documentation for details:
+-- https://docs.darktable.org/lua/stable/lua.api.manual/darktable/darktable.gettext/,
 -- use bash script GetTextExtractMessages.sh to update the .mo file
 
 local _ = {}

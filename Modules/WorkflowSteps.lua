@@ -1,12 +1,82 @@
--- Implementation of workflow steps.
--- For more details see Readme.md in
--- https://github.com/UliGesing/Darktable-Initial-Workflow-Module
+--[[
+  This lua file is part of Darktable Initial Workflow Module
+
+  copyright (c) 2022 Ulrich Gesing
+
+  For more details see Readme.md in
+  https://github.com/UliGesing/Darktable-Initial-Workflow-Module
+
+  This script is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This script is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  See the GNU General Public License for more details
+  at <http://www.gnu.org/licenses/>.
+]]
+  
+--[[
+  This file contains the implementation of workflow steps. Every step configures
+  a darktable module. You can easily customize steps or add new ones.
+  
+  All steps are derived from a base class to offer common methods. You can easily
+  customize steps or add new ones: Just copy an existing class and adapt the label,
+  tooltip and function accordingly. Copy and adapt Constructor, Init and Run functions.
+  Don't forget to customize the name of the class as well. Use the new class name for
+  Constructor, Init and Run functions.
+
+  By adding it to the "WorkflowSteps" table, the step is automatically displayed and
+  executed. The order in the GUI is the same as the order of declaration here in the
+  code. The order during execution is from bottom to top, along the pixel pipeline.
+
+  You can get the lua command to perform a specific task as described here:
+  https://darktable-org.github.io/dtdocs/en/preferences-settings/shortcuts/
+  
+  Click on the small icon in the top panel as described in “assigning shortcuts
+  to actions”. You enter visual shortcut mapping mode. Point to a module or GUI control.
+  Within the popup you can read the lua command. The most flexible way is to use the
+  shortcut mapping screen, create and edit a shortcut (action, element and effect),
+  read the lua command from popup windows or copy it to your clipboard (ctrl+v).
+
+  Every workflow step contains of constructor, init and run functions. Example:
+  
+  StepCompressHistoryStack = WorkflowStepCombobox:new():new {[...]}
+  to create the new instance.
+  
+  function StepCompressHistoryStack:Init()
+  to define combobox values and create the widget.
+  
+  function StepCompressHistoryStack:Run()
+  to execute the step
+  
+  table.insert(WorkflowSteps, StepCompressHistoryStack)
+  to collect all steps and execute them later on.
+
+  
+  It is not possible to debug your script code directly. If you change your script code,
+  you have to restart darktable to apply your changes. But you can run dt.gui.action
+  commands on the fly:
+  
+  Create a file named "TestFlag.txt" in the same directory as the script file and restart
+  darktable. From now there are new buttons, used to perform the module tests.
+
+  The git repository contains one additional file named TestCustomCode.lua. You can use
+  it to try some commands or tests "on the fly". This file contains some custom debug code.
+  The code is executed by clicking the "Custom Code" button. It can be changed without
+  restarting darktable. This is helpful, if you want to run some special tests or execute
+  some dt.gui.action commands.
+]]
 
 local WorkflowSteps = {}
 
 local indent = '. '
 
-function WorkflowSteps.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _Workflow, _GuiAction, _WidgetStack, _ScriptFilePath)
+function WorkflowSteps.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _Workflow, _GuiAction,
+                            _WidgetStack, _ScriptFilePath)
     dt = _dt
     LogHelper = _LogHelper
     Helper = _Helper

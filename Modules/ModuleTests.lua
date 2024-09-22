@@ -1,5 +1,53 @@
--- This helper module contains some functions to perform module tests.
--- The following functions are used during development and deployment.
+--[[
+  This lua file is part of Darktable Initial Workflow Module
+
+  copyright (c) 2022 Ulrich Gesing
+
+  For more details see Readme.md in
+  https://github.com/UliGesing/Darktable-Initial-Workflow-Module
+
+  This script is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This script is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  See the GNU General Public License for more details
+  at <http://www.gnu.org/licenses/>.
+]]
+
+--[[
+
+  This file contains some functions to perform module tests. These functions
+  are used during development and deployment. The test method is used to iterate 
+  over all workflow steps and combobox value settings and to set different
+  combinations of module settings. 
+  
+  There is an additional and optional module test implementation. This should be
+  disabled and not visible for general use of the script. You can find it in this file.
+
+  To run these tests, do the following steps:
+  
+  - create a file named "TestFlag.txt" in the same directory as the script file and restart darktable
+  - from now there is a special "TEST" button, used to perform the module tests
+  - open any image in darkroom view, create a backup first
+  - create a new folder named "TEST" on your harddisk below the folder of this image file
+  - click the TEST button to start the tests
+  - up to now, there is a simple module test that iterates over workflow steps and combobox value settings
+  - it creates some images and sets different combinations of module settings
+  - resulting xmp files are copied to the TEST result folder
+  - you can compare these files with previously generated reference files
+  - after tests are completed, there should be no error messages
+
+  The git repository contains one additional file named TestCustomCode.lua. You can use
+  it to try some commands or tests "on the fly". This file contains some custom debug code.
+  The code is executed by clicking the "Custom Code" button. It can be changed without
+  restarting darktable. This is helpful, if you want to run some special tests or execute
+  some dt.gui.action commands.
+]]
 
 local ModuleTests = {}
 

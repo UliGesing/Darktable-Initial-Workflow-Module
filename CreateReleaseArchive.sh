@@ -19,6 +19,7 @@ echo -e "copy files using rsync"
 # exclude files that are relevant for development only
 rsync -rtq --delete --delete-excluded\
  --exclude=Release/\
+ --exclude=.vscode/\
  --exclude=.git/\
  --exclude=*.po\
  --exclude=*.po~\
@@ -28,7 +29,7 @@ rsync -rtq --delete --delete-excluded\
  --exclude=GetTextExtractMessages.sh\
  --exclude=main.lqa\
  --exclude=TestCustomCode.lua\
- --exclude=TestFlag.txt\
+ --exclude=TestFlag*.txt\
  ./ $BaseFolder/InitialWorkflowModule
 
 

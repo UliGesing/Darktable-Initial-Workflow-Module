@@ -1,4 +1,25 @@
--- some common helper functions
+--[[
+  This lua file is part of Darktable Initial Workflow Module
+
+  copyright (c) 2022 Ulrich Gesing
+
+  For more details see Readme.md in
+  https://github.com/UliGesing/Darktable-Initial-Workflow-Module
+
+  This script is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This script is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  See the GNU General Public License for more details
+  at <http://www.gnu.org/licenses/>.
+]]
+
+-- This file provides some common helper functions.
 
 local du = require 'lib/dtutils'
 
@@ -60,7 +81,6 @@ function Helper.CheckDarktableModernWorkflowPreference()
 
   return Helper.Contains(modernWorkflows, _(workflow))
 end
-
 
 -- check, if given array contains a certain value
 function Helper.Contains(table, value)

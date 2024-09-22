@@ -1,6 +1,30 @@
-local GuiWidgets = {}
+--[[
+  This lua file is part of Darktable Initial Workflow Module
 
-local indent = '. '
+  copyright (c) 2022 Ulrich Gesing
+
+  For more details see Readme.md in
+  https://github.com/UliGesing/Darktable-Initial-Workflow-Module
+
+  This script is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This script is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  See the GNU General Public License for more details
+  at <http://www.gnu.org/licenses/>.
+]]
+
+-- Implementation of visible widget frame. Create main widget, collect buttons
+-- and comboboxes, add buttons to simplify some manual steps, add comboboxes
+-- to configure workflow steps, collect all widgets to be displayed within the module.
+
+
+local GuiWidgets = {}
 
 function GuiWidgets.Init(_dt, _LogHelper, _Helper, _Workflow, _WidgetStack, _TranslationHelper)
     dt = _dt
@@ -20,11 +44,6 @@ end
 local function _dt(msgid)
     return GuiTranslation.tdt(msgid)
 end
-
-
-
--- IMPLEMENTATION OF WIDGET FRAME
--- Create main widget. Collect buttons and comboboxes.
 
 local ResetAllCommonMainSettingsWidget
 ResetAllCommonMainSettingsWidget = dt.new_widget('combobox')

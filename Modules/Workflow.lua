@@ -1,4 +1,33 @@
--- base class of workflow steps
+--[[
+  This lua file is part of Darktable Initial Workflow Module
+
+  copyright (c) 2022 Ulrich Gesing
+
+  For more details see Readme.md in
+  https://github.com/UliGesing/Darktable-Initial-Workflow-Module
+
+  This script is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This script is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  See the GNU General Public License for more details
+  at <http://www.gnu.org/licenses/>.
+]]
+
+-- This file provides the base class of workflow steps. Collect all
+-- workflow steps in a table. This table is used to execute or configure
+-- all steps at once. Collect button widgets in a table, used during
+-- callback functions.
+
+-- Show, hide, enable, disable or reset darktable modules.
+
+-- Save current workflow configurations, used to restore settings after
+-- starting darktable. Read saved selection value from darktable preferences.
 
 local Workflow = {}
 
@@ -404,6 +433,5 @@ end
 Workflow.StepButton = Workflow.ModuleStep:new():new
     {
     }
-
 
 return Workflow
