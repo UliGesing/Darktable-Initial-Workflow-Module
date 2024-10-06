@@ -71,6 +71,13 @@ local function ProcessWorkflowSteps()
 
     Helper.ThreadSleep(StepTimeout:Value())
 
+    -- show active modules in darkroom view
+    LogHelper.Info(_dt("show only active modules"))
+    GuiAction.DoWithoutEvent('lib/modulegroups/active modules', 0, '', 'on', 1.0)
+
+    GuiAction.ShowDarkroomModule("iop/colorout")
+    GuiAction.HideDarkroomModule("iop/colorout")
+
     -- execute all workflow steps
     -- the order is from bottom to top, along the pixel pipeline.
     for i = 1, #Workflow.ModuleSteps do
@@ -290,8 +297,8 @@ function WorkflowButtons.CreateWorkflowButtons()
                     clicked_callback = function(widget)
                         local button = Workflow.GetButton(widget)
                         if button ~= nil then
-                            button:EnableDarkroomModule('iop/ashift')
-                            button:ShowDarkroomModule('iop/ashift')
+                            GuiAction.EnableDarkroomModule('iop/ashift')
+                            GuiAction.ShowDarkroomModule('iop/ashift')
                         end
                     end
                 }
@@ -316,8 +323,8 @@ function WorkflowButtons.CreateWorkflowButtons()
                     clicked_callback = function(widget)
                         local button = Workflow.GetButton(widget)
                         if (button ~= nil) then
-                            button:EnableDarkroomModule('iop/crop')
-                            button:ShowDarkroomModule('iop/crop')
+                            GuiAction.EnableDarkroomModule('iop/crop')
+                            GuiAction.ShowDarkroomModule('iop/crop')
                         end
                     end
                 }
@@ -343,8 +350,8 @@ function WorkflowButtons.CreateWorkflowButtons()
                     clicked_callback = function(widget)
                         local button = Workflow.GetButton(widget)
                         if (button ~= nil) then
-                            button:EnableDarkroomModule('iop/exposure')
-                            button:ShowDarkroomModule('iop/exposure')
+                            GuiAction.EnableDarkroomModule('iop/exposure')
+                            GuiAction.ShowDarkroomModule('iop/exposure')
                         end
                     end
                 }
@@ -415,7 +422,7 @@ function WorkflowButtons.CreateWorkflowButtons()
                                 return
                             end
 
-                            local fileName = Helper.ScriptFilePath() .. 'TestCustomCode.lua'
+                            local fileName = ScriptFilePath .. 'TestCustomCode.lua'
 
                             if (not FileExists(fileName)) then
                                 LogHelper.Screen(string.format(_("module test file not found: %s"), fileName))

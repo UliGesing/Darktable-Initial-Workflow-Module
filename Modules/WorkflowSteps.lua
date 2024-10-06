@@ -228,18 +228,18 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         if (basic == _("disable")) then
-            self:DisableDarkroomModule(self:OperationPath())
+            GuiAction.DisableDarkroomModule(self:OperationPath())
             return false
         end
 
         if (self:FilmicSelected()) then
-            self:DisableDarkroomModule('iop/sigmoid')
-            self:DisableDarkroomModule('iop/basecurve')
+            GuiAction.DisableDarkroomModule('iop/sigmoid')
+            GuiAction.DisableDarkroomModule('iop/basecurve')
         end
 
         if (self:SigmoidSelected()) then
-            self:DisableDarkroomModule('iop/filmicrgb')
-            self:DisableDarkroomModule('iop/basecurve')
+            GuiAction.DisableDarkroomModule('iop/filmicrgb')
+            GuiAction.DisableDarkroomModule('iop/basecurve')
         end
 
         -- evaluate basic widget
@@ -694,7 +694,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         -- workaround: show this module, otherwise the buttons will not be pressed
-        self:ShowDarkroomModule('iop/toneequal')
+        GuiAction.ShowDarkroomModule('iop/toneequal')
         GuiAction.DoWithoutEvent('iop/toneequal/page', 0, 'masking', '', 1.0)
 
         if (selection == _("mask exposure compensation")) then
@@ -713,7 +713,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         -- workaround: show this module, otherwise the buttons will not be pressed
-        self:HideDarkroomModule('iop/toneequal')
+        GuiAction.HideDarkroomModule('iop/toneequal')
         --
     end
 
@@ -776,7 +776,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             OperationNameInternal = 'exposure',
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 3,
+            WidgetDefaultStepConfiguationValue = 1,
             Label = _dt("exposure"),
             Tooltip = _(
                 "Automatically adjust the exposure correction. Remove the camera exposure bias, useful if you exposed the image to the right.")
@@ -1009,17 +1009,17 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         if (basic == _("disable")) then
-            self:DisableDarkroomModule(self:OperationPath())
+            GuiAction.DisableDarkroomModule(self:OperationPath())
             return false
         end
 
         -- disable other module than selected
         if (self:BayerSensorSelected()) then
-            self:DisableDarkroomModule('iop/cacorrectrgb')
+            GuiAction.DisableDarkroomModule('iop/cacorrectrgb')
         end
 
         if (self:OtherSensorSelected()) then
-            self:DisableDarkroomModule('iop/cacorrect')
+            GuiAction.DisableDarkroomModule('iop/cacorrect')
         end
 
         -- evaluate basic widget
@@ -1050,10 +1050,14 @@ function WorkflowSteps.CreateWorkflowSteps()
         }
 
     -- distinguish between modern and legacy workflow
-    -- keep value unchanged, if using legacy workflow
+    -- keep value unchanged (1), if using legacy workflow
     -- depends on darktable preference settings
     function StepColorCalibrationIlluminant:EnableDefaultStepConfiguation()
-        self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 2 or 1
+        -- "unchanged: scene referred default"
+        self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 1 or 1
+
+        -- "same as pipeline"
+        -- self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 3 or 1
     end
 
     table.insert(Workflow.ModuleSteps, StepColorCalibrationIlluminant)
@@ -1070,6 +1074,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues =
         {
             _("unchanged"), -- additional value
+            _dt("set white balance to detected from area"),
             _dt("same as pipeline (D50)"),
             _dt("A (incandescent)"),
             _dt("D (daylight)"),
@@ -1119,6 +1124,15 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         -- set illuminant
 
+        -- detect custom value from picture
+        if(selection == _dt("set white balance to detected from area")) then
+            
+            -- dt.gui.action("iop/channelmixerrgb/picker", "", "toggle", 1,000, 0)
+            GuiAction.Do('iop/channelmixerrgb/picker', 0, '', 'toggle', 1.0)
+            return
+        end
+
+        -- set predefined values
         local currentSelectionIndex = GuiAction.GetValue('iop/channelmixerrgb/illuminant', 'selection')
         local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
@@ -1155,6 +1169,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues =
         {
             _("unchanged"), -- additional value
+            _dt(""),
             _dt("linear Bradford (ICC v4)"),
             _dt("CAT16 (CIECAM16)"),
             _dt("non-linear Bradford"),

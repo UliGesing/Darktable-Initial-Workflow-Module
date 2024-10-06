@@ -39,6 +39,11 @@ local function _(msgid)
     return GuiTranslation.t(msgid)
 end
 
+-- return translation from darktable
+local function _dt(msgid)
+    return GuiTranslation.tdt(msgid)
+end
+
 -- convert values to boolean, consider not a number and nil
 function GuiAction.ConvertValueToBoolean(value)
     -- NaN
@@ -142,6 +147,66 @@ function GuiAction.ButtonOffOn(path)
     end
 
     GuiAction.Do(path, 0, 'button', 'on', 1.0)
+end
+
+-- show given darkroom module
+function GuiAction.ShowDarkroomModule(moduleName)
+    -- check if the module is already displayed
+    LogHelper.Info(string.format(_("show module if not visible: %s"), moduleName))
+    local visible = GuiAction.GetValue(moduleName, 'show')
+    if (not GuiAction.ConvertValueToBoolean(visible)) then
+        dt.gui.panel_show('DT_UI_PANEL_RIGHT')
+        Helper.ThreadSleep(StepTimeout:Value() / 2)
+        GuiAction.DoWithoutEvent(moduleName, 0, 'show', '', 1.0)
+    else
+        LogHelper.Info(indent .. _("module is already visible, nothing to do"))
+    end
+end
+
+-- disable given darkroom module
+function GuiAction.DisableDarkroomModule(moduleName)
+    -- check if the module is already activated
+    LogHelper.Info(string.format(_("disable module if enabled: %s"), moduleName))
+    local status = GuiAction.GetValue(moduleName, 'enable')
+    if (GuiAction.ConvertValueToBoolean(status)) then
+        GuiAction.Do(moduleName, 0, 'enable', '', 1.0)
+    else
+        LogHelper.Info(indent .. _("module is already disabled, nothing to do"))
+    end
+end
+
+-- hide given darkroom module
+function GuiAction.HideDarkroomModule(moduleName)
+    -- check if the module is already hidden
+    LogHelper.Info(string.format(_("hide module if visible: %s"), moduleName))
+    local visible = GuiAction.GetValue(moduleName, 'show')
+    if (GuiAction.ConvertValueToBoolean(visible)) then
+        GuiAction.DoWithoutEvent(moduleName, 0, 'show', '', 1.0)
+    else
+        LogHelper.Info(indent .. _("module is already hidden, nothing to do"))
+    end
+end
+
+-- enable given darkroom module
+function GuiAction.EnableDarkroomModule(moduleName)
+    -- check if the module is already activated
+    LogHelper.Info(string.format(_("enable module if disabled: %s"), moduleName))
+    local status = GuiAction.GetValue(moduleName, 'enable')
+    if (not GuiAction.ConvertValueToBoolean(status)) then
+        GuiAction.Do(moduleName, 0, 'enable', '', 1.0)
+    else
+        LogHelper.Info(indent .. _("module is already enabled, nothing to do"))
+    end
+
+    if (StepShowModulesDuringExecution.Widget.value == _dt("yes")) then
+        GuiAction.ShowDarkroomModule(moduleName)
+    end
+end
+
+-- reset given darkroom module
+function GuiAction.ResetDarkroomModule(moduleName)
+    LogHelper.Info(_dt("reset parameters") .. ' (' .. moduleName .. ')')
+    GuiAction.Do(moduleName, 0, 'reset', '', 1.0)
 end
 
 return GuiAction

@@ -92,66 +92,6 @@ function Workflow.ModuleStep:LogStepMessage()
     LogHelper.Info(string.format(_("selection = %s - %s"), self.WidgetBasic.value, self.Widget.value))
 end
 
--- show given darkroom module
-function Workflow.ModuleStep:ShowDarkroomModule(moduleName)
-    -- check if the module is already displayed
-    LogHelper.Info(string.format(_("show module if not visible: %s"), moduleName))
-    local visible = GuiAction.GetValue(moduleName, 'show')
-    if (not GuiAction.ConvertValueToBoolean(visible)) then
-        dt.gui.panel_show('DT_UI_PANEL_RIGHT')
-        Helper.ThreadSleep(StepTimeout:Value() / 2)
-        GuiAction.DoWithoutEvent(moduleName, 0, 'show', '', 1.0)
-    else
-        LogHelper.Info(indent .. _("module is already visible, nothing to do"))
-    end
-end
-
--- hide given darkroom module
-function Workflow.ModuleStep:HideDarkroomModule(moduleName)
-    -- check if the module is already hidden
-    LogHelper.Info(string.format(_("hide module if visible: %s"), moduleName))
-    local visible = GuiAction.GetValue(moduleName, 'show')
-    if (GuiAction.ConvertValueToBoolean(visible)) then
-        GuiAction.DoWithoutEvent(moduleName, 0, 'show', '', 1.0)
-    else
-        LogHelper.Info(indent .. _("module is already hidden, nothing to do"))
-    end
-end
-
--- enable given darkroom module
-function Workflow.ModuleStep:EnableDarkroomModule(moduleName)
-    -- check if the module is already activated
-    LogHelper.Info(string.format(_("enable module if disabled: %s"), moduleName))
-    local status = GuiAction.GetValue(moduleName, 'enable')
-    if (not GuiAction.ConvertValueToBoolean(status)) then
-        GuiAction.Do(moduleName, 0, 'enable', '', 1.0)
-    else
-        LogHelper.Info(indent .. _("module is already enabled, nothing to do"))
-    end
-
-    if (StepShowModulesDuringExecution.Widget.value == _dt("yes")) then
-        self:ShowDarkroomModule(moduleName)
-    end
-end
-
--- disable given darkroom module
-function Workflow.ModuleStep:DisableDarkroomModule(moduleName)
-    -- check if the module is already activated
-    LogHelper.Info(string.format(_("disable module if enabled: %s"), moduleName))
-    local status = GuiAction.GetValue(moduleName, 'enable')
-    if (GuiAction.ConvertValueToBoolean(status)) then
-        GuiAction.Do(moduleName, 0, 'enable', '', 1.0)
-    else
-        LogHelper.Info(indent .. _("module is already disabled, nothing to do"))
-    end
-end
-
--- reset given darkroom module
-function Workflow.ModuleStep:ResetDarkroomModule(moduleName)
-    LogHelper.Info(_dt("reset parameters") .. ' (' .. moduleName .. ')')
-    GuiAction.Do(moduleName, 0, 'reset', '', 1.0)
-end
-
 -- handle view changed event (lighttable / darkroom view)
 -- some comboboxes or buttons need a special handling
 function Workflow.ModuleStep:InitDependingOnCurrentView()
@@ -245,18 +185,18 @@ function Workflow.StepConfiguration:RunBasicWidget()
     self:LogStepMessage()
 
     if (basic == _("disable")) then
-        self:DisableDarkroomModule(self:OperationPath())
+        GuiAction.DisableDarkroomModule(self:OperationPath())
         return false
     end
 
     if (basic == _("enable")) then
-        self:EnableDarkroomModule(self:OperationPath())
+        GuiAction.EnableDarkroomModule(self:OperationPath())
         return true
     end
 
     if (basic == _("reset")) then
-        self:EnableDarkroomModule(self:OperationPath())
-        self:ResetDarkroomModule(self:OperationPath())
+        GuiAction.EnableDarkroomModule(self:OperationPath())
+        GuiAction.ResetDarkroomModule(self:OperationPath())
         return true
     end
 
@@ -278,7 +218,7 @@ function Workflow.StepConfiguration:RunSimpleBasicWidget()
 
     if (basic == _("enable")) then
         if (self:OperationName() ~= nil) then
-            self:EnableDarkroomModule(self:OperationPath())
+            GuiAction.EnableDarkroomModule(self:OperationPath())
         end
         return true
     end
