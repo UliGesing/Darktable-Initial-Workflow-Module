@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-06 15:02+0200\n"
+"POT-Creation-Date: 2024-11-25 13:42+0100\n"
 "PO-Revision-Date: 2023-05-18 14:20+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -123,7 +123,7 @@ msgstr ""
 
 #: Modules/GuiWidgets.lua:102 Modules/Workflow.lua:116 Modules/Workflow.lua:150
 #: Modules/Workflow.lua:181 Modules/Workflow.lua:213
-#: Modules/WorkflowSteps.lua:226 Modules/WorkflowSteps.lua:1007
+#: Modules/WorkflowSteps.lua:226 Modules/WorkflowSteps.lua:1026
 msgid "ignore"
 msgstr ""
 
@@ -138,7 +138,7 @@ msgid "reset"
 msgstr ""
 
 #: Modules/GuiWidgets.lua:102 Modules/Workflow.lua:116 Modules/Workflow.lua:187
-#: Modules/WorkflowSteps.lua:230 Modules/WorkflowSteps.lua:1011
+#: Modules/WorkflowSteps.lua:230 Modules/WorkflowSteps.lua:1030
 msgid "disable"
 msgstr ""
 
@@ -151,15 +151,15 @@ msgstr ""
 #: Modules/WorkflowSteps.lua:535 Modules/WorkflowSteps.lua:561
 #: Modules/WorkflowSteps.lua:613 Modules/WorkflowSteps.lua:641
 #: Modules/WorkflowSteps.lua:669 Modules/WorkflowSteps.lua:692
-#: Modules/WorkflowSteps.lua:741 Modules/WorkflowSteps.lua:764
-#: Modules/WorkflowSteps.lua:793 Modules/WorkflowSteps.lua:815
-#: Modules/WorkflowSteps.lua:853 Modules/WorkflowSteps.lua:874
-#: Modules/WorkflowSteps.lua:918 Modules/WorkflowSteps.lua:937
-#: Modules/WorkflowSteps.lua:963 Modules/WorkflowSteps.lua:1032
-#: Modules/WorkflowSteps.lua:1076 Modules/WorkflowSteps.lua:1108
-#: Modules/WorkflowSteps.lua:1171 Modules/WorkflowSteps.lua:1197
-#: Modules/WorkflowSteps.lua:1234 Modules/WorkflowSteps.lua:1259
-#: Modules/WorkflowSteps.lua:1306 Modules/WorkflowSteps.lua:1331
+#: Modules/WorkflowSteps.lua:760 Modules/WorkflowSteps.lua:783
+#: Modules/WorkflowSteps.lua:812 Modules/WorkflowSteps.lua:834
+#: Modules/WorkflowSteps.lua:872 Modules/WorkflowSteps.lua:893
+#: Modules/WorkflowSteps.lua:937 Modules/WorkflowSteps.lua:956
+#: Modules/WorkflowSteps.lua:982 Modules/WorkflowSteps.lua:1051
+#: Modules/WorkflowSteps.lua:1094 Modules/WorkflowSteps.lua:1127
+#: Modules/WorkflowSteps.lua:1193 Modules/WorkflowSteps.lua:1218
+#: Modules/WorkflowSteps.lua:1255 Modules/WorkflowSteps.lua:1280
+#: Modules/WorkflowSteps.lua:1327 Modules/WorkflowSteps.lua:1352
 msgid "unchanged"
 msgstr ""
 
@@ -174,16 +174,16 @@ msgstr ""
 msgid "insert test button widget"
 msgstr ""
 
-#: Modules/Helper.lua:59
+#: Modules/Helper.lua:58
 #, lua-format
 msgid "darktable version with appropriate lua API detected: %s"
 msgstr ""
 
-#: Modules/Helper.lua:62
-msgid "this script needs at least darktable 4.8 API to run"
+#: Modules/Helper.lua:61
+msgid "this script needs at least darktable 5.0 API to run"
 msgstr ""
 
-#: Modules/ModuleTests.lua:186 Modules/WorkflowButtons.lua:421
+#: Modules/ModuleTests.lua:186 Modules/WorkflowButtons.lua:423
 msgid "module tests must be started from darkroom view"
 msgstr ""
 
@@ -195,109 +195,113 @@ msgstr ""
 msgid "module test finished"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:66
+#: Modules/WorkflowButtons.lua:65
+msgid "start initial workflow"
+msgstr ""
+
+#: Modules/WorkflowButtons.lua:68
 msgid "process workflow steps"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:98
+#: Modules/WorkflowButtons.lua:100
 msgid "workflow canceled"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:106
+#: Modules/WorkflowButtons.lua:108
 msgid "workflow canceled - darktable shutting down"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:131
+#: Modules/WorkflowButtons.lua:133
 msgid "OK - script run without errors"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:132 Modules/WorkflowButtons.lua:140
+#: Modules/WorkflowButtons.lua:134 Modules/WorkflowButtons.lua:142
 msgid "initial workflow done"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:166
+#: Modules/WorkflowButtons.lua:168
 msgid "process selected images"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:171
+#: Modules/WorkflowButtons.lua:173
 msgid "no image selected"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:182
+#: Modules/WorkflowButtons.lua:184
 msgid "switch to darkroom view"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:196
+#: Modules/WorkflowButtons.lua:198
 #, lua-format
 msgid "load image number %s of %s"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:197
+#: Modules/WorkflowButtons.lua:199
 #, lua-format
 msgid "image file = %s"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:201
+#: Modules/WorkflowButtons.lua:203
 msgid "load new image into darkroom view"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:216
+#: Modules/WorkflowButtons.lua:218
 msgid "switch to lighttable view"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:230
+#: Modules/WorkflowButtons.lua:232
 msgid "run"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:232
+#: Modules/WorkflowButtons.lua:234
 msgid ""
 "Perform all configured steps in darkroom for an initial workflow. Perform "
 "the steps from bottom to top along the pixel pipeline."
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:255 Modules/WorkflowSteps.lua:1406
+#: Modules/WorkflowButtons.lua:257 Modules/WorkflowSteps.lua:1427
 msgid "show modules"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:257
+#: Modules/WorkflowButtons.lua:259
 msgid "Show the subpage with the configuration of the modules."
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:274
+#: Modules/WorkflowButtons.lua:276
 msgid "show settings"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:276
+#: Modules/WorkflowButtons.lua:278
 msgid "Show the subpage with common settings."
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:295
+#: Modules/WorkflowButtons.lua:297
 msgid ""
 "Activate the module to rotate the image and adjust the perspective. Enabled "
 "in darkroom view."
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:321
+#: Modules/WorkflowButtons.lua:323
 msgid "Activate the module to crop the image. Enabled in darkroom view."
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:348
+#: Modules/WorkflowButtons.lua:350
 msgid ""
 "Show exposure module to adjust the exposure until the mid-tones are clear "
 "enough. Enabled in darkroom view."
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:399
+#: Modules/WorkflowButtons.lua:401
 msgid ""
 "Execute module tests. Used during development and deployment. Enabled in "
 "darkroom view."
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:414
+#: Modules/WorkflowButtons.lua:416
 msgid "Custom Code"
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:416
+#: Modules/WorkflowButtons.lua:418
 msgid ""
 "Execute code from TestCustomCode.lua: This file contains some custom debug "
 "code. It can be changed without restarting darktable. Just edit, save and "
@@ -305,7 +309,7 @@ msgid ""
 "action commands. Enabled in darkroom view."
 msgstr ""
 
-#: Modules/WorkflowButtons.lua:428
+#: Modules/WorkflowButtons.lua:430
 #, lua-format
 msgid "module test file not found: %s"
 msgstr ""
@@ -341,7 +345,7 @@ msgid ""
 "one of Filmic, Sigmoid or Basecurve, this module disables the others."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:264 Modules/WorkflowSteps.lua:826
+#: Modules/WorkflowSteps.lua:264 Modules/WorkflowSteps.lua:845
 msgid "checkbox already selected, nothing to do"
 msgstr ""
 
@@ -390,19 +394,20 @@ msgid ""
 "contrast and average exposure."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:670 Modules/WorkflowSteps.lua:700
+#: Modules/WorkflowSteps.lua:670 Modules/WorkflowSteps.lua:701
 msgid "mask exposure compensation"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:671 Modules/WorkflowSteps.lua:704
+#: Modules/WorkflowSteps.lua:671 Modules/WorkflowSteps.lua:719
 msgid "mask contrast compensation"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:672 Modules/WorkflowSteps.lua:708
+#: Modules/WorkflowSteps.lua:672 Modules/WorkflowSteps.lua:702
+#: Modules/WorkflowSteps.lua:720
 msgid "exposure & contrast comp."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:730
+#: Modules/WorkflowSteps.lua:749
 msgid ""
 "Use preset to compress shadows and highlights with exposure-independent "
 "guided filter (eigf) (soft, medium or strong)."
@@ -410,164 +415,164 @@ msgstr ""
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: Modules/WorkflowSteps.lua:742
+#: Modules/WorkflowSteps.lua:761
 msgid "compress shadows-highlights (eigf): medium"
 msgstr ""
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: Modules/WorkflowSteps.lua:743
+#: Modules/WorkflowSteps.lua:762
 msgid "compress shadows-highlights (eigf): soft"
 msgstr ""
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: Modules/WorkflowSteps.lua:744
+#: Modules/WorkflowSteps.lua:763
 msgid "compress shadows-highlights (eigf): strong"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:782
+#: Modules/WorkflowSteps.lua:801
 msgid ""
 "Automatically adjust the exposure correction. Remove the camera exposure "
 "bias, useful if you exposed the image to the right."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:794
+#: Modules/WorkflowSteps.lua:813
 msgid "adjust exposure correction"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:795 Modules/WorkflowSteps.lua:821
+#: Modules/WorkflowSteps.lua:814 Modules/WorkflowSteps.lua:840
 msgid "adjust & compensate bias"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:840
+#: Modules/WorkflowSteps.lua:859
 msgid "Enable and reset lens correction module."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:890
+#: Modules/WorkflowSteps.lua:909
 #, lua-format
 msgid "current correction method = %s"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:894
+#: Modules/WorkflowSteps.lua:913
 #, lua-format
 msgid "nothing to do, correction method already = %s"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:909
+#: Modules/WorkflowSteps.lua:928
 msgid ""
 "Enable denoise (profiled) module. There is nothing to configure, just enable "
 "or reset this module."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:952
+#: Modules/WorkflowSteps.lua:971
 msgid ""
 "Correct chromatic aberrations. Distinguish between Bayer sensor and other "
 "camera sensors. This operation uses the corresponding correction module and "
 "disables the other."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:964 Modules/WorkflowSteps.lua:979
+#: Modules/WorkflowSteps.lua:983 Modules/WorkflowSteps.lua:998
 msgid "Bayer sensor"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:965 Modules/WorkflowSteps.lua:985
+#: Modules/WorkflowSteps.lua:984 Modules/WorkflowSteps.lua:1004
 msgid "other sensors"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1049
+#: Modules/WorkflowSteps.lua:1068
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "illuminant. The type of illuminant assumed to have lit the scene. By default "
 "unchanged for the legacy workflow."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1117
+#: Modules/WorkflowSteps.lua:1136
 #, lua-format
 msgid "color calibration adaption = %s"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1119
+#: Modules/WorkflowSteps.lua:1138
 msgid "illuminant cannot be set"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1122
+#: Modules/WorkflowSteps.lua:1141
 msgid "illuminant can be set"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1140
+#: Modules/WorkflowSteps.lua:1162
 #, lua-format
 msgid "current illuminant = %s"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1144
+#: Modules/WorkflowSteps.lua:1166
 #, lua-format
 msgid "nothing to do, illuminant already = %s"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1158
+#: Modules/WorkflowSteps.lua:1180
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "adaptation. The working color space in which the module will perform its "
 "chromatic adaptation transform and channel mixing."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1205
+#: Modules/WorkflowSteps.lua:1226
 #, lua-format
 msgid "current adaptation = %s"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1209
+#: Modules/WorkflowSteps.lua:1230
 #, lua-format
 msgid "nothing to do, adaptation already = %s"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1223
+#: Modules/WorkflowSteps.lua:1244
 msgid ""
 "Reconstruct color information for clipped pixels. Select an appropriate "
 "reconstruction methods to reconstruct the missing data from unclipped "
 "channels and/or neighboring pixels."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1267 Modules/WorkflowSteps.lua:1339
+#: Modules/WorkflowSteps.lua:1288 Modules/WorkflowSteps.lua:1360
 #, lua-format
 msgid "current value = %s"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1271 Modules/WorkflowSteps.lua:1343
+#: Modules/WorkflowSteps.lua:1292 Modules/WorkflowSteps.lua:1364
 #, lua-format
 msgid "nothing to do, value already = %s"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1285
+#: Modules/WorkflowSteps.lua:1306
 msgid "white balance"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1287
+#: Modules/WorkflowSteps.lua:1308
 msgid ""
 "Adjust the white balance of the image by altering the temperature. By "
 "default unchanged for the legacy workflow."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1356
+#: Modules/WorkflowSteps.lua:1377
 msgid "discard complete history"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1357
+#: Modules/WorkflowSteps.lua:1378
 msgid "Reset all modules of the whole pixelpipe and discard complete history."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1408
+#: Modules/WorkflowSteps.lua:1429
 msgid ""
 "Show darkroom modules for enabled workflow steps during execution of this "
 "initial workflow. This makes the changes easier to understand."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1441
+#: Modules/WorkflowSteps.lua:1462
 msgid "timeout value"
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1443
+#: Modules/WorkflowSteps.lua:1464
 msgid ""
 "Some calculations take a certain amount of time. Depending on the hardware "
 "equipment also longer.This script waits and attempts to detect timeouts. If "
@@ -577,7 +582,7 @@ msgid ""
 "(loading an image) or a fraction (querying a status)."
 msgstr ""
 
-#: Modules/WorkflowSteps.lua:1472
+#: Modules/WorkflowSteps.lua:1493
 #, lua-format
 msgid "step timeout = %s ms"
 msgstr ""

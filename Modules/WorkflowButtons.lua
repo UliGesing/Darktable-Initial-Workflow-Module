@@ -62,6 +62,8 @@ end
 
 -- process all configured workflow steps
 local function ProcessWorkflowSteps()
+    LogHelper.Screen(_("start initial workflow"))
+    
     LogHelper.Info('==============================')
     LogHelper.Info(_("process workflow steps"))
 
