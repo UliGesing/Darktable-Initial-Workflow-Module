@@ -25,7 +25,7 @@
 - The new module offers some buttons, a list of configurable darktable modules and some common options, both in lighttable and darkroom view. Feel free to use these configurations and options in any order or combination.
 
 - In preparation for running the script, use the following buttons in darkroom view to rotate the image, adjust the perspective, crop the image and to adjust the exposure until the mid-tones are clear enough. These buttons activate and display the associated module. <br>
->><img src="ReadmeImages/ScreenshotModulePreparingSteps.png" width=250>
+>><img src="ReadmeImages/ScreenshotModulePreparingSteps.png" width=350>
 
 ### Configuration
 
@@ -146,30 +146,8 @@ require "InitialWorkflowModule"</code>
 
 ### Add new or modify workflow steps
 
-- To modify the script, clone the whole repository or download Source.zip archive. You can easily customize steps or add new ones. See "IMPLEMENTATION OF WORKFLOW STEPS" within the module file.
-
-- All steps are derived from a base class to offer common methods. You can easily customize steps or add new ones: Just copy an existing class and adapt the label, tooltip and function accordingly. Copy and adapt Constructor, Init and Run functions. Don't forget to customize the name of the class as well. Use the new class name for Constructor, Init and Run functions.
-
-- By adding it to the "WorkflowSteps" table, the step is automatically displayed and executed. The order in the GUI is the same as the order of declaration here in the code. The order during execution is from bottom to top, along the pixel pipeline.
-
-- You can get the lua command in this way: Follow https://darktable-org.github.io/dtdocs/en/preferences-settings/shortcuts/ and click on the small icon in the top panel as described in “assigning shortcuts to actions”. You enter visual shortcut mapping mode. Point to a module or GUI control. Within the popup you can read the lua command. The most flexible way is to use the shortcut mapping screen, create and edit a shortcut (action, element and effect), read the lua command from popup windows or copy it to your clipboard (ctrl+v).
-
-- Every workflow step contains of constructor, init and run functions. Example:<br><br><code>StepCompressHistoryStack = WorkflowStepCombobox:new():new {[...]}</code> to create the new instance.<br><br><code>function StepCompressHistoryStack:Init()</code> to define combobox values and create the widget.<br><br><code>function StepCompressHistoryStack:Run()</code> to execute the step<br><br><code>table.insert(WorkflowSteps, StepCompressHistoryStack)</code> to collect all steps and execute some common things.
+- To modify the script, clone the whole repository or download Source.zip archive. You can easily customize steps or add new ones. These steps are implemented in a separate lua file "WorkflowSteps.lua" in subfolder "Modules". You can find more details within this file.
 
 ### Module Tests
 
-- The git repository provides some additional files to execute module tests. This is used during module development and deployment. Within the script code there is an additional and optional module test implementation. This should be disabled and not visible for general use of the script. 
-
-- To run these tests, do the following steps:<br>
->- create a file named "TestFlag.txt" in the same directory as the script file and restart darktable
->- from now there is a special "TEST" button, used to perform the module tests
->- open any image in darkroom view, create a backup first
->- create a new folder named "TEST" on your harddisk below the folder of this image file
->- click the TEST button to start the tests
->- up to now, there is a simple module test that iterates over workflow steps and combobox value settings
->- it creates some images and sets different combinations of module settings
->- resulting xmp files are copied to the TEST result folder
->- you can compare these files with previously generated reference files
->- after tests are completed, there should be no error messages
-
-- The git repository contains one additional file called <code>TestCustomCode.lua</code>. You can use it to try some commands or tests "on the fly". This file contains some custom debug code. The code is executed by clicking the "Custom Code" button. It can be changed without restarting darktable. This is helpful, if you want to run some special tests or execute some dt.gui.action commands.
+- The git repository provides some additional files to execute module tests. This is used during module development and deployment. Within the script code there is an additional and optional module test implementation. This should be disabled and not visible for general use of the script. You can find it in file "ModuleTests.lua" in subfolder "Modules". You can find more details within this file.
