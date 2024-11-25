@@ -52,14 +52,13 @@ function Helper.ThreadSleep(milliseconds)
 end
 
 function Helper.CheckApiVersion()
-  -- check Darktable API version
-  -- new API of DT 4.8 is needed to use pixelpipe-processing-complete event
-  local apiCheck, err = pcall(function() du.check_min_api_version('9.3.0', ModuleName) end)
+  -- check Darktable API version: darktable version 5.0 is needed
+  local apiCheck, err = pcall(function() du.check_min_api_version('9.4.0', ModuleName) end)
   if (apiCheck) then
     LogHelper.Info(string.format(_("darktable version with appropriate lua API detected: %s"),
       'dt' .. dt.configuration.version))
   else
-    LogHelper.Info(_("this script needs at least darktable 4.8 API to run"))
+    LogHelper.Info(_("this script needs at least darktable 5.0 API to run"))
     return false
   end
 

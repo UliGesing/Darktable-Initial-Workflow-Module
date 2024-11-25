@@ -18,11 +18,11 @@
   See the GNU General Public License for more details
   at <http://www.gnu.org/licenses/>.
 ]]
-  
+
 --[[
   This file contains the implementation of workflow steps. Every step configures
   a darktable module. You can easily customize steps or add new ones.
-  
+
   All steps are derived from a base class to offer common methods. You can easily
   customize steps or add new ones: Just copy an existing class and adapt the label,
   tooltip and function accordingly. Copy and adapt Constructor, Init and Run functions.
@@ -35,7 +35,7 @@
 
   You can get the lua command to perform a specific task as described here:
   https://darktable-org.github.io/dtdocs/en/preferences-settings/shortcuts/
-  
+
   Click on the small icon in the top panel as described in “assigning shortcuts
   to actions”. You enter visual shortcut mapping mode. Point to a module or GUI control.
   Within the popup you can read the lua command. The most flexible way is to use the
@@ -43,24 +43,24 @@
   read the lua command from popup windows or copy it to your clipboard (ctrl+v).
 
   Every workflow step contains of constructor, init and run functions. Example:
-  
+
   StepCompressHistoryStack = WorkflowStepCombobox:new():new {[...]}
   to create the new instance.
-  
+
   function StepCompressHistoryStack:Init()
   to define combobox values and create the widget.
-  
+
   function StepCompressHistoryStack:Run()
   to execute the step
-  
+
   table.insert(WorkflowSteps, StepCompressHistoryStack)
   to collect all steps and execute them later on.
 
-  
+
   It is not possible to debug your script code directly. If you change your script code,
   you have to restart darktable to apply your changes. But you can run dt.gui.action
   commands on the fly:
-  
+
   Create a file named "TestFlag.txt" in the same directory as the script file and restart
   darktable. From now there are new buttons, used to perform the module tests.
 
@@ -697,19 +697,38 @@ function WorkflowSteps.CreateWorkflowSteps()
         GuiAction.ShowDarkroomModule('iop/toneequal')
         GuiAction.DoWithoutEvent('iop/toneequal/page', 0, 'masking', '', 1.0)
 
-        if (selection == _("mask exposure compensation")) then
-            GuiAction.Do('iop/toneequal/mask exposure compensation', 0, 'button', 'toggle', 1.0)
+        -- exposure compensation
+        if ((selection == _("mask exposure compensation"))
+                or (selection == _("exposure & contrast comp."))) then
+            --
+            local path = 'iop/toneequal/mask exposure compensation'
+
+            -- workaround: move slider to initialize mask post-processing
+            -- otherwise this setting will not work reliably
+            -- (there are different states after the complete reset of the history stack and after the initialization of this module)
+            local oldValue = GuiAction.DoWithoutEvent(path, 0, 'value', 'set', 0 / 0)
+            GuiAction.SetValue(path, 0, 'value', 'set', oldValue + 0.1)
+
+            -- toggle button
+            GuiAction.Do(path, 0, 'button', 'toggle', 1.0)
             Helper.ThreadSleep(StepTimeout:Value())
             --
-        elseif (selection == _("mask contrast compensation")) then
-            GuiAction.Do('iop/toneequal/mask contrast compensation', 0, 'button', 'toggle', 1.0)
+        end
+
+        -- contrast compensation
+        if ((selection == _("mask contrast compensation"))
+                or (selection == _("exposure & contrast comp."))) then
+            --
+            local path = 'iop/toneequal/mask contrast compensation'
+
+            -- workaround: move slider to initialize mask post-processing
+            local oldValue = GuiAction.DoWithoutEvent(path, 0, 'value', 'set', 0 / 0)
+            GuiAction.SetValue(path, 0, 'value', 'set', oldValue + 0.1)
+
+            -- toggle button
+            GuiAction.Do(path, 0, 'button', 'toggle', 1.0)
             Helper.ThreadSleep(StepTimeout:Value())
             --
-        elseif (selection == _("exposure & contrast comp.")) then
-            GuiAction.Do('iop/toneequal/mask exposure compensation', 0, 'button', 'toggle', 1.0)
-            Helper.ThreadSleep(StepTimeout:Value())
-            GuiAction.Do('iop/toneequal/mask contrast compensation', 0, 'button', 'toggle', 1.0)
-            Helper.ThreadSleep(StepTimeout:Value())
         end
 
         -- workaround: show this module, otherwise the buttons will not be pressed
@@ -1055,9 +1074,6 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepColorCalibrationIlluminant:EnableDefaultStepConfiguation()
         -- "unchanged: scene referred default"
         self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 1 or 1
-
-        -- "same as pipeline"
-        -- self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 3 or 1
     end
 
     table.insert(Workflow.ModuleSteps, StepColorCalibrationIlluminant)
@@ -1071,10 +1087,12 @@ function WorkflowSteps.CreateWorkflowSteps()
         self:CreateLabelWidget()
         self:CreateDefaultBasicWidget()
 
+        self.WidgetBasicDefaultValue = 3 -- enable instead of reset
+        
         self.ConfigurationValues =
         {
             _("unchanged"), -- additional value
-            _dt("set white balance to detected from area"),
+            _dt("set white balance to detected from area"), -- additional value
             _dt("same as pipeline (D50)"),
             _dt("A (incandescent)"),
             _dt("D (daylight)"),
@@ -1083,8 +1101,9 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("LED (LED light)"),
             _dt("Planckian (black body)"),
             _dt("custom"),
-            _dt("(AI) detect from image surfaces..."),
-            _dt("(AI) detect from image edges..."),
+            -- these presets are ditched...
+            -- _dt("(AI) detect from image surfaces..."),
+            -- _dt("(AI) detect from image edges..."),
             _dt("as shot in camera")
         }
 
@@ -1125,8 +1144,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- set illuminant
 
         -- detect custom value from picture
-        if(selection == _dt("set white balance to detected from area")) then
-            
+        if (selection == _dt("set white balance to detected from area")) then
             -- dt.gui.action("iop/channelmixerrgb/picker", "", "toggle", 1,000, 0)
             GuiAction.Do('iop/channelmixerrgb/picker', 0, '', 'toggle', 1.0)
             return
@@ -1134,6 +1152,10 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         -- set predefined values
         local currentSelectionIndex = GuiAction.GetValue('iop/channelmixerrgb/illuminant', 'selection')
+        
+        -- consider additional value
+        currentSelectionIndex = currentSelectionIndex - 1
+
         local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
         if (selection ~= currentSelection) then
@@ -1169,7 +1191,6 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues =
         {
             _("unchanged"), -- additional value
-            _dt(""),
             _dt("linear Bradford (ICC v4)"),
             _dt("CAT16 (CIECAM16)"),
             _dt("non-linear Bradford"),

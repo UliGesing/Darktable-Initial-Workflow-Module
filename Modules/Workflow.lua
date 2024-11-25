@@ -312,6 +312,22 @@ function Workflow.StepConfiguration:SetWidgetBasicValue(value)
         end
     end
 
+    -- basic configuration ("reset" or "disable" not supported by this step?
+    -- switch to "ignore" and try again
+    if ((value == "reset") or (value == "disable")) then
+        value = "ignore"
+    end
+
+    for i, basicValue in ipairs(self.BasicValues) do
+        if (value == basicValue) then
+            if (self.WidgetBasic.value ~= i) then
+                self.WidgetBasic.value = i
+            end
+            return
+        end
+    end
+
+    -- fallback: set default value
     self:EnableDefaultBasicConfiguation()
 end
 
