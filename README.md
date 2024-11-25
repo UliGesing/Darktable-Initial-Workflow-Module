@@ -25,7 +25,7 @@
 - The new module offers some buttons, a list of configurable darktable modules and some common options, both in lighttable and darkroom view. Feel free to use these configurations and options in any order or combination.
 
 - In preparation for running the script, use the following buttons in darkroom view to rotate the image, adjust the perspective, crop the image and to adjust the exposure until the mid-tones are clear enough. These buttons activate and display the associated module. <br>
->><img src="ReadmeImages/ScreenshotModulePreparingSteps.png" width=250>
+>><img src="ReadmeImages/ScreenshotModulePreparingSteps.png" width=350>
 
 ### Configuration
 
