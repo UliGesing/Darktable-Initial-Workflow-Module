@@ -31,8 +31,6 @@
 
 local Workflow = {}
 
-local indent = '. '
-
 function Workflow.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _GuiAction)
     dt = _dt
     LogHelper = _LogHelper

@@ -26,8 +26,9 @@
 
 local WorkflowButtons = {}
 
-function WorkflowButtons.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _Workflow, _GuiAction, _WidgetStack,
-                      _ScriptFilePath)
+function WorkflowButtons.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _Workflow, _GuiAction,
+                              _WidgetStack,
+                              _ScriptFilePath)
     dt = _dt
     LogHelper = _LogHelper
     Helper = _Helper
@@ -63,7 +64,7 @@ end
 -- process all configured workflow steps
 local function ProcessWorkflowSteps()
     LogHelper.Screen(_("start initial workflow"))
-    
+
     LogHelper.Info('==============================')
     LogHelper.Info(_("process workflow steps"))
 
@@ -381,17 +382,26 @@ function WorkflowButtons.CreateWorkflowButtons()
 
     ---------------------------------------------------------------
 
-    -- init ./Modules/ModuleTest
-    local ModuleTests = require 'Modules.ModuleTests'
-    ModuleTests.Init(dt, LogHelper, Helper, GuiTranslation, GuiAction, Workflow.ModuleSteps, ProcessWorkflowSteps,
-        SetAllDefaultModuleConfigurations)
-
     -- TEST button: Special button, used to perform module tests.
     -- This button should be disabled for general use of the script.
     -- To enable it, create a file named 'TestFlag.txt' in the same
     -- directory as this script file.
 
+    -- check, if file exists
+    local function FileExists(filename)
+        local f = io.open(filename, 'r')
+        if f ~= nil then
+            io.close(f)
+            return true
+        end
+        return false
+    end
+
     if (FileExists(ScriptFilePath .. 'TestFlag.txt')) then
+        local ModuleTests = require 'lib.IWF_ModuleTests'
+        ModuleTests.Init(dt, LogHelper, Helper, GuiTranslation, GuiAction, Workflow.ModuleSteps, ProcessWorkflowSteps,
+            SetAllDefaultModuleConfigurations)
+
         ButtonModuleTest = Workflow.StepButton:new():new
             {
                 Widget = dt.new_widget('button')

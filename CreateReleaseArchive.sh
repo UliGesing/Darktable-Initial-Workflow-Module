@@ -35,8 +35,8 @@ rsync -rtq --delete --delete-excluded\
 
 echo -e "=================================================="
 echo -e "create git archive"
-stashName=`git stash create`;
-git archive --format=zip --output=$BaseFolder/Sources.zip $stashName
+
+git archive --format=zip --output=$BaseFolder/Sources.zip HEAD
 git gc --prune=now
 
 echo -e "=================================================="

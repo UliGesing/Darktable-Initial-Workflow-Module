@@ -21,8 +21,6 @@
 
 -- This file provides some common helper functions.
 
-local du = require 'lib/dtutils'
-
 local Helper = {}
 
 function Helper.Init(_dt, _LogHelper, _TranslationHelper, _ModuleName)
@@ -50,21 +48,6 @@ end
 function Helper.ThreadSleep(milliseconds)
   dt.control.sleep(milliseconds)
 end
-
-function Helper.CheckApiVersion()
-  -- check Darktable API version: darktable version 5.0 is needed
-  local apiCheck, err = pcall(function() du.check_min_api_version('9.4.0', ModuleName) end)
-  if (apiCheck) then
-    LogHelper.Info(string.format(_("darktable version with appropriate lua API detected: %s"),
-      'dt' .. dt.configuration.version))
-  else
-    LogHelper.Info(_("this script needs at least darktable 5.0 API to run"))
-    return false
-  end
-
-  return true
-end
-
 
 -- get Darktable workflow setting
 -- read preference 'auto-apply chromatic adaptation defaults'
