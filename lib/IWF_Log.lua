@@ -23,7 +23,7 @@
 
 local LogHelper = {}
 
-local log = require 'lib/dtutils.log'
+local log = require 'lib.dtutils.log'
 
 function LogHelper.Init()
     log.log_level(log.info) -- log.info or log.warn or log.debug
@@ -36,7 +36,11 @@ function LogHelper.Init()
 end
 
 function LogHelper.GetLogInfoText(text)
-    return '[' .. LogHelper.MajorNr .. '/' .. LogHelper.MajorMax .. '] ' .. LogHelper.CurrentStep .. ': ' .. text
+    local prefix = ''
+    if ((LogHelper.MajorNr ~= 0) or (LogHelper.MajorMax ~= 0)) then
+        prefix = '[' .. LogHelper.MajorNr .. '/' .. LogHelper.MajorMax .. '] '
+    end
+    return prefix .. LogHelper.CurrentStep .. ': ' .. text
 end
 
 function LogHelper.Info(text)

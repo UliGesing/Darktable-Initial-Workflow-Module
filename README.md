@@ -86,48 +86,53 @@
 
 ### Prerequisites
 
-- This script requires darktable 4.8. The script was developed and tested on Linux (Arch-based EndeavourOs). You need darktable and Lua installed on your machine. See darktable documentation for your first steps: https://docs.darktable.org/usermanual/4.8/en/lua/. At startup, darktable will automatically run the Lua script called luarc. All lua scripts are integrated and started from this file. You can find it here:<br>
+- This script requires darktable 5.0. The script was developed and tested on Linux (Arch-based EndeavourOs), but it should also work on Windows. You need darktable and Lua installed on your machine. See darktable documentation for your first steps: https://docs.darktable.org/usermanual and choose chapter "Scripting with Lua" in the left panel.
 
-- luarc directory on Linux: <br> <code>/home/[user_name]/.config/darktable</code>
+### Lua examples folder
 
-- luarc directory on Windows: <br> <code>%LocalAppData%/darktable</code>
-
-### Download Initial-Workflow-Script
-
-- Download the newest release archive <code>InitialWorkflowModule.zip</code> from https://github.com/UliGesing/Darktable-Initial-Workflow-Module/releases. Extract the release archive and all contained folders to your darktable lua script example folder. Some examples and contributed scripts come with your darktable lua installation. The initial module script can be installed at the same place. After that, you have to integrate it into darktable (more precisely in the named luarc file), using one of the following methods.
-
-- After installation, your folder structure could look like this:
-
->><img src="ReadmeImages/ScreenshotInstallationFolder.png" width=250>
+Some examples and contributed scripts come with your darktable lua installation. The initial module script can be installed at the same place.
 
 - lua script folders on Linux: <br><code>/home/[user_name]/.config/darktable/lua/examples</code>
 
 - lua script folders on Windows: <br><code>%LocalAppData%/darktable/lua/examples</code>
 
-- lua script example folder: <br>
-<code>[...]/darktable/lua/examples/Darktable-Initial-Workflow-Module/</code>
+### Download Initial-Workflow-Script
 
-### Installation method 1: Using darktable script manager
+- Download the newest release archive <code>InitialWorkflowModule.zip</code> from https://github.com/UliGesing/Darktable-Initial-Workflow-Module/releases. Extract this archive and all contained folders to your darktable lua script examples folder. 
+
+- After installation, your folder structure at <code>[...]/darktable/lua/examples/InitialWorkflowModule/</code> should look like this. The main script <code>InitialWorkflowModule.lua</code> uses some modules in the lib folder.
+
+>><img src="ReadmeImages/ScreenshotInstallationFolder.png" width=250>
+
+### Integration in darktable luarc file
+
+After extracting the archive, you have to integrate it into darktable (more precisely in the named luarc file), using one of the following methods. At startup, darktable will automatically run luarc. All lua scripts are integrated and started from this file. You can find it here:<br>
+
+- luarc directory on Linux: <br> <code>/home/[user_name]/.config/darktable</code>
+
+- luarc directory on Windows: <br> <code>%LocalAppData%/darktable</code>
+
+#### Installation method 1: Using darktable script manager
 
 - edit your luarc file to activate the script manager. The luarc file should contain the following line of code. Restart darktable and use darktable script manager to start the script, see https://docs.darktable.org/lua/stable/lua.scripts.manual/scripts/tools/script_manager/ for details
 
 - in luarc:<br><code>require "tools/script_manager"</code>
-
+- there should be no second entry in luarc to require the InitialWorkflowModule from here
 - start it from darktable script manager examples:
 
 >><img src="ReadmeImages/ScreenshotInstallationScriptManager.png" width=250>
 
-### Installation method 2: Require from luarc directly
+#### Installation method 2: Require from luarc directly
 
 - edit your luarc file to integrate the initial workflow script directly, without using darktable script manager. Add a new line to your luarc file starting with <code>require</code> and the path of the script file. Restart darktable, the initial workflow script is executed and displayed as a new module.
 
-- in luarc:<br><code>require "examples/Darktable-Initial-Workflow-Module/InitialWorkflowModule"</code>
+- in luarc:<br><code>require "examples.InitialWorkflowModule.InitialWorkflowModule"</code>
 
-### Installation method 3: Use any other script folder
+#### Installation method 3: Use any other script folder
 
 - you can extract the script archive to any other folder, e.g. your git repository directory. Edit your luarc file to extend the package path and to require the script. Add the following two lines of code and adjust the path name. Restart darktable, the initial workflow script is executed and displayed as a new module.
 
-- in luarc: <br><code>package.path = package.path .. ";[any path]/Darktable-Initial-Workflow-Module/?.lua"<br>
+- in luarc: <br><code>package.path = package.path .. ";[any path]/InitialWorkflowModule/?.lua"<br>
 require "InitialWorkflowModule"</code>
 
 ### Logging

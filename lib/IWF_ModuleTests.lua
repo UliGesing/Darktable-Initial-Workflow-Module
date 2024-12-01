@@ -79,16 +79,6 @@ local moduleTestIgnoreSteps =
   StepTimeout
 }
 
--- check, if file exists
-function FileExists(filename)
-  local f = io.open(filename, 'r')
-  if f ~= nil then
-    io.close(f)
-    return true
-  end
-  return false
-end
-
 -- check, if file was modified
 local function GetFileModified(fileName)
   local fileHandle = io.popen('stat -c %Y ' .. Helper.Quote(fileName))

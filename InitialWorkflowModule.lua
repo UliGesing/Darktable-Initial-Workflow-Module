@@ -33,7 +33,7 @@
 
 
 --[[
-  This lua file contains the main entry point to install the 
+  This lua file contains the main entry point to install the
   Initial Workflow Module as a new module in darktable.
 
   This file is executed during startup of darktable, loads other
@@ -49,63 +49,122 @@ local ModuleName = 'InitialWorkflowModule'
 
 local dt = require 'darktable'
 
--- get path, where the main script was started from
-local function ScriptFilePath()
-  local str = debug.getinfo(1, 'S').source:sub(2)
-  return str:match('(.*[/\\])')
+-- log startup messages
+local startupLog = require 'lib/dtutils.log'
+startupLog.log_level(startupLog.info)
+
+local function StartupMessage(message)
+  startupLog.msg(startupLog.info, message)
 end
 
--- set locales directory
-local pathSeparator = dt.configuration.running_os == 'windows' and '\\' or '/'
-local localePath = ScriptFilePath() .. 'locale' .. pathSeparator
+-- simple startup message
+StartupMessage("Initial Workflow Module")
 
--- init ./Modules/GuiTranslation.lua
-local GuiTranslation = require 'Modules.GuiTranslation'
-GuiTranslation.Init(dt.gettext, ModuleName, localePath)
+-- get path, where the main script was started from
+-- get locales directory, used for translations
+local pathSeparator = dt.configuration.running_os == 'windows' and '\\' or '/'
+local scriptFilePath = debug.getinfo(1, 'S').source:sub(2):match('(.*[/\\])')
+local scriptLocalePath = scriptFilePath .. 'locale' .. pathSeparator
+
+-- prevent exception, if require fails
+local function prequire(module)
+  StartupMessage("Load submodule " .. module)
+  local success, result
+
+  -- first try
+  success, result = pcall(require, module)
+
+  if not success then
+    -- sub module was not found
+    -- try to extend lua package path
+    StartupMessage("extend lua package path: " .. scriptFilePath .. "?.lua")
+    package.path = package.path .. ";" .. scriptFilePath .. "?.lua"
+
+    -- second try
+    success, result = pcall(require, module)
+
+    if not success then
+      StartupMessage("Failed to require module " .. module)
+      StartupMessage("Script executed from path " .. scriptFilePath)
+      StartupMessage("Lua package path = " .. package.path)
+      StartupMessage(result)
+      return false, result
+    end
+  end
+
+  return true, result
+end
+
+local success
+
+-- load module IWF_GuiTranslation.lua
+local GuiTranslation
+success, GuiTranslation = prequire('lib.IWF_GuiTranslation')
+if not success then return end
+GuiTranslation.Init(dt.gettext, ModuleName, scriptLocalePath)
+
+-- load module IWF_LogHelper.lua
+local LogHelper
+success, LogHelper = prequire('lib.IWF_Log')
+if not success then return end
+LogHelper.Init()
+
+-- load module IWF_Helper.lua
+local Helper
+success, Helper = prequire('lib.IWF_Helper')
+if not success then return end
+Helper.Init(dt, LogHelper, GuiTranslation, ModuleName)
 
 -- return translation from local .po / .mo file
 local function _(msgid)
   return GuiTranslation.t(msgid)
 end
 
--- return translation from darktable
-local function _dt(msgid)
-  return GuiTranslation.tdt(msgid)
+-- startup messages
+StartupMessage(string.format(_("script executed from path %s"), scriptFilePath))
+StartupMessage(string.format(_("script translation files in %s"), scriptLocalePath))
+StartupMessage(_("script outputs are in English"))
+
+-- check darktable API version: darktable version 5.0 is needed
+local du = require 'lib/dtutils'
+local function CheckApiVersion()
+  local apiCheck, err = pcall(function() du.check_min_api_version('9.4.0', ModuleName) end)
+  if (apiCheck) then
+    StartupMessage(string.format(_("darktable version with appropriate lua API detected: %s"),
+      'dt' .. dt.configuration.version))
+  else
+    StartupMessage(_("this script needs at least darktable 5.0 API to run"))
+    return false
+  end
+
+  return true
 end
 
--- init ./Modules/LogHelper.lua
-local indent = '. '
-local LogHelper = require 'Modules.LogHelper'
-LogHelper.Init()
-
--- init ./Modules/Helper.lua
-local Helper = require 'Modules.Helper'
-Helper.Init(dt, LogHelper, GuiTranslation, ModuleName)
-
-if not Helper.CheckApiVersion() then
+if not CheckApiVersion() then
   return
 end
 
-LogHelper.Info(string.format(_("script executed from path %s"), ScriptFilePath()))
-LogHelper.Info(string.format(_("script translation files in %s"), localePath))
-LogHelper.Info(_("script outputs are in English"))
-
 ---------------------------------------------------------------
 
--- init ./Modules/EventHelper.lua
-local EventHelper = require 'Modules.EventHelper'
+-- load module IWF_EventHelper.lua
+local EventHelper
+success, EventHelper = prequire('lib.IWF_EventHelper')
+if not success then return end
 EventHelper.Init(dt, LogHelper, Helper, GuiTranslation, ModuleName)
 
--- init ./Modules/GuiActionHelper
-local GuiAction = require 'Modules.GuiAction'
+-- load module IWF_GuiAction.lua
+local GuiAction
+success, GuiAction = prequire('lib.IWF_GuiAction')
+if not success then return end
 GuiAction.Init(dt, LogHelper, Helper, EventHelper, GuiTranslation)
 
----------------------------------------------------------------
-
--- init ./Modules/Workflow.lua
-local Workflow = require 'Modules.Workflow'
+-- load module IWF_Workflow.lua
+local Workflow
+success, Workflow = prequire('lib.IWF_Workflow')
+if not success then return end
 Workflow.Init(dt, LogHelper, Helper, EventHelper, GuiTranslation, GuiAction)
 
+-- create stack widget, used to display subpages
 local WidgetStack =
 {
   Modules = 1,
@@ -113,21 +172,26 @@ local WidgetStack =
   Stack = dt.new_widget("stack") {},
 }
 
--- init ./Modules/Steps.lua
-local WorkflowSteps = require 'Modules.WorkflowSteps'
-WorkflowSteps.Init(dt, LogHelper, Helper, EventHelper, GuiTranslation, Workflow, GuiAction, WidgetStack, ScriptFilePath())
+-- load module IWF_WorkflowSteps.lua
+local WorkflowSteps
+success, WorkflowSteps = prequire('lib.IWF_WorkflowSteps')
+if not success then return end
+WorkflowSteps.Init(dt, LogHelper, Helper, EventHelper, GuiTranslation, Workflow, GuiAction, WidgetStack, scriptFilePath)
 
--- init ./Modules/Buttons.lua
-local WorkflowButtons = require 'Modules.WorkflowButtons'
-WorkflowButtons.Init(dt, LogHelper, Helper, EventHelper, GuiTranslation, Workflow, GuiAction, WidgetStack,
-ScriptFilePath())
+-- load module IWF_WorkflowButtons.lua
+local WorkflowButtons
+success, WorkflowButtons = prequire('lib.IWF_WorkflowButtons')
+if not success then return end
+WorkflowButtons.Init(dt, LogHelper, Helper, EventHelper, GuiTranslation, Workflow, GuiAction, WidgetStack, scriptFilePath)
 
 -- init widget controls
 WorkflowSteps.CreateWorkflowSteps()
 WorkflowButtons.CreateWorkflowButtons()
 
--- init ./Modules/GuiWidgets
-local GuiWidgets = require 'Modules.GuiWidgets'
+-- load module IWF_GuiWidgets
+local GuiWidgets
+success, GuiWidgets = prequire('lib.IWF_GuiWidgets')
+if not success then return end
 GuiWidgets.Init(dt, LogHelper, Helper, Workflow, WidgetStack)
 
 ---------------------------------------------------------------
