@@ -153,7 +153,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             OperationNameInternal = 'Filmic or Sigmoid',
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 4,
+            WidgetDefaultStepConfiguationValue = 6,
             Label = GuiTranslation.dtConcat({ "filmic rgb", ' / ', "sigmoid" }),
             Tooltip = _(
                 "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others.")
@@ -170,15 +170,15 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.sigmoidDefault = GuiTranslation.dtConcat({ "sigmoid", ' ', "default" })
         self.sigmoidAces100Preset = GuiTranslation.dtConcat({ "sigmoid", ' ', "ACES 100-nit like" })
         self.sigmoidNeutralGrayPreset = GuiTranslation.dtConcat({ "sigmoid", ' ', "neutral gray" })
-        
+
         self.ConfigurationValues =
         {
             _("unchanged"),
             self.filmicAutoTuneLevels,
             self.filmicHighlightReconstruction,
             self.sigmoidDefault,
-            self.sigmoidNeutralGrayPreset,
-            self.sigmoidAces100Preset
+            self.sigmoidAces100Preset,
+            self.sigmoidNeutralGrayPreset
         }
 
         self.Widget = dt.new_widget('combobox')
@@ -373,6 +373,54 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         GuiAction.SetValue('iop/colorbalancergb/global chroma', 0, 'value', 'set', selection / 100)
+    end
+
+    ---------------------------------------------------------------
+
+    StepColorBalanceContrast = Workflow.StepConfiguration:new():new
+        {
+            OperationNameInternal = 'colorbalancergb',
+            WidgetStackValue = WidgetStack.Modules,
+            WidgetUnchangedStepConfigurationValue = 1,
+            WidgetDefaultStepConfiguationValue = 6,
+            Label = GuiTranslation.dtConcat({ "color balance rgb", ' ', "contrast" }),
+            Tooltip = _("Adjust brilliance in color balance rgb module to add contrast (darker shadows and brighter highlights). You can combine this with sigmoid neutral gray preset.")
+        }
+
+    table.insert(Workflow.ModuleSteps, StepColorBalanceContrast)
+
+    function StepColorBalanceContrast:Init()
+        self:CreateLabelWidget()
+        self:CreateSimpleBasicWidget()
+
+        self.ConfigurationValues =
+        {
+            _("unchanged"), 0, 5, 10, 15, 20, 25, 30
+        }
+
+        self.Widget = dt.new_widget('combobox')
+            {
+                changed_callback = Workflow.ComboBoxChangedCallback,
+                label = ' ', -- use separate label widget
+                tooltip = self:GetLabelAndTooltip(),
+                table.unpack(self.ConfigurationValues)
+            }
+    end
+
+    function StepColorBalanceContrast:Run()
+        -- evaluate basic widget
+        if (not self:RunSimpleBasicWidget()) then
+            return
+        end
+
+        local selection = self.Widget.value
+
+        if (selection == _("unchanged")) then
+            return
+        end
+
+        GuiAction.SetValue('iop/colorbalancergb/brilliance/shadows', 0, 'value', 'set', - selection / 100)
+        GuiAction.SetValue('iop/colorbalancergb/brilliance/highlights', 0, 'value', 'set', selection / 100)
     end
 
     ---------------------------------------------------------------
@@ -1065,10 +1113,10 @@ function WorkflowSteps.CreateWorkflowSteps()
         self:CreateDefaultBasicWidget()
 
         self.WidgetBasicDefaultValue = 3 -- enable instead of reset
-        
+
         self.ConfigurationValues =
         {
-            _("unchanged"), -- additional value
+            _("unchanged"),                                 -- additional value
             _dt("set white balance to detected from area"), -- additional value
             _dt("same as pipeline (D50)"),
             _dt("A (incandescent)"),
@@ -1129,7 +1177,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         -- set predefined values
         local currentSelectionIndex = GuiAction.GetValue('iop/channelmixerrgb/illuminant', 'selection')
-        
+
         -- consider additional value
         currentSelectionIndex = currentSelectionIndex - 1
 
