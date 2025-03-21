@@ -153,7 +153,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             OperationNameInternal = 'Filmic or Sigmoid',
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 3,
+            WidgetDefaultStepConfiguationValue = 4,
             Label = GuiTranslation.dtConcat({ "filmic rgb", ' / ', "sigmoid" }),
             Tooltip = _(
                 "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others.")
@@ -167,17 +167,17 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         self.filmicAutoTuneLevels = GuiTranslation.dtConcat({ "filmic", ' ', "auto tune levels" })
         self.filmicHighlightReconstruction = GuiTranslation.dtConcat({ "filmic", ' + ', "highlight reconstruction" })
-        self.sigmoidColorPerChannel = GuiTranslation.dtConcat({ "sigmoid", ' ', "per channel" })
-        self.sigmoidColorRgbRatio = GuiTranslation.dtConcat({ "sigmoid", ' ', "RGB ratio" })
+        self.sigmoidDefault = GuiTranslation.dtConcat({ "sigmoid", ' ', "default" })
         self.sigmoidAces100Preset = GuiTranslation.dtConcat({ "sigmoid", ' ', "ACES 100-nit like" })
-
+        self.sigmoidNeutralGrayPreset = GuiTranslation.dtConcat({ "sigmoid", ' ', "neutral gray" })
+        
         self.ConfigurationValues =
         {
             _("unchanged"),
             self.filmicAutoTuneLevels,
             self.filmicHighlightReconstruction,
-            self.sigmoidColorPerChannel,
-            self.sigmoidColorRgbRatio,
+            self.sigmoidDefault,
+            self.sigmoidNeutralGrayPreset,
             self.sigmoidAces100Preset
         }
 
@@ -199,8 +199,8 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepDynamicRangeSceneToDisplay:SigmoidSelected()
         return Helper.Contains(
-            { self.sigmoidColorPerChannel,
-                self.sigmoidColorRgbRatio,
+            { self.sigmoidDefault,
+                self.sigmoidNeutralGrayPreset,
                 self.sigmoidAces100Preset
             }, self.Widget.value)
     end
@@ -216,7 +216,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             return 'sigmoid'
         end
 
-        return 'filmicrgb'
+        return 'sigmoid'
     end
 
     function StepDynamicRangeSceneToDisplay:Run()
@@ -267,35 +267,12 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         if (self:SigmoidSelected()) then
-            local colorProcessingValues =
-            {
-                _dt("per channel"),
-                _dt("RGB ratio")
-            }
-
-            local currentSelectionIndex = GuiAction.GetValue('iop/sigmoid/color processing', 'selection')
-            local currentSelection = colorProcessingValues[-currentSelectionIndex]
-
-            if (selection == self.sigmoidColorPerChannel) then
-                if (_dt("per channel") ~= currentSelection) then
-                    LogHelper.Info(indent ..
-                        string.format(_("current color processing = %s"), Helper.Quote(currentSelection)))
-                    GuiAction.Do('iop/sigmoid/color processing', 0, 'selection', 'item:per channel', 1.0)
-                else
-                    LogHelper.Info(indent ..
-                        string.format(_("nothing to do, color processing already = %s"), Helper.Quote(currentSelection)))
-                end
+            if (selection == self.sigmoidDefault) then
+                -- use default settings, nothing to do
             end
 
-            if (selection == self.sigmoidColorRgbRatio) then
-                if (_dt("RGB ratio") ~= currentSelection) then
-                    LogHelper.Info(indent ..
-                        string.format(_("current color processing = %s"), Helper.Quote(currentSelection)))
-                    GuiAction.Do('iop/sigmoid/color processing', 0, 'selection', 'item:RGB ratio', 1.0)
-                else
-                    LogHelper.Info(indent ..
-                        string.format(_("nothing to do, color processing already = %s"), Helper.Quote(currentSelection)))
-                end
+            if (selection == self.sigmoidNeutralGrayPreset) then
+                GuiAction.ButtonOffOn('iop/sigmoid/preset/' .. _dt("neutral gray"))
             end
 
             if (selection == self.sigmoidAces100Preset) then
@@ -311,7 +288,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             OperationNameInternal = 'colorbalancergb',
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 7,
+            WidgetDefaultStepConfiguationValue = 1,
             Label = GuiTranslation.dtConcat({ "color balance rgb", ' ', "saturation" }),
             Tooltip = _("Adjust global saturation in color balance rgb module.")
         }
@@ -358,7 +335,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             OperationNameInternal = 'colorbalancergb',
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 5,
+            WidgetDefaultStepConfiguationValue = 1,
             Label = GuiTranslation.dtConcat({ "color balance rgb", ' ', "chroma" }),
             Tooltip = _("Adjust global chroma in color balance rgb module.")
         }
@@ -510,7 +487,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             OperationNameInternal = 'atrous',
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 2,
+            WidgetDefaultStepConfiguationValue = 1,
             Label = _dt("contrast equalizer"),
             Tooltip = _(
                 "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect.")
