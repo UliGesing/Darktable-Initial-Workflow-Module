@@ -419,7 +419,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        GuiAction.SetValue('iop/colorbalancergb/brilliance/shadows', 0, 'value', 'set', - selection / 100)
+        GuiAction.SetValue('iop/colorbalancergb/brilliance/shadows', 0, 'value', 'set', -selection / 100)
         GuiAction.SetValue('iop/colorbalancergb/brilliance/highlights', 0, 'value', 'set', selection / 100)
     end
 
@@ -611,6 +611,62 @@ function WorkflowSteps.CreateWorkflowSteps()
             GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
         end
+    end
+
+    ---------------------------------------------------------------
+
+    StepColorLookupTable = Workflow.StepConfiguration:new():new
+        {
+            OperationNameInternal = 'colorchecker',
+            WidgetStackValue = WidgetStack.Modules,
+            WidgetUnchangedStepConfigurationValue = 1,
+            WidgetDefaultStepConfiguationValue = 2,
+            Label = GuiTranslation.dtConcat({ "color look up table" }),
+            Tooltip = _("Use LUTs to modify the color mapping, perform color corrections or apply looks. You can choose a given preset.")
+        }
+
+    table.insert(Workflow.ModuleSteps, StepColorLookupTable)
+
+    function StepColorLookupTable:Init()
+        self:CreateLabelWidget()
+        self:CreateSimpleBasicWidget()
+
+        self.ConfigurationValues =
+        {
+            _("unchanged"),
+            _dt("expanded color checker"),
+            _dt("Fuji Astia emulation"),
+            _dt("Fuji Classic Chrome emulation"),
+            _dt("Fuji Monochrome emulation"),
+            _dt("Fuji Provia emulation"),
+            _dt("Fuji Velvia emulation"),
+            _dt("Helmholtz/Kohlrausch monochrome"),
+            _dt("it8 skin tones")
+        }
+
+        self.Widget = dt.new_widget('combobox')
+            {
+                changed_callback = Workflow.ComboBoxChangedCallback,
+                label = ' ', -- use separate label widget
+                tooltip = self:GetLabelAndTooltip(),
+                table.unpack(self.ConfigurationValues)
+            }
+    end
+
+    function StepColorLookupTable:Run()
+        -- evaluate basic widget
+        if (not self:RunSimpleBasicWidget()) then
+            return
+        end
+
+        local selection = self.Widget.value
+
+        if (selection == _("unchanged")) then
+            return
+        end
+
+        GuiAction.Do('iop/colorchecker/preset/' .. _dt(selection), 0, '', '', 1.0)
+
     end
 
     ---------------------------------------------------------------

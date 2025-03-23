@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-21 15:42+0100\n"
+"POT-Creation-Date: 2025-03-23 09:07+0100\n"
 "PO-Revision-Date: 2023-06-10 10:27+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -146,7 +146,7 @@ msgstr ""
 
 #: lib/IWF_GuiWidgets.lua:102 lib/IWF_Workflow.lua:114 lib/IWF_Workflow.lua:148
 #: lib/IWF_Workflow.lua:179 lib/IWF_Workflow.lua:211
-#: lib/IWF_WorkflowSteps.lua:226 lib/IWF_WorkflowSteps.lua:1051
+#: lib/IWF_WorkflowSteps.lua:226 lib/IWF_WorkflowSteps.lua:1107
 msgid "ignore"
 msgstr "ignorieren"
 
@@ -161,7 +161,7 @@ msgid "reset"
 msgstr "zuruecksetzen"
 
 #: lib/IWF_GuiWidgets.lua:102 lib/IWF_Workflow.lua:114 lib/IWF_Workflow.lua:185
-#: lib/IWF_WorkflowSteps.lua:230 lib/IWF_WorkflowSteps.lua:1055
+#: lib/IWF_WorkflowSteps.lua:230 lib/IWF_WorkflowSteps.lua:1111
 msgid "disable"
 msgstr "deaktivieren"
 
@@ -173,17 +173,18 @@ msgstr "deaktivieren"
 #: lib/IWF_WorkflowSteps.lua:449 lib/IWF_WorkflowSteps.lua:470
 #: lib/IWF_WorkflowSteps.lua:500 lib/IWF_WorkflowSteps.lua:524
 #: lib/IWF_WorkflowSteps.lua:560 lib/IWF_WorkflowSteps.lua:586
-#: lib/IWF_WorkflowSteps.lua:638 lib/IWF_WorkflowSteps.lua:666
-#: lib/IWF_WorkflowSteps.lua:694 lib/IWF_WorkflowSteps.lua:717
-#: lib/IWF_WorkflowSteps.lua:785 lib/IWF_WorkflowSteps.lua:808
-#: lib/IWF_WorkflowSteps.lua:837 lib/IWF_WorkflowSteps.lua:859
-#: lib/IWF_WorkflowSteps.lua:897 lib/IWF_WorkflowSteps.lua:918
-#: lib/IWF_WorkflowSteps.lua:962 lib/IWF_WorkflowSteps.lua:981
-#: lib/IWF_WorkflowSteps.lua:1007 lib/IWF_WorkflowSteps.lua:1076
-#: lib/IWF_WorkflowSteps.lua:1119 lib/IWF_WorkflowSteps.lua:1152
-#: lib/IWF_WorkflowSteps.lua:1218 lib/IWF_WorkflowSteps.lua:1243
-#: lib/IWF_WorkflowSteps.lua:1280 lib/IWF_WorkflowSteps.lua:1305
-#: lib/IWF_WorkflowSteps.lua:1352 lib/IWF_WorkflowSteps.lua:1377
+#: lib/IWF_WorkflowSteps.lua:636 lib/IWF_WorkflowSteps.lua:664
+#: lib/IWF_WorkflowSteps.lua:694 lib/IWF_WorkflowSteps.lua:722
+#: lib/IWF_WorkflowSteps.lua:750 lib/IWF_WorkflowSteps.lua:773
+#: lib/IWF_WorkflowSteps.lua:841 lib/IWF_WorkflowSteps.lua:864
+#: lib/IWF_WorkflowSteps.lua:893 lib/IWF_WorkflowSteps.lua:915
+#: lib/IWF_WorkflowSteps.lua:953 lib/IWF_WorkflowSteps.lua:974
+#: lib/IWF_WorkflowSteps.lua:1018 lib/IWF_WorkflowSteps.lua:1037
+#: lib/IWF_WorkflowSteps.lua:1063 lib/IWF_WorkflowSteps.lua:1132
+#: lib/IWF_WorkflowSteps.lua:1175 lib/IWF_WorkflowSteps.lua:1208
+#: lib/IWF_WorkflowSteps.lua:1274 lib/IWF_WorkflowSteps.lua:1299
+#: lib/IWF_WorkflowSteps.lua:1336 lib/IWF_WorkflowSteps.lua:1361
+#: lib/IWF_WorkflowSteps.lua:1408 lib/IWF_WorkflowSteps.lua:1433
 msgid "unchanged"
 msgstr "unveraendert"
 
@@ -280,7 +281,7 @@ msgstr ""
 "anwenden. Die Schritte werden von unten nach oben entlang der Pixelpipeline "
 "verarbeitet."
 
-#: lib/IWF_WorkflowButtons.lua:258 lib/IWF_WorkflowSteps.lua:1452
+#: lib/IWF_WorkflowButtons.lua:258 lib/IWF_WorkflowSteps.lua:1508
 msgid "show modules"
 msgstr "Module anzeigen"
 
@@ -394,7 +395,7 @@ msgstr ""
 "Voreinstellungen. Es wird nur eines der Module Filmic, Sigmoid oder "
 "Basiskurve zugleich aktiviert. Die jeweils anderen werden deaktiviert."
 
-#: lib/IWF_WorkflowSteps.lua:264 lib/IWF_WorkflowSteps.lua:870
+#: lib/IWF_WorkflowSteps.lua:264 lib/IWF_WorkflowSteps.lua:926
 msgid "checkbox already selected, nothing to do"
 msgstr "Einstellung bereits vorhanden, nichts zu tun"
 
@@ -433,7 +434,7 @@ msgstr "max. Weiss- und Kontrast-Graupunkt"
 msgid "Choose a predefined preset for your color-grading."
 msgstr "Bestimmen Sie die Farbkorrektur mit einer vordefinierten Einstellung."
 
-#: lib/IWF_WorkflowSteps.lua:541 lib/IWF_WorkflowSteps.lua:626
+#: lib/IWF_WorkflowSteps.lua:541 lib/IWF_WorkflowSteps.lua:682
 msgid ""
 "Adjust luminance and chroma contrast. Apply choosen preset (clarity or "
 "denoise & sharpen). Choose different values to adjust the strength of the "
@@ -443,7 +444,47 @@ msgstr ""
 "Voreinstellung anwenden (Klarheit oder entrauschen & schaerfen). Stellen Sie "
 "verschiedene Werte ein, um die Staerke des Effekts anzupassen."
 
-#: lib/IWF_WorkflowSteps.lua:683
+#: lib/IWF_WorkflowSteps.lua:625
+msgid ""
+"Use LUTs to modify the color mapping, perform color corrections or apply "
+"looks. You can choose a given preset."
+msgstr ""
+"LUTs für die Farbzuordnung anwenden, Farbkorrekturen durchführen oder Looks "
+"anwenden. Wählen Sie ein vorhandenes Preset aus."
+
+#: lib/IWF_WorkflowSteps.lua:637
+msgid "expanded color checker"
+msgstr ""
+
+#: lib/IWF_WorkflowSteps.lua:638
+msgid "Fuji Astia emulation"
+msgstr ""
+
+#: lib/IWF_WorkflowSteps.lua:639
+msgid "Fuji Classic Chrome emulation"
+msgstr ""
+
+#: lib/IWF_WorkflowSteps.lua:640
+msgid "Fuji Monochrome emulation"
+msgstr ""
+
+#: lib/IWF_WorkflowSteps.lua:641
+msgid "Fuji Provia emulation"
+msgstr ""
+
+#: lib/IWF_WorkflowSteps.lua:642
+msgid "Fuji Velvia emulation"
+msgstr ""
+
+#: lib/IWF_WorkflowSteps.lua:643
+msgid "Helmholtz/Kohlrausch monochrome"
+msgstr ""
+
+#: lib/IWF_WorkflowSteps.lua:644
+msgid "it8 skin tones"
+msgstr ""
+
+#: lib/IWF_WorkflowSteps.lua:739
 msgid ""
 "Apply automatic mask contrast and exposure compensation. Auto adjust the "
 "contrast and average exposure."
@@ -451,20 +492,20 @@ msgstr ""
 "Automatische Anpassung der durchschnittlichen Belichtung und des Kontrasts "
 "der Maske."
 
-#: lib/IWF_WorkflowSteps.lua:695 lib/IWF_WorkflowSteps.lua:726
+#: lib/IWF_WorkflowSteps.lua:751 lib/IWF_WorkflowSteps.lua:782
 msgid "mask exposure compensation"
 msgstr "Maskenbelichtung kompensieren"
 
-#: lib/IWF_WorkflowSteps.lua:696 lib/IWF_WorkflowSteps.lua:744
+#: lib/IWF_WorkflowSteps.lua:752 lib/IWF_WorkflowSteps.lua:800
 msgid "mask contrast compensation"
 msgstr "Maskenkontrast kompensieren"
 
-#: lib/IWF_WorkflowSteps.lua:697 lib/IWF_WorkflowSteps.lua:727
-#: lib/IWF_WorkflowSteps.lua:745
+#: lib/IWF_WorkflowSteps.lua:753 lib/IWF_WorkflowSteps.lua:783
+#: lib/IWF_WorkflowSteps.lua:801
 msgid "exposure & contrast comp."
 msgstr "Belichtung & Kontrast komp."
 
-#: lib/IWF_WorkflowSteps.lua:774
+#: lib/IWF_WorkflowSteps.lua:830
 msgid ""
 "Use preset to compress shadows and highlights with exposure-independent "
 "guided filter (eigf) (soft, medium or strong)."
@@ -475,23 +516,23 @@ msgstr ""
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: lib/IWF_WorkflowSteps.lua:786
+#: lib/IWF_WorkflowSteps.lua:842
 msgid "compress shadows-highlights (eigf): medium"
 msgstr "komprimiert Schatten-Spitzlichter (EIGF): mittel"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: lib/IWF_WorkflowSteps.lua:787
+#: lib/IWF_WorkflowSteps.lua:843
 msgid "compress shadows-highlights (eigf): soft"
 msgstr "komprimiert Schatten-Spitzlichter (EIGF): gering"
 
 # must be identical to darktable user interface / menu / preferences / module setting / module preset name
 # darktable 4.3+
-#: lib/IWF_WorkflowSteps.lua:788
+#: lib/IWF_WorkflowSteps.lua:844
 msgid "compress shadows-highlights (eigf): strong"
 msgstr "komprimiert Schatten-Spitzlichter (EIGF): stark"
 
-#: lib/IWF_WorkflowSteps.lua:826
+#: lib/IWF_WorkflowSteps.lua:882
 msgid ""
 "Automatically adjust the exposure correction. Remove the camera exposure "
 "bias, useful if you exposed the image to the right."
@@ -500,29 +541,29 @@ msgstr ""
 "Belichtungskorrektur der Kamera. Dies ist hilfreich, wenn Sie das Bild nach "
 "rechts belichtet haben."
 
-#: lib/IWF_WorkflowSteps.lua:838
+#: lib/IWF_WorkflowSteps.lua:894
 msgid "adjust exposure correction"
 msgstr "Belichtungskorrektur kompensieren"
 
-#: lib/IWF_WorkflowSteps.lua:839 lib/IWF_WorkflowSteps.lua:865
+#: lib/IWF_WorkflowSteps.lua:895 lib/IWF_WorkflowSteps.lua:921
 msgid "adjust & compensate bias"
 msgstr "Belichtung & BIAS anpassen"
 
-#: lib/IWF_WorkflowSteps.lua:884
+#: lib/IWF_WorkflowSteps.lua:940
 msgid "Enable and reset lens correction module."
 msgstr "Objektivkorrektur aktivieren und zuruecksetzen."
 
-#: lib/IWF_WorkflowSteps.lua:934
+#: lib/IWF_WorkflowSteps.lua:990
 #, lua-format
 msgid "current correction method = %s"
 msgstr "Aktuelle Anpassung = %s"
 
-#: lib/IWF_WorkflowSteps.lua:938
+#: lib/IWF_WorkflowSteps.lua:994
 #, lua-format
 msgid "nothing to do, correction method already = %s"
 msgstr "Nichts zu tun, Anpassung ist bereits = %s"
 
-#: lib/IWF_WorkflowSteps.lua:953
+#: lib/IWF_WorkflowSteps.lua:1009
 msgid ""
 "Enable denoise (profiled) module. There is nothing to configure, just enable "
 "or reset this module."
@@ -531,7 +572,7 @@ msgstr ""
 "konfigurieren, das Modul kann aktiviert oder auch zuvor zurueckgesetzt "
 "werden."
 
-#: lib/IWF_WorkflowSteps.lua:996
+#: lib/IWF_WorkflowSteps.lua:1052
 msgid ""
 "Correct chromatic aberrations. Distinguish between Bayer sensor and other "
 "camera sensors. This operation uses the corresponding correction module and "
@@ -542,15 +583,15 @@ msgstr ""
 "Konfiguration nutzt das passende Korrekturmodul und deaktiviert das jeweils "
 "andere."
 
-#: lib/IWF_WorkflowSteps.lua:1008 lib/IWF_WorkflowSteps.lua:1023
+#: lib/IWF_WorkflowSteps.lua:1064 lib/IWF_WorkflowSteps.lua:1079
 msgid "Bayer sensor"
 msgstr "Bayer-Sensor"
 
-#: lib/IWF_WorkflowSteps.lua:1009 lib/IWF_WorkflowSteps.lua:1029
+#: lib/IWF_WorkflowSteps.lua:1065 lib/IWF_WorkflowSteps.lua:1085
 msgid "other sensors"
 msgstr "andere Sensoren"
 
-#: lib/IWF_WorkflowSteps.lua:1093
+#: lib/IWF_WorkflowSteps.lua:1149
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "illuminant. The type of illuminant assumed to have lit the scene. By default "
@@ -561,30 +602,30 @@ msgstr ""
 "es die Szene beleuchtet hat. Als Standardvorgabe wird hier beim Legacy-"
 "Workflow keine Einstellung vorgenommen."
 
-#: lib/IWF_WorkflowSteps.lua:1161
+#: lib/IWF_WorkflowSteps.lua:1217
 #, lua-format
 msgid "color calibration adaption = %s"
 msgstr "Farbkalibrierung Anpassung = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1163
+#: lib/IWF_WorkflowSteps.lua:1219
 msgid "illuminant cannot be set"
 msgstr "Leuchtmittel kann nicht eingestellt werden"
 
-#: lib/IWF_WorkflowSteps.lua:1166
+#: lib/IWF_WorkflowSteps.lua:1222
 msgid "illuminant can be set"
 msgstr "Leuchtmittel kann eingestellt werden"
 
-#: lib/IWF_WorkflowSteps.lua:1187
+#: lib/IWF_WorkflowSteps.lua:1243
 #, lua-format
 msgid "current illuminant = %s"
 msgstr "Aktuelles Leuchtmittel = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1191
+#: lib/IWF_WorkflowSteps.lua:1247
 #, lua-format
 msgid "nothing to do, illuminant already = %s"
 msgstr "Nichts zu tun, Leuchtmittel bereits = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1205
+#: lib/IWF_WorkflowSteps.lua:1261
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "adaptation. The working color space in which the module will perform its "
@@ -594,17 +635,17 @@ msgstr ""
 "die Art der Adaption. Der Farbraum, in dem das Modul seine chromatische "
 "Anpassung und Kanalmischung vornimmt."
 
-#: lib/IWF_WorkflowSteps.lua:1251
+#: lib/IWF_WorkflowSteps.lua:1307
 #, lua-format
 msgid "current adaptation = %s"
 msgstr "Aktuelle Anpassung = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1255
+#: lib/IWF_WorkflowSteps.lua:1311
 #, lua-format
 msgid "nothing to do, adaptation already = %s"
 msgstr "Nichts zu tun, Anpassung bereits = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1269
+#: lib/IWF_WorkflowSteps.lua:1325
 msgid ""
 "Reconstruct color information for clipped pixels. Select an appropriate "
 "reconstruction methods to reconstruct the missing data from unclipped "
@@ -614,21 +655,21 @@ msgstr ""
 "Sie eine geeignete Rekonstruktionsmethode, um die fehlenden Daten aus nicht "
 "abgeschnittenen Kanaelen und/oder benachbarten Pixeln zu rekonstruieren."
 
-#: lib/IWF_WorkflowSteps.lua:1313 lib/IWF_WorkflowSteps.lua:1385
+#: lib/IWF_WorkflowSteps.lua:1369 lib/IWF_WorkflowSteps.lua:1441
 #, lua-format
 msgid "current value = %s"
 msgstr "Aktueller Wert = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1317 lib/IWF_WorkflowSteps.lua:1389
+#: lib/IWF_WorkflowSteps.lua:1373 lib/IWF_WorkflowSteps.lua:1445
 #, lua-format
 msgid "nothing to do, value already = %s"
 msgstr "Nichts zu tun, Wert ist bereits = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1331
+#: lib/IWF_WorkflowSteps.lua:1387
 msgid "white balance"
 msgstr "Weissabgleich"
 
-#: lib/IWF_WorkflowSteps.lua:1333
+#: lib/IWF_WorkflowSteps.lua:1389
 msgid ""
 "Adjust the white balance of the image by altering the temperature. By "
 "default unchanged for the legacy workflow."
@@ -636,17 +677,17 @@ msgstr ""
 "Passen Sie den Weissabgleich des Bildes mit der passenden Temperatur an. Als "
 "Standardvorgabe wird hier beim Legacy-Workflow keine Einstellung vorgenommen."
 
-#: lib/IWF_WorkflowSteps.lua:1402
+#: lib/IWF_WorkflowSteps.lua:1458
 msgid "discard complete history"
 msgstr "Verlauf ganz verwerfen"
 
-#: lib/IWF_WorkflowSteps.lua:1403
+#: lib/IWF_WorkflowSteps.lua:1459
 msgid "Reset all modules of the whole pixelpipe and discard complete history."
 msgstr ""
 "Verwerfe alle Einstellungen der Module der gesamten Pixelpipeline und den "
 "kompletten Verlauf."
 
-#: lib/IWF_WorkflowSteps.lua:1454
+#: lib/IWF_WorkflowSteps.lua:1510
 msgid ""
 "Show darkroom modules for enabled workflow steps during execution of this "
 "initial workflow. This makes the changes easier to understand."
@@ -654,11 +695,11 @@ msgstr ""
 "Module in der Dunkelkammer anzeigen, dabei die Konfigurationen im Initial-"
 "Workflow anwenden. Dadurch sind die Einstellungen leichter nachzuvollziehen."
 
-#: lib/IWF_WorkflowSteps.lua:1487
+#: lib/IWF_WorkflowSteps.lua:1543
 msgid "timeout value"
 msgstr "Zeitlimit / Timeout"
 
-#: lib/IWF_WorkflowSteps.lua:1489
+#: lib/IWF_WorkflowSteps.lua:1545
 msgid ""
 "Some calculations take a certain amount of time. Depending on the hardware "
 "equipment also longer.This script waits and attempts to detect timeouts. If "
@@ -675,7 +716,7 @@ msgstr ""
 "anderen Stellen auch ein Vielfaches (Laden eines Bildes) oder ein Bruchteil "
 "davon (Abfragen eines aktuellen Wertes)."
 
-#: lib/IWF_WorkflowSteps.lua:1518
+#: lib/IWF_WorkflowSteps.lua:1574
 #, lua-format
 msgid "step timeout = %s ms"
 msgstr "Zeitlimit / Timeout dieses Schritts = %s ms"
