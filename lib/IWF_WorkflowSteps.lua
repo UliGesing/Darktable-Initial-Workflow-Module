@@ -293,7 +293,9 @@ function WorkflowSteps.CreateWorkflowSteps()
             Tooltip = _("Adjust global saturation in color balance rgb module.")
         }
 
-    table.insert(Workflow.ModuleSteps, StepColorBalanceGlobalSaturation)
+    -- remove workflow steps for global chroma and saturation
+    -- Keep implementation to reactivate it if needed
+    -- table.insert(Workflow.ModuleSteps, StepColorBalanceGlobalSaturation)
 
     function StepColorBalanceGlobalSaturation:Init()
         self:CreateLabelWidget()
@@ -340,7 +342,9 @@ function WorkflowSteps.CreateWorkflowSteps()
             Tooltip = _("Adjust global chroma in color balance rgb module.")
         }
 
-    table.insert(Workflow.ModuleSteps, StepColorBalanceGlobalChroma)
+    -- remove workflow steps for global chroma and saturation
+    -- Keep implementation to reactivate it if needed
+    -- table.insert(Workflow.ModuleSteps, StepColorBalanceGlobalChroma)
 
     function StepColorBalanceGlobalChroma:Init()
         self:CreateLabelWidget()
@@ -666,7 +670,6 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         GuiAction.Do('iop/colorchecker/preset/' .. _dt(selection), 0, '', '', 1.0)
-
     end
 
     ---------------------------------------------------------------
