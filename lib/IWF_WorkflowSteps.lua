@@ -1534,6 +1534,49 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- do nothing...
     end
 
+    function StepShowModulesDuringExecution:Value()
+        return self.Widget.value == _dt("yes")
+    end
+
+    ---------------------------------------------------------------
+
+    StepRunSingleStepOnSettingsChange = Workflow.StepConfiguration:new():new
+        {
+            -- operation = nil: ignore this module during module reset
+            OperationNameInternal = nil,
+            WidgetStackValue = WidgetStack.Settings,
+            WidgetUnchangedStepConfigurationValue = 2,
+            WidgetDefaultStepConfiguationValue = 2,
+            Label = _("run single steps on change"),
+            Tooltip = _(
+                "When settings change, execute individual workflow steps. Configure a single module. This allows you to see the changes made by each configuration without having to execute the entire workflow.")
+        }
+
+    table.insert(Workflow.ModuleSteps, StepRunSingleStepOnSettingsChange)
+
+    function StepRunSingleStepOnSettingsChange:Init()
+        self:CreateLabelWidget()
+        self:CreateEmptyBasicWidget()
+
+        self.ConfigurationValues = { _dt("no"), _dt("yes") }
+
+        self.Widget = dt.new_widget('combobox')
+            {
+                changed_callback = Workflow.ComboBoxChangedCallback,
+                label = ' ', -- use separate label widget
+                tooltip = self:GetLabelAndTooltip(),
+                table.unpack(self.ConfigurationValues)
+            }
+    end
+
+    function StepRunSingleStepOnSettingsChange:Run()
+        -- do nothing...
+    end
+
+    function StepRunSingleStepOnSettingsChange:Value()
+        return self.Widget.value == _dt("yes")
+    end
+
     ---------------------------------------------------------------
 
     StepTimeout = Workflow.StepConfiguration:new():new
