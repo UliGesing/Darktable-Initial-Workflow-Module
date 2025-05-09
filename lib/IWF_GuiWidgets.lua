@@ -55,10 +55,21 @@ ResetAllCommonMainSettingsWidget = dt.new_widget('combobox')
                 for i, step in ipairs(Workflow.ModuleSteps) do
                     if step.WidgetStackValue == WidgetStack.Settings then
                         if (step ~= StepTimeout) then
+                            -- do not excecute a single step, if all configurations are changing, prevent chaos
+                            step:DisableRunSingleStepOnSettingsChange()
+
                             if (selection == _("default")) then
                                 LogHelper.Info(step.Label)
                                 step:EnableDefaultStepConfiguation()
                             end
+
+                            -- sleep for a short moment to give callback function a chance to run
+                            -- callback function Workflow.ComboBoxChangedCallback calls Workflow.RunSingleStep
+                            -- function Workflow.RunSingleStep checks the RunSingleStepOnSettingsChange flag
+                            dt.control.sleep(100)
+
+                            -- set default
+                            step:EnableRunSingleStepOnSettingsChange()
                         end
                     end
                 end
@@ -83,11 +94,22 @@ ResetAllModuleBasicSettingsWidget = dt.new_widget('combobox')
                 for i, step in ipairs(Workflow.ModuleSteps) do
                     if step.WidgetStackValue == WidgetStack.Modules then
                         if (step ~= StepTimeout) then
+                            -- do not excecute a single step, if all configurations are changing, prevent chaos
+                            step:DisableRunSingleStepOnSettingsChange()
+
                             if (selection == _("default")) then
                                 step:EnableDefaultBasicConfiguation()
                             else
                                 step:SetWidgetBasicValue(selection)
                             end
+
+                            -- sleep for a short moment to give callback function a chance to run
+                            -- callback function Workflow.ComboBoxChangedCallback calls Workflow.RunSingleStep
+                            -- function Workflow.RunSingleStep checks the RunSingleStepOnSettingsChange flag
+                            dt.control.sleep(100)
+
+                            -- set default
+                            step:EnableRunSingleStepOnSettingsChange()
                         end
                     end
                 end
@@ -112,6 +134,9 @@ ResetAllModuleMainSettingsWidget = dt.new_widget('combobox')
                 for i, step in ipairs(Workflow.ModuleSteps) do
                     if step.WidgetStackValue == WidgetStack.Modules then
                         if (step ~= StepTimeout) then
+                            -- do not excecute a single step, if all configurations are changing, prevent chaos
+                            step:DisableRunSingleStepOnSettingsChange()
+
                             if (selection == _("default")) then
                                 step:EnableDefaultStepConfiguation()
                             elseif (selection == _("unchanged")) then
@@ -119,6 +144,14 @@ ResetAllModuleMainSettingsWidget = dt.new_widget('combobox')
                                 -- configuration keeps unchanged during script execution
                                 step.Widget.value = step.WidgetUnchangedStepConfigurationValue
                             end
+
+                            -- sleep for a short moment to give callback function a chance to run
+                            -- callback function Workflow.ComboBoxChangedCallback calls Workflow.RunSingleStep
+                            -- function Workflow.RunSingleStep checks the RunSingleStepOnSettingsChange flag
+                            dt.control.sleep(100)
+
+                            -- set default
+                            step:EnableRunSingleStepOnSettingsChange()
                         end
                     end
                 end
@@ -149,6 +182,8 @@ local function GetWidgetTestButtons(widgets)
         )
     end
 end
+
+----------------------------------------------------------
 
 -- add buttons to simplify some manual steps
 local function GetWidgetOverallButtons(widgets)

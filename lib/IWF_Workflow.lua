@@ -53,8 +53,8 @@ end
 -- return reverse translation
 local function _ReverseTranslation(msgid)
     return GuiTranslation.GetReverseTranslation(msgid)
-  end
-  
+end
+
 
 -- collect all workflow steps in a table
 -- used to execute or configure all steps at once
@@ -86,7 +86,7 @@ end
 -- message at the beginning of a step
 function Workflow.ModuleStep:LogStepMessage()
     LogHelper.Info('==============================')
----@diagnostic disable-next-line: undefined-field
+    ---@diagnostic disable-next-line: undefined-field
     LogHelper.Info(string.format(_("selection = %s - %s"), self.WidgetBasic.value, self.Widget.value))
 end
 
@@ -105,6 +105,7 @@ Workflow.StepConfiguration = Workflow.ModuleStep:new():new
         ConfigurationValues = nil,
         WidgetUnchangedStepConfigurationValue = nil,
         WidgetDefaultStepConfiguationValue = nil,
+        RunSingleStepOnSettingsChange = true,
     }
 
 -- create default basic widget of most workflow steps
@@ -222,6 +223,22 @@ function Workflow.StepConfiguration:RunSimpleBasicWidget()
     end
 
     return true
+end
+
+
+-- enable flag
+function Workflow.StepConfiguration:EnableRunSingleStepOnSettingsChange()
+    self.RunSingleStepOnSettingsChange = true
+end
+
+-- disable flag
+function Workflow.StepConfiguration:DisableRunSingleStepOnSettingsChange()
+    self.RunSingleStepOnSettingsChange = false
+end
+
+-- check flag
+function Workflow.StepConfiguration:CheckRunSingleStepOnSettingsChange()
+    return self.RunSingleStepOnSettingsChange
 end
 
 -- choose default step setting
@@ -378,10 +395,64 @@ function Workflow.GetStep(widget)
     return Workflow.GetItem(widget, Workflow.ModuleSteps)
 end
 
--- called after selection was changed
+-- run single step, if selection / combobox / setting was changed by user
+-- callback function Workflow.ComboBoxChangedCallback calls Workflow.RunSingleStep
+-- when a single setting changes, execute individual workflow steps and configure a single module.
+-- This allows you to see the changes made by each configuration without having to execute the entire workflow.
+-- run single step, if the setting has been configured accordingly
+function Workflow.RunSingleStep(step)
+    -- run single step from darkroom view only
+    local currentView = dt.gui.current_view()
+    if (currentView ~= dt.gui.views.darkroom) then
+        return
+    end
+
+    -- run single step after configuration was changed, if configured accordingly.
+    -- user can enable this by activating "run single steps on change"
+    if (StepRunSingleStepOnSettingsChange:Value() == false) then
+        return
+    end
+
+    -- return, if e.g. combobox "all module settings" was selected
+    -- do not excecute a single step, if all configurations are changing, prevent chaos
+    if (not step:CheckRunSingleStepOnSettingsChange()) then
+        return
+    end
+
+    -- run single step, but ignore common settings
+    if (step.WidgetStackValue == WidgetStack.Settings) then
+        return
+    end
+
+    -- show active modules in darkroom view
+    GuiAction.DoWithoutEvent('lib/modulegroups/active modules', 0, '', 'on', 1.0)
+
+    -- show corresponding darkroom module
+    GuiAction.ShowDarkroomModule(step:OperationPath())
+
+    -- execute workflow step
+    LogHelper.CurrentStep = step.Label
+    LogHelper.Screen(step.Label)
+
+    -- execute workflow step
+    step:Run()
+
+    LogHelper.Screen("Done")
+end
+
+-- called after selection / combobox / setting was changed by user
 -- current settings are saved as darktable preferences
 function Workflow.ComboBoxChangedCallback(widget)
-    Workflow.GetStep(widget):SavePreferenceValue()
+    local step = Workflow.GetStep(widget)
+    if (step == nil) then
+        return
+    end
+
+    -- save current setting
+    step:SavePreferenceValue()
+
+    -- run single step
+    Workflow.RunSingleStep(step)
 end
 
 -- base class of workflow steps with Button widget

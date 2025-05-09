@@ -198,7 +198,7 @@ function GuiAction.EnableDarkroomModule(moduleName)
         LogHelper.Info(indent .. _("module is already enabled, nothing to do"))
     end
 
-    if (StepShowModulesDuringExecution.Widget.value == _dt("yes")) then
+    if (StepShowModulesDuringExecution:Value()) then
         GuiAction.ShowDarkroomModule(moduleName)
     end
 end
