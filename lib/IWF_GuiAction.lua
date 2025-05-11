@@ -135,6 +135,34 @@ function GuiAction.SetValue(path, instance, element, effect, speed)
     end
 end
 
+local ModulePresetPath = {}
+
+-- darktable 5.2 provides a new preset structure
+-- this function returns the new full preset path
+function GuiAction.GetPresetPath(modulePath, presetPath, presetName)
+    if presetPath ~= '' then
+        return modulePath .. '_builtin_' .. presetPath .. ' | ' .. presetName
+    else
+        return modulePath .. '_builtin_' .. presetName
+    end
+end
+
+-- Select module preset
+function GuiAction.SelectModulePreset(modulePath, presetPath, presetName)
+    local fullPath = GuiAction.GetPresetPath(modulePath, presetPath, presetName)
+
+    LogHelper.Info(string.format(_("select module preset: %s"), Helper.Quote(fullPath)))
+
+    local buttonState = GuiAction.GetValue(fullPath, 'button')
+    if (GuiAction.ConvertValueToBoolean(buttonState)) then
+        GuiAction.DoWithoutEvent(fullPath, 0, 'button', 'off', 1.0)
+    else
+        LogHelper.Info(indent .. _("nothing to do, current preset differs"))
+    end
+
+    GuiAction.Do(fullPath, 0, 'button', 'on', 1.0)
+end
+
 -- Push the button  addressed by the path. Turn it off, if necessary.
 function GuiAction.ButtonOffOn(path)
     LogHelper.Info(string.format(_("push button off and on: %s"), Helper.Quote(path)))

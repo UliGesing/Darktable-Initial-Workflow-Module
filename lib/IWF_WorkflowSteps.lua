@@ -98,6 +98,10 @@ local function _dt(msgid)
     return GuiTranslation.tdt(msgid)
 end
 
+local function _dtConcat(msgid)
+    return GuiTranslation.dtConcat(msgid)
+end
+
 -- return reverse translation
 local function _ReverseTranslation(msgid)
     return GuiTranslation.GetReverseTranslation(msgid)
@@ -154,7 +158,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 6,
-            Label = GuiTranslation.dtConcat({ "filmic rgb", ' / ', "sigmoid" }),
+            Label = _dtConcat({ "filmic rgb", ' / ', "sigmoid" }),
             Tooltip = _(
                 "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others.")
         }
@@ -165,11 +169,11 @@ function WorkflowSteps.CreateWorkflowSteps()
         self:CreateLabelWidget()
         self:CreateDefaultBasicWidget()
 
-        self.filmicAutoTuneLevels = GuiTranslation.dtConcat({ "filmic", ' ', "auto tune levels" })
-        self.filmicHighlightReconstruction = GuiTranslation.dtConcat({ "filmic", ' + ', "highlight reconstruction" })
-        self.sigmoidDefault = GuiTranslation.dtConcat({ "sigmoid", ' ', "default" })
-        self.sigmoidAces100Preset = GuiTranslation.dtConcat({ "sigmoid", ' ', "ACES 100-nit like" })
-        self.sigmoidNeutralGrayPreset = GuiTranslation.dtConcat({ "sigmoid", ' ', "neutral gray" })
+        self.filmicAutoTuneLevels = _dtConcat({ "filmic", ' ', "auto tune levels" })
+        self.filmicHighlightReconstruction = _dtConcat({ "filmic", ' + ', "highlight reconstruction" })
+        self.sigmoidDefault = _dtConcat({ "sigmoid", ' ', "default" })
+        self.sigmoidAces100Preset = _dtConcat({ "sigmoid", ' ', "ACES 100-nit like" })
+        self.sigmoidNeutralGrayPreset = _dtConcat({ "sigmoid", ' ', "neutral gray" })
 
         self.ConfigurationValues =
         {
@@ -272,11 +276,11 @@ function WorkflowSteps.CreateWorkflowSteps()
             end
 
             if (selection == self.sigmoidNeutralGrayPreset) then
-                GuiAction.ButtonOffOn('iop/sigmoid/preset/' .. _dt("neutral gray"))
+                GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'neutral gray')
             end
 
             if (selection == self.sigmoidAces100Preset) then
-                GuiAction.ButtonOffOn('iop/sigmoid/preset/' .. _dt("ACES 100-nit like"))
+                GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'ACES 100-nit like')
             end
         end
     end
@@ -289,7 +293,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 1,
-            Label = GuiTranslation.dtConcat({ "color balance rgb", ' ', "saturation" }),
+            Label = _dtConcat({ "color balance rgb", ' ', "saturation" }),
             Tooltip = _("Adjust global saturation in color balance rgb module.")
         }
 
@@ -338,7 +342,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 1,
-            Label = GuiTranslation.dtConcat({ "color balance rgb", ' ', "chroma" }),
+            Label = _dtConcat({ "color balance rgb", ' ', "chroma" }),
             Tooltip = _("Adjust global chroma in color balance rgb module.")
         }
 
@@ -387,7 +391,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 6,
-            Label = GuiTranslation.dtConcat({ "color balance rgb", ' ', "contrast" }),
+            Label = _dtConcat({ "color balance rgb", ' ', "contrast" }),
             Tooltip = _("Adjust brilliance in color balance rgb module to add contrast (darker shadows and brighter highlights). You can combine this with sigmoid neutral gray preset.")
         }
 
@@ -435,7 +439,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 2,
-            Label = GuiTranslation.dtConcat({ "color balance rgb", ' ', "masks" }),
+            Label = _dtConcat({ "color balance rgb", ' ', "masks" }),
             Tooltip = _(
                 "Set auto pickers of the module mask and peak white and gray luminance value to normalize the power setting in the 4 ways tab.")
         }
@@ -489,8 +493,8 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 5,
-            Label = _dt("color balance rgb"),
-            Tooltip = _("Choose a predefined preset for your color-grading.")
+            Label = _dtConcat({'color balance rgb', ' ', 'basic colorfulness'}),
+            Tooltip = _("Choose a predefined basic colorfulness preset for your color-grading.")
         }
 
     table.insert(Workflow.ModuleSteps, StepColorBalanceRGB)
@@ -502,10 +506,10 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues =
         {
             _("unchanged"),
-            _dt("add basic colorfulness (legacy)"),
-            _dt("basic colorfulness: natural skin"),
-            _dt("basic colorfulness: standard"),
-            _dt("basic colorfulness: vibrant colors")
+            _dt("legacy"),
+            _dt("natural skin"),
+            _dt("standard"),
+            _dt("vibrant colors")
         }
 
         self.Widget = dt.new_widget('combobox')
@@ -529,7 +533,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        GuiAction.ButtonOffOn('iop/colorbalancergb/preset/' .. selection)
+        GuiAction.SelectModulePreset('iop/colorbalancergb/preset/', 'basic colorfulness', GuiTranslation.GetReverseTranslation(selection))
     end
 
     ---------------------------------------------------------------
@@ -551,13 +555,13 @@ function WorkflowSteps.CreateWorkflowSteps()
         self:CreateLabelWidget()
         self:CreateDefaultBasicWidget()
 
-        self.clarity010 = GuiTranslation.dtConcat({ "clarity", ', ', "mix", ' ', "0.10" })
-        self.clarity025 = GuiTranslation.dtConcat({ "clarity", ', ', "mix", ' ', "0.25" })
-        self.clarity050 = GuiTranslation.dtConcat({ "clarity", ', ', "mix", ' ', "0.50" })
+        self.clarity010 = _dtConcat({ "clarity", ', ', "mix", ' ', "0.10" })
+        self.clarity025 = _dtConcat({ "clarity", ', ', "mix", ' ', "0.25" })
+        self.clarity050 = _dtConcat({ "clarity", ', ', "mix", ' ', "0.50" })
 
-        self.denoise010 = GuiTranslation.dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.10" })
-        self.denoise025 = GuiTranslation.dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.25" })
-        self.denoise050 = GuiTranslation.dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.50" })
+        self.denoise010 = _dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.10" })
+        self.denoise025 = _dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.25" })
+        self.denoise050 = _dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.50" })
 
         self.ConfigurationValues =
         {
@@ -592,27 +596,27 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         if (selection == self.clarity010) then
-            GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("clarity"))
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
             --
         elseif (selection == self.clarity025) then
-            GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("clarity"))
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
             --
         elseif (selection == self.clarity050) then
-            GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("clarity"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("clarity"))
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
             --
         elseif (selection == self.denoise010) then
-            GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("denoise & sharpen"))
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
             --
         elseif (selection == self.denoise025) then
-            GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("denoise & sharpen"))
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
             --
         elseif (selection == self.denoise050) then
-            GuiAction.ButtonOffOn('iop/atrous/preset/' .. _dt("denoise & sharpen"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("denoise & sharpen"))
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
         end
     end
@@ -625,7 +629,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 2,
-            Label = GuiTranslation.dtConcat({ "color look up table" }),
+            Label = _dtConcat({ "color look up table" }),
             Tooltip = _("Use LUTs to modify the color mapping, perform color corrections or apply looks. You can choose a given preset.")
         }
 
@@ -669,7 +673,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        GuiAction.Do('iop/colorchecker/preset/' .. _dt(selection), 0, '', '', 1.0)
+        GuiAction.SelectModulePreset('iop/colorchecker/preset/', '', GuiTranslation.GetReverseTranslation(selection))
     end
 
     ---------------------------------------------------------------
@@ -695,14 +699,14 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues =
         {
             _("unchanged"),
-            _dt("dehaze"),
-            _dt("denoise: coarse"),
-            _dt("denoise: fine"),
-            _dt("denoise: medium"),
-            _dt("lens deblur: medium"),
-            _dt("local contrast"),
-            _dt("sharpen demosaicing: AA filter"),
-            _dt("sharpness")
+            _dt("dehaze | default"),
+            _dt("denoise | coarse"),
+            _dt("denoise | fine"),
+            _dt("denoise | medium"),
+            _dt("lens deblur | medium"),
+            _dt("local contrast | normal"),
+            _dt("sharpen demosaicing | AA filter"),
+            _dt("sharpness | normal")
         }
 
         self.Widget = dt.new_widget('combobox')
@@ -726,7 +730,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        GuiAction.Do('iop/diffuse/preset/' .. _dt(selection), 0, '', '', 1.0)
+        GuiAction.SelectModulePreset('iop/diffuse/preset/', '', GuiTranslation.GetReverseTranslation(selection))
     end
 
     ---------------------------------------------------------------
@@ -737,7 +741,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 4,
-            Label = GuiTranslation.dtConcat({ "tone equalizer", ' ', "masking" }),
+            Label = _dtConcat({ "tone equalizer", ' ', "masking" }),
             Tooltip = _(
                 "Apply automatic mask contrast and exposure compensation. Auto adjust the contrast and average exposure.")
         }
@@ -842,9 +846,9 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues =
         {
             _("unchanged"),
-            _("compress shadows-highlights (eigf): medium"),
-            _("compress shadows-highlights (eigf): soft"),
-            _("compress shadows-highlights (eigf): strong")
+            _("compress shadows-highlights (eigf) | medium"),
+            _("compress shadows-highlights (eigf) | soft"),
+            _("compress shadows-highlights (eigf) | strong")
         }
 
         self.Widget = dt.new_widget('combobox')
@@ -869,7 +873,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
 
-        GuiAction.ButtonOffOn('iop/toneequal/preset/' .. selection)
+        GuiAction.SelectModulePreset('iop/toneequal/preset/', '', GuiTranslation.GetReverseTranslation(selection))
     end
 
     ---------------------------------------------------------------
@@ -1147,7 +1151,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
             -- see EnableDefaultStepConfiguation() override
             WidgetDefaultStepConfiguationValue = nil,
-            Label = GuiTranslation.dtConcat({ "color calibration", ' ', "illuminant" }),
+            Label = _dtConcat({ "color calibration", ' ', "illuminant" }),
             Tooltip = _(
                 "Perform color space corrections in color calibration module. Select the illuminant. The type of illuminant assumed to have lit the scene. By default unchanged for the legacy workflow.")
         }
@@ -1259,7 +1263,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 3,
-            Label = GuiTranslation.dtConcat({ "color calibration", ' ', "adaptation" }),
+            Label = _dtConcat({ "color calibration", ' ', "adaptation" }),
             Tooltip = _(
                 "Perform color space corrections in color calibration module. Select the adaptation. The working color space in which the module will perform its chromatic adaptation transform and channel mixing.")
         }
