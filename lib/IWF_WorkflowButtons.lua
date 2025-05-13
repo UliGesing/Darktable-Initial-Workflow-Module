@@ -373,7 +373,7 @@ function WorkflowButtons.CreateWorkflowButtons()
     -- called via module reset control
     local function SetAllDefaultModuleConfigurations()
         for i, step in ipairs(Workflow.ModuleSteps) do
-            if (step ~= StepTimeout) then
+            if (step ~= StepTimeout) and (step ~= StepRunSingleStepOnSettingsChange) then
                 step:EnableDefaultBasicConfiguation()
                 step:EnableDefaultStepConfiguation()
             end

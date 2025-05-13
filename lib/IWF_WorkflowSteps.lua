@@ -493,7 +493,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 5,
-            Label = _dtConcat({'color balance rgb', ' ', 'basic colorfulness'}),
+            Label = _dtConcat({ 'color balance rgb', ' ', 'basic colorfulness' }),
             Tooltip = _("Choose a predefined basic colorfulness preset for your color-grading.")
         }
 
@@ -533,7 +533,8 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        GuiAction.SelectModulePreset('iop/colorbalancergb/preset/', 'basic colorfulness', GuiTranslation.GetReverseTranslation(selection))
+        GuiAction.SelectModulePreset('iop/colorbalancergb/preset/', 'basic colorfulness',
+            GuiTranslation.GetReverseTranslation(selection))
     end
 
     ---------------------------------------------------------------
@@ -832,12 +833,16 @@ function WorkflowSteps.CreateWorkflowSteps()
             WidgetStackValue = WidgetStack.Modules,
             WidgetUnchangedStepConfigurationValue = 1,
             WidgetDefaultStepConfiguationValue = 1,
-            Label = _dt("tone equalizer"),
+            Label = _dtConcat({ 'tone equalizer', ' ', 'compress shadows-highlights' }),
             Tooltip = _(
                 "Use preset to compress shadows and highlights with exposure-independent guided filter (eigf) (soft, medium or strong).")
         }
 
     table.insert(Workflow.ModuleSteps, StepToneEqualizer)
+
+    local labelMedium = _dtConcat({ "EIGF", ' ', "medium" })
+    local labelSoft = _dtConcat({ "EIGF", ' ', "soft" })
+    local labelStrong = _dtConcat({ "EIGF", ' ', "strong" })
 
     function StepToneEqualizer:Init()
         self:CreateLabelWidget()
@@ -846,9 +851,9 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues =
         {
             _("unchanged"),
-            _("compress shadows-highlights (eigf) | medium"),
-            _("compress shadows-highlights (eigf) | soft"),
-            _("compress shadows-highlights (eigf) | strong")
+            labelMedium,
+            labelSoft,
+            labelStrong
         }
 
         self.Widget = dt.new_widget('combobox')
@@ -872,8 +877,14 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
+        if (selection == labelMedium) then
+            GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows-highlights', 'EIGF | medium')
+        elseif (selection == labelSoft) then
+            GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows-highlights', 'EIGF | soft')
+        elseif (selection == labelStrong) then
+            GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows-highlights', 'EIGF | strong')
+        end
 
-        GuiAction.SelectModulePreset('iop/toneequal/preset/', '', GuiTranslation.GetReverseTranslation(selection))
     end
 
     ---------------------------------------------------------------

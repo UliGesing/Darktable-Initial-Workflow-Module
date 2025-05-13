@@ -13,6 +13,8 @@ local dt = require "darktable"
 local log = require "lib/dtutils.log"
 local value
 
-value = dt.gui.action("iop/exposure/exposure",0,"button","on",1.0000)
+-- value = dt.gui.action("iop/exposure/exposure",0,"button","on",1.0000)
+
+value = dt.gui.action("iop/toneequal/preset/_builtin_compress shadows-highlights | EIGF | medium", 1.000, 0)
 
 log.msg(log.info,value)

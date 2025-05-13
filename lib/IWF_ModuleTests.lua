@@ -22,15 +22,15 @@
 --[[
 
   This file contains some functions to perform module tests. These functions
-  are used during development and deployment. The test method is used to iterate 
+  are used during development and deployment. The test method is used to iterate
   over all workflow steps and combobox value settings and to set different
-  combinations of module settings. 
-  
+  combinations of module settings.
+
   There is an additional and optional module test implementation. This should be
   disabled and not visible for general use of the script. You can find it in this file.
 
   To run these tests, do the following steps:
-  
+
   - create a file named "TestFlag.txt" in the same directory as the script file and restart darktable
   - from now there is a special "TEST" button, used to perform the module tests
   - open any image in darkroom view, create a backup first
@@ -51,20 +51,21 @@
 
 local ModuleTests = {}
 
-function ModuleTests.Init(_dt, _LogHelper, _Helper, _TranslationHelper, _GuiAction, _WorkflowSteps, _ProcessWorkflowSteps, _SetAllDefaultModuleConfigurations)
-    dt = _dt
-    LogHelper = _LogHelper
-    Helper = _Helper
-    GuiTranslation = _TranslationHelper
-    GuiAction = _GuiAction
-    WorkflowSteps = _WorkflowSteps
-    ProcessWorkflowSteps = _ProcessWorkflowSteps
-    SetAllDefaultModuleConfigurations = _SetAllDefaultModuleConfigurations
+function ModuleTests.Init(_dt, _LogHelper, _Helper, _TranslationHelper, _GuiAction, _WorkflowSteps, _ProcessWorkflowSteps,
+                          _SetAllDefaultModuleConfigurations)
+  dt = _dt
+  LogHelper = _LogHelper
+  Helper = _Helper
+  GuiTranslation = _TranslationHelper
+  GuiAction = _GuiAction
+  WorkflowSteps = _WorkflowSteps
+  ProcessWorkflowSteps = _ProcessWorkflowSteps
+  SetAllDefaultModuleConfigurations = _SetAllDefaultModuleConfigurations
 end
 
 -- return translation from local .po / .mo file
 local function _(msgid)
-    return GuiTranslation.t(msgid)
+  return GuiTranslation.t(msgid)
 end
 
 local moduleTestImage
@@ -76,7 +77,8 @@ local moduleTestBasicSetting
 local moduleTestIgnoreSteps =
 {
   StepResetModuleHistory,
-  StepTimeout
+  StepTimeout,
+  StepRunSingleStepOnSettingsChange
 }
 
 -- check, if file was modified
@@ -194,6 +196,13 @@ function ModuleTests.ModuleTest()
   GuiAction.Do('lib/history', 0, 'reset', '', 1.0)
   moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename, '_0_Reset',
     moduleTestXmpModified)
+
+  -- disable "run single steps on change" during test run
+  -- prevent chaos
+  StepRunSingleStepOnSettingsChange.Widget.value = 1
+
+  -- sleep for a short moment to give callback function a chance to run
+  dt.control.sleep(100)
 
   ---------------------------------------------------------------
   -- 2. test case
