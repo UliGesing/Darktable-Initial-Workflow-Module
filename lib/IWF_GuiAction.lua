@@ -155,9 +155,10 @@ function GuiAction.SelectModulePreset(modulePath, presetPath, presetName)
 
     local buttonState = GuiAction.GetValue(fullPath, 'button')
     if (GuiAction.ConvertValueToBoolean(buttonState)) then
+        LogHelper.Info(indent .. _("disable currently selected module preset to apply it again"))
         GuiAction.DoWithoutEvent(fullPath, 0, 'button', 'off', 1.0)
     else
-        LogHelper.Info(indent .. _("nothing to do, current preset differs"))
+        LogHelper.Info(indent .. _("currently selected module preset differs"))
     end
 
     GuiAction.Do(fullPath, 0, 'button', 'on', 1.0)
