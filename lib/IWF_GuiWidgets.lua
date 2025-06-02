@@ -54,7 +54,7 @@ ResetAllCommonMainSettingsWidget = dt.new_widget('combobox')
             if (selection ~= _dt("all common settings")) then
                 for i, step in ipairs(Workflow.ModuleSteps) do
                     if step.WidgetStackValue == WidgetStack.Settings then
-                        if (step ~= StepTimeout) then
+                        if (step ~= StepTimeout) and (step ~= StepCreator) then
                             -- do not excecute a single step, if all configurations are changing, prevent chaos
                             step:DisableRunSingleStepOnSettingsChange()
 
@@ -93,7 +93,7 @@ ResetAllModuleBasicSettingsWidget = dt.new_widget('combobox')
             if (selection ~= _dt("all module basics")) then
                 for i, step in ipairs(Workflow.ModuleSteps) do
                     if step.WidgetStackValue == WidgetStack.Modules then
-                        if (step ~= StepTimeout) then
+                        if (step ~= StepTimeout) and (step ~= StepCreator) then
                             -- do not excecute a single step, if all configurations are changing, prevent chaos
                             step:DisableRunSingleStepOnSettingsChange()
 
@@ -133,7 +133,7 @@ ResetAllModuleMainSettingsWidget = dt.new_widget('combobox')
             if (selection ~= _dt("all module settings")) then
                 for i, step in ipairs(Workflow.ModuleSteps) do
                     if step.WidgetStackValue == WidgetStack.Modules then
-                        if (step ~= StepTimeout) then
+                        if (step ~= StepTimeout) and (step ~= StepCreator) then
                             -- do not excecute a single step, if all configurations are changing, prevent chaos
                             step:DisableRunSingleStepOnSettingsChange()
 

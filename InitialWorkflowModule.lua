@@ -254,6 +254,11 @@ local function ViewChangedEvent(event, old_view, new_view)
   InitAllControlsDependingOnCurrentView()
 end
 
+local function EventOnDarktableExit()
+  LogHelper.Info(_("exit darktable."))
+  WorkflowSteps.OnDarktableExit()
+end
+
 -- main entry function to install the module at startup
 local function InstallInitialWorkflowModule()
   LogHelper.Info(_("create widget in lighttable and darkroom panels"))
@@ -280,6 +285,9 @@ local function InstallInitialWorkflowModule()
   end
 
   InitAllControlsDependingOnCurrentView()
+
+  -- register event: This event is triggered when darktable exits.
+  dt.register_event(ModuleName, "exit", EventOnDarktableExit)
 
   return true
 end
