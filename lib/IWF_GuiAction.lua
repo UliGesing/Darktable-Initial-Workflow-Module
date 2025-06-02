@@ -139,7 +139,14 @@ local ModulePresetPath = {}
 
 -- darktable 5.2 provides a new preset structure
 -- this function returns the new full preset path
+-- presetPath == nil: concat modulePath and presetName
+-- presetPath == '': concat _builtin_, modulePath and presetName
+-- presetPath not empty: concat all with '|' 
 function GuiAction.GetPresetPath(modulePath, presetPath, presetName)
+    if presetPath == nil then
+        return modulePath .. presetName
+    end
+
     if presetPath ~= '' then
         return modulePath .. '_builtin_' .. presetPath .. ' | ' .. presetName
     else

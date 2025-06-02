@@ -88,6 +88,11 @@ function WorkflowSteps.Init(_dt, _LogHelper, _Helper, _EventHelper, _Translation
     ScriptFilePath = _ScriptFilePath
 end
 
+-- called from darktable exit event
+function WorkflowSteps.OnDarktableExit()
+    StepCreator:SavePreferenceValue()
+end
+
 -- return translation from local .po / .mo file
 local function _(msgid)
     return GuiTranslation.t(msgid)
@@ -108,7 +113,7 @@ local function _ReverseTranslation(msgid)
 end
 
 function WorkflowSteps.CreateWorkflowSteps()
-    StepCompressHistoryStack = Workflow.StepConfiguration:new():new
+    StepCompressHistoryStack = Workflow.StepComboBox:new():new
         {
             -- operation = nil: ignore this module during module reset
             OperationNameInternal = nil,
@@ -151,7 +156,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepDynamicRangeSceneToDisplay = Workflow.StepConfiguration:new():new
+    StepDynamicRangeSceneToDisplay = Workflow.StepComboBox:new():new
         {
             -- this step refers to different modules
             OperationNameInternal = 'Filmic or Sigmoid',
@@ -287,7 +292,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceGlobalSaturation = Workflow.StepConfiguration:new():new
+    StepColorBalanceGlobalSaturation = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'colorbalancergb',
             WidgetStackValue = WidgetStack.Modules,
@@ -336,7 +341,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceGlobalChroma = Workflow.StepConfiguration:new():new
+    StepColorBalanceGlobalChroma = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'colorbalancergb',
             WidgetStackValue = WidgetStack.Modules,
@@ -385,7 +390,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceContrast = Workflow.StepConfiguration:new():new
+    StepColorBalanceContrast = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'colorbalancergb',
             WidgetStackValue = WidgetStack.Modules,
@@ -433,7 +438,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceRGBMasks = Workflow.StepConfiguration:new():new
+    StepColorBalanceRGBMasks = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'colorbalancergb',
             WidgetStackValue = WidgetStack.Modules,
@@ -487,7 +492,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceRGB = Workflow.StepConfiguration:new():new
+    StepColorBalanceRGB = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'colorbalancergb',
             WidgetStackValue = WidgetStack.Modules,
@@ -539,7 +544,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepContrastEqualizer = Workflow.StepConfiguration:new():new
+    StepContrastEqualizer = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'atrous',
             WidgetStackValue = WidgetStack.Modules,
@@ -624,7 +629,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorLookupTable = Workflow.StepConfiguration:new():new
+    StepColorLookupTable = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'colorchecker',
             WidgetStackValue = WidgetStack.Modules,
@@ -679,7 +684,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepDiffuseOrSharpen = Workflow.StepConfiguration:new():new
+    StepDiffuseOrSharpen = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'diffuse',
             WidgetStackValue = WidgetStack.Modules,
@@ -736,7 +741,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepToneEqualizerMask = Workflow.StepConfiguration:new():new
+    StepToneEqualizerMask = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'toneequal',
             WidgetStackValue = WidgetStack.Modules,
@@ -827,7 +832,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepToneEqualizer = Workflow.StepConfiguration:new():new
+    StepToneEqualizer = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'toneequal',
             WidgetStackValue = WidgetStack.Modules,
@@ -878,18 +883,17 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         if (selection == labelMedium) then
-            GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows-highlights', 'EIGF | medium')
+            GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows@<highlights', 'EIGF | medium')
         elseif (selection == labelSoft) then
-            GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows-highlights', 'EIGF | soft')
+            GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows@<highlights', 'EIGF | soft')
         elseif (selection == labelStrong) then
-            GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows-highlights', 'EIGF | strong')
+            GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows@<highlights', 'EIGF | strong')
         end
-
     end
 
     ---------------------------------------------------------------
 
-    StepExposureCorrection = Workflow.StepConfiguration:new():new
+    StepExposureCorrection = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'exposure',
             WidgetStackValue = WidgetStack.Modules,
@@ -948,7 +952,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepLensCorrection = Workflow.StepConfiguration:new():new
+    StepLensCorrection = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'lens',
             WidgetStackValue = WidgetStack.Modules,
@@ -1016,7 +1020,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepDenoiseProfiled = Workflow.StepConfiguration:new():new
+    StepDenoiseProfiled = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'denoiseprofile',
             WidgetStackValue = WidgetStack.Modules,
@@ -1059,7 +1063,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepChromaticAberrations = Workflow.StepConfiguration:new():new
+    StepChromaticAberrations = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'cacorrect',
             WidgetStackValue = WidgetStack.Modules,
@@ -1154,7 +1158,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorCalibrationIlluminant = Workflow.StepConfiguration:new():new
+    StepColorCalibrationIlluminant = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'channelmixerrgb',
             WidgetStackValue = WidgetStack.Modules,
@@ -1268,7 +1272,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorCalibrationAdaptation = Workflow.StepConfiguration:new():new
+    StepColorCalibrationAdaptation = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'channelmixerrgb',
             WidgetStackValue = WidgetStack.Modules,
@@ -1332,7 +1336,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepHighlightReconstruction = Workflow.StepConfiguration:new():new
+    StepHighlightReconstruction = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'highlights',
             WidgetStackValue = WidgetStack.Modules,
@@ -1394,7 +1398,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepWhiteBalance = Workflow.StepConfiguration:new():new
+    StepWhiteBalance = Workflow.StepComboBox:new():new
         {
             OperationNameInternal = 'temperature',
             WidgetUnchangedStepConfigurationValue = 1,
@@ -1466,7 +1470,137 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepResetModuleHistory = Workflow.StepConfiguration:new():new
+    StepCreator = Workflow.StepTextEntry:new():new
+        {
+            -- operation = nil: ignore this module during module reset
+            OperationNameInternal = nil,
+            WidgetStackValue = WidgetStack.Modules,
+            WidgetUnchangedStepConfigurationValue = 2,
+            WidgetDefaultStepConfiguationValue = 3,
+            Label = _dtConcat({ 'metadata', ' ', 'creator' }),
+            Tooltip = _("Creator of this image. Enter your name or contact address. Leave this field blank if you don't want to change the current value. After reloading your image you can find this value as full text in metadata editor and image information module. This value is exported to jpg meta data.")
+        }
+
+    table.insert(Workflow.ModuleSteps, StepCreator)
+
+    function StepCreator:Init()
+        self:CreateLabelWidget()
+        self:CreateEmptyBasicWidget()
+
+        -- https://docs.darktable.org/lua/stable/lua.api.manual/types/lua_entry/
+        self.Widget = dt.new_widget('entry')
+            {
+                -- changed_callback does not exist for lua_entry
+                -- preferences are saved via darktable exit event
+                text = "",
+                placeholder = _("empty, tag keeps unchanged"),
+                is_password = false,
+                editable = true,
+                tooltip = self:GetLabelAndTooltip(),
+            }
+    end
+
+    function StepCreator:Run()
+        local creatorName = self.Widget.text
+
+        if (creatorName == nil) or (creatorName == "") then
+            return
+        end
+
+        local currentImage = dt.gui.views.darkroom.display_image()
+        LogHelper.Info(_dtConcat({ "creator", " = ", creatorName }))
+        currentImage.creator = creatorName
+    end
+
+    function StepCreator:Value()
+        return self.Widget.text
+    end
+
+    function StepCreator:EnableDefaultStepConfiguation()
+        -- do nothing
+    end
+
+    ---------------------------------------------------------------
+
+    StepCreativeCommonLicense = Workflow.StepComboBox:new():new
+        {
+            -- operation = nil: ignore this module during module reset
+            OperationNameInternal = "creator and license",
+            WidgetStackValue = WidgetStack.Modules,
+            WidgetUnchangedStepConfigurationValue = 1,
+            WidgetDefaultStepConfiguationValue = 1,
+            Label = _dtConcat({ 'metadata', ' ', 'license' }),
+            Tooltip = _("Choose a creative common license. After reloading your image you can find this value as full text in metadata editor and image information module. This value is exported to jpg meta data.")
+        }
+
+    table.insert(Workflow.ModuleSteps, StepCreativeCommonLicense)
+
+    function StepCreativeCommonLicense:Init()
+        self:CreateLabelWidget()
+        self:CreateEmptyBasicWidget()
+
+        self.ConfigurationValues =
+        {
+            _("unchanged"),
+            "all rights reserved",
+            "CC BY",
+            "CC BY-NC",
+            "CC BY-NC-ND",
+            "CC BY-NC-SA",
+            "CC BY-ND",
+            "CC BY-SA"
+        }
+
+        self.Widget = dt.new_widget('combobox')
+            {
+                changed_callback = Workflow.ComboBoxChangedCallback,
+                label = ' ', -- use separate label widget
+                tooltip = self:GetLabelAndTooltip(),
+                table.unpack(self.ConfigurationValues)
+            }
+    end
+
+    -- show darkroom module during step execution
+    -- override base class function
+    function StepCreativeCommonLicense:ShowDarkroomModuleDuringStepRun()
+        return false
+    end
+
+    local licenseFullText = {}
+
+    licenseFullText["all rights reserved"] = "all rights reserved"
+    licenseFullText["CC BY"] = "Creative Commons Attribution (CC BY)"
+    licenseFullText["CC BY-NC"] = "Creative Commons Attribution-NonCommercial (CC BY-NC)"
+    licenseFullText["CC BY-NC-ND"] = "Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)"
+    licenseFullText["CC BY-NC-SA"] = "Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)"
+    licenseFullText["CC BY-ND"] = "Creative Commons Attribution-NoDerivs (CC BY-ND)"
+    licenseFullText["CC BY-SA"] = "Creative Commons Attribution-ShareAlike (CC BY-SA)"
+
+    function StepCreativeCommonLicense:Run()
+        -- evaluate basic widget
+        if (not self:RunBasicWidget()) then
+            return
+        end
+
+        local rights = self.Widget.value
+
+        if (rights == nil) or (rights == "") then
+            return
+        end
+
+        if (rights == _("unchanged")) then
+            return
+        end
+
+        local currentImage = dt.gui.views.darkroom.display_image()
+        rights = licenseFullText[rights]
+        LogHelper.Info(_dtConcat({ "rights", " = ", rights }))
+        currentImage.rights = rights
+    end
+
+    ---------------------------------------------------------------
+
+    StepResetModuleHistory = Workflow.StepComboBox:new():new
         {
             -- operation = nil: ignore this module during module reset
             OperationNameInternal = nil,
@@ -1516,7 +1650,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepShowModulesDuringExecution = Workflow.StepConfiguration:new():new
+    StepShowModulesDuringExecution = Workflow.StepComboBox:new():new
         {
             -- operation = nil: ignore this module during module reset
             OperationNameInternal = nil,
@@ -1555,7 +1689,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepRunSingleStepOnSettingsChange = Workflow.StepConfiguration:new():new
+    StepRunSingleStepOnSettingsChange = Workflow.StepComboBox:new():new
         {
             -- operation = nil: ignore this module during module reset
             OperationNameInternal = nil,
@@ -1594,7 +1728,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepTimeout = Workflow.StepConfiguration:new():new
+    StepTimeout = Workflow.StepComboBox:new():new
         {
             -- operation = nil: ignore this module during module reset
             OperationNameInternal = nil,

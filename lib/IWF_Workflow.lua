@@ -64,6 +64,8 @@ Workflow.ModuleSteps = {}
 -- used during callback functions
 Workflow.Buttons = {}
 
+---------------------------------------------------------------
+
 -- base class of all workflow steps
 Workflow.ModuleStep =
 {
@@ -96,20 +98,8 @@ function Workflow.ModuleStep:InitDependingOnCurrentView()
     -- do nothing by default
 end
 
----------------------------------------------------------------
--- base class of workflow steps with ComboBox widget
-Workflow.StepConfiguration = Workflow.ModuleStep:new():new
-    {
-        OperationNameInternal = nil,
-        WidgetStackValue = nil,
-        ConfigurationValues = nil,
-        WidgetUnchangedStepConfigurationValue = nil,
-        WidgetDefaultStepConfiguationValue = nil,
-        RunSingleStepOnSettingsChange = true,
-    }
-
 -- create default basic widget of most workflow steps
-function Workflow.StepConfiguration:CreateDefaultBasicWidget()
+function Workflow.ModuleStep:CreateDefaultBasicWidget()
     self.WidgetBasicDefaultValue = 4
 
     self.BasicValues = { _("default"), _("ignore"), _("enable"), _("reset"), _("disable") }
@@ -134,7 +124,7 @@ function Workflow.StepConfiguration:CreateDefaultBasicWidget()
 end
 
 -- create label widget
-function Workflow.StepConfiguration:CreateLabelWidget()
+function Workflow.ModuleStep:CreateLabelWidget()
     self.WidgetLabel = dt.new_widget('combobox')
         {
             label = self.Label,
@@ -142,8 +132,13 @@ function Workflow.StepConfiguration:CreateLabelWidget()
         }
 end
 
+-- concat widget label and tooltip
+function Workflow.ModuleStep:GetLabelAndTooltip()
+    return Helper.Wordwrap(self.Label .. ': ' .. self.Tooltip)
+end
+
 -- create simple basic widget of some workflow steps
-function Workflow.StepConfiguration:CreateSimpleBasicWidget()
+function Workflow.ModuleStep:CreateSimpleBasicWidget()
     self.WidgetBasicDefaultValue = 2
 
     self.BasicValues = { _("ignore"), _("enable") }
@@ -158,7 +153,7 @@ function Workflow.StepConfiguration:CreateSimpleBasicWidget()
 end
 
 -- create empty invisible basic widget
-function Workflow.StepConfiguration:CreateEmptyBasicWidget()
+function Workflow.ModuleStep:CreateEmptyBasicWidget()
     self.WidgetBasicDefaultValue = 1
 
     self.BasicValues = { '' }
@@ -171,7 +166,7 @@ function Workflow.StepConfiguration:CreateEmptyBasicWidget()
 end
 
 -- evaluate basic widget, common for most workflow steps
-function Workflow.StepConfiguration:RunBasicWidget()
+function Workflow.ModuleStep:RunBasicWidget()
     local basic = self.WidgetBasic.value
     if (basic == '') then
         return true
@@ -203,7 +198,7 @@ function Workflow.StepConfiguration:RunBasicWidget()
 end
 
 -- evaluate basic widget, common for some workflow steps
-function Workflow.StepConfiguration:RunSimpleBasicWidget()
+function Workflow.ModuleStep:RunSimpleBasicWidget()
     local basic = self.WidgetBasic.value
     if (basic == '') then
         return true
@@ -225,41 +220,7 @@ function Workflow.StepConfiguration:RunSimpleBasicWidget()
     return true
 end
 
-
--- enable flag
-function Workflow.StepConfiguration:EnableRunSingleStepOnSettingsChange()
-    self.RunSingleStepOnSettingsChange = true
-end
-
--- disable flag
-function Workflow.StepConfiguration:DisableRunSingleStepOnSettingsChange()
-    self.RunSingleStepOnSettingsChange = false
-end
-
--- check flag
-function Workflow.StepConfiguration:CheckRunSingleStepOnSettingsChange()
-    return self.RunSingleStepOnSettingsChange
-end
-
--- choose default step setting
-function Workflow.StepConfiguration:EnableDefaultStepConfiguation()
-    self.Widget.value = self.WidgetDefaultStepConfiguationValue
-end
-
--- choose default basic setting
-function Workflow.StepConfiguration:EnableDefaultBasicConfiguation()
-    self.WidgetBasic.value = self.WidgetBasicDefaultValue
-end
-
--- returns internal operation name like 'colorbalancergb' or 'atrous'
-function Workflow.StepConfiguration:OperationName()
-    return self.OperationNameInternal
-end
-
--- returns operation path like 'iop/colorbalancergb'
-function Workflow.StepConfiguration:OperationPath()
-    return 'iop/' .. self:OperationName()
-end
+---------------------------------------------------------------
 
 local PreferencePresetName = "Current"
 local PreferencePrefixBasic = "Basic"
@@ -267,7 +228,7 @@ local PreferencePrefixConfiguration = "Config"
 
 -- save current selections of this workflow step
 -- used to restore settings after starting darktable
-function Workflow.StepConfiguration:SavePreferenceValue()
+function Workflow.ModuleStep:SavePreferenceValue()
     -- check, if there are any changes
     -- preferences are saved with english names and values
     -- user interfase uses translated names and values
@@ -293,9 +254,9 @@ function Workflow.StepConfiguration:SavePreferenceValue()
     end
 end
 
--- read saved selection value from darktable preferences
+-- read saved value from darktable preferences
 -- used to restore settings after starting darktable
-function Workflow.StepConfiguration:ReadPreferenceConfigurationValue()
+function Workflow.ModuleStep:ReadPreferenceConfigurationValue()
     -- preferences are saved with english names and values
     -- user intercase uses translated names and values
     local prefix = PreferencePresetName .. ":" .. PreferencePrefixConfiguration .. ":"
@@ -317,7 +278,7 @@ end
 
 -- select widget value
 -- get combo box index of given value
-function Workflow.StepConfiguration:SetWidgetBasicValue(value)
+function Workflow.ModuleStep:SetWidgetBasicValue(value)
     for i, basicValue in ipairs(self.BasicValues) do
         if (value == basicValue) then
             if (self.WidgetBasic.value ~= i) then
@@ -346,9 +307,9 @@ function Workflow.StepConfiguration:SetWidgetBasicValue(value)
     self:EnableDefaultBasicConfiguation()
 end
 
--- read saved selection value from darktable preferences
+-- read saved value from darktable preferences
 -- used to restore settings after starting darktable
-function Workflow.StepConfiguration:ReadPreferenceBasicValue()
+function Workflow.ModuleStep:ReadPreferenceBasicValue()
     -- preferences are saved separately for each user interface language
     -- user intercase uses translated names and values
     local prefixBasic = PreferencePresetName .. ":" .. PreferencePrefixBasic .. ":"
@@ -357,17 +318,132 @@ function Workflow.StepConfiguration:ReadPreferenceBasicValue()
     self:SetWidgetBasicValue(preferenceBasicValue)
 end
 
+---------------------------------------------------------------
+
+-- base class of workflow steps with Button widget
+Workflow.StepButton = Workflow.ModuleStep:new():new
+    {
+    }
+
+---------------------------------------------------------------
+
+-- base class of workflow steps with text entry widget
+Workflow.StepTextEntry = Workflow.ModuleStep:new():new
+    {
+    }
+
+
+-- save current selections of this workflow step
+-- used to restore settings after starting darktable
+function Workflow.StepTextEntry:SavePreferenceValue()
+    -- check, if there are any changes
+    -- preferences are saved with english names and values
+    -- user interfase uses translated names and values
+
+    -- save any changes of the configuration combobox value
+    local prefix = PreferencePresetName .. ":" .. PreferencePrefixConfiguration .. ":"
+    local preferenceName = prefix .. _ReverseTranslation(self.Label)
+    local preferenceValue = dt.preferences.read(ModuleName, preferenceName, 'string')
+
+    -- lua_entry: use text property instead of value property
+    local configurationValue = _ReverseTranslation(self.Widget.text)
+
+    if (preferenceValue ~= configurationValue) then
+        dt.preferences.write(ModuleName, preferenceName, 'string', configurationValue)
+    end
+
+    -- save any changes of the basic combobox value
+    local prefixBasic = PreferencePresetName .. ":" .. PreferencePrefixBasic .. ":"
+    local preferenceBasicName = prefixBasic .. _ReverseTranslation(self.Label)
+    local preferenceBasicValue = dt.preferences.read(ModuleName, preferenceBasicName, 'string')
+    local basicValue = _ReverseTranslation(self.WidgetBasic.value)
+
+    if (preferenceBasicValue ~= basicValue) then
+        dt.preferences.write(ModuleName, preferenceBasicName, 'string', basicValue)
+    end
+end
+
+-- read saved value from darktable preferences
+-- used to restore settings after starting darktable
+function Workflow.StepTextEntry:ReadPreferenceConfigurationValue()
+    -- preferences are saved with english names and values
+    -- user intercase uses translated names and values
+    local prefix = PreferencePresetName .. ":" .. PreferencePrefixConfiguration .. ":"
+    local preferenceName = prefix .. _ReverseTranslation(self.Label)
+    local preferenceValue = _(dt.preferences.read(ModuleName, preferenceName, 'string'))
+
+    if (self.Widget.text ~= preferenceValue) then
+        self.Widget.text = preferenceValue
+    end
+
+    self:EnableDefaultStepConfiguation()
+end
+
+---------------------------------------------------------------
+
+-- base class of workflow steps with ComboBox widget
+Workflow.StepComboBox = Workflow.ModuleStep:new():new
+    {
+        -- some basic settings that are overwritten in derived classes
+        OperationNameInternal = nil,
+        WidgetStackValue = nil,
+        ConfigurationValues = nil,
+        WidgetUnchangedStepConfigurationValue = nil,
+        WidgetDefaultStepConfiguationValue = nil,
+        RunSingleStepOnSettingsChange = true,
+    }
+
+-- enable flag
+function Workflow.StepComboBox:EnableRunSingleStepOnSettingsChange()
+    self.RunSingleStepOnSettingsChange = true
+end
+
+-- disable flag
+function Workflow.StepComboBox:DisableRunSingleStepOnSettingsChange()
+    self.RunSingleStepOnSettingsChange = false
+end
+
+-- check flag
+function Workflow.StepComboBox:CheckRunSingleStepOnSettingsChange()
+    return self.RunSingleStepOnSettingsChange
+end
+
+-- choose default step setting
+function Workflow.StepComboBox:EnableDefaultStepConfiguation()
+    self.Widget.value = self.WidgetDefaultStepConfiguationValue
+end
+
+-- choose default basic setting
+function Workflow.StepComboBox:EnableDefaultBasicConfiguation()
+    self.WidgetBasic.value = self.WidgetBasicDefaultValue
+end
+
+-- returns internal operation name like 'colorbalancergb' or 'atrous'
+function Workflow.StepComboBox:OperationName()
+    return self.OperationNameInternal
+end
+
+-- returns operation path like 'iop/colorbalancergb'
+function Workflow.StepComboBox:OperationPath()
+    return 'iop/' .. self:OperationName()
+end
+
+-- show darkroom module during step execution
+-- see override for some special steps
+function Workflow.StepComboBox:ShowDarkroomModuleDuringStepRun()
+    return true
+end
+
+---------------------------------------------------------------
+
 -- combobox selection is returned as negative index value
 -- convert negative index value to combobox string value
 -- consider "unchanged" value: + 1
-function Workflow.StepConfiguration:GetConfigurationValueFromSelectionIndex(index)
+function Workflow.StepComboBox:GetConfigurationValueFromSelectionIndex(index)
     return self.ConfigurationValues[(-index) + 1]
 end
 
--- concat widget label and tooltip
-function Workflow.StepConfiguration:GetLabelAndTooltip()
-    return Helper.Wordwrap(self.Label .. ': ' .. self.Tooltip)
-end
+---------------------------------------------------------------
 
 -- called from callback function within a 'foreign context'
 -- we have to determine the button object or workflow step first
@@ -424,18 +500,19 @@ function Workflow.RunSingleStep(step)
         return
     end
 
-    -- show active modules in darkroom view
-    GuiAction.DoWithoutEvent('lib/modulegroups/active modules', 0, '', 'on', 1.0)
+    if (step:ShowDarkroomModuleDuringStepRun()) then
+        -- show active modules in darkroom view
+        GuiAction.DoWithoutEvent('lib/modulegroups/active modules', 0, '', 'on', 1.0)
 
-    -- show corresponding darkroom module
-    GuiAction.ShowDarkroomModule(step:OperationPath())
-
+        -- show corresponding darkroom module
+        GuiAction.ShowDarkroomModule(step:OperationPath())
+    end
+    
     -- execute workflow step
     LogHelper.CurrentStep = step.Label
     LogHelper.Screen(step.Label)
-
-    -- execute workflow step
     step:Run()
+    LogHelper.CurrentStep = ''
 
     LogHelper.Screen("Done")
 end
@@ -454,10 +531,5 @@ function Workflow.ComboBoxChangedCallback(widget)
     -- run single step
     Workflow.RunSingleStep(step)
 end
-
--- base class of workflow steps with Button widget
-Workflow.StepButton = Workflow.ModuleStep:new():new
-    {
-    }
 
 return Workflow
