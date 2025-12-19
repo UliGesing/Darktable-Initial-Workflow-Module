@@ -932,7 +932,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         -- workaround: show this module, otherwise the buttons will not be pressed
         GuiAction.ShowDarkroomModule('iop/toneequal')
-        GuiAction.DoWithoutEvent('iop/toneequal/page', 0, 'masking', '', 1.0)
+        GuiAction.DoWithoutEvent('iop/toneequal/page', 0, 'advanced', '', 1.0)
 
         -- exposure compensation
         if ((selection == _("mask exposure compensation"))
