@@ -99,8 +99,10 @@ function Workflow.ModuleStep:InitDependingOnCurrentView()
 end
 
 -- create default basic widget of most workflow steps
+-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first 
 function Workflow.ModuleStep:CreateDefaultBasicWidget()
-    self.WidgetBasicDefaultValue = 4
+    -- enable module by default
+    self.WidgetBasicDefaultValue = 3
 
     self.BasicValues = { _("default"), _("ignore"), _("enable"), _("reset"), _("disable") }
 
@@ -123,7 +125,7 @@ function Workflow.ModuleStep:CreateDefaultBasicWidget()
         }
 end
 
--- create label widget
+-- show step label and tooltip in first column of the inital workflow module
 function Workflow.ModuleStep:CreateLabelWidget()
     self.WidgetLabel = dt.new_widget('combobox')
         {
@@ -138,7 +140,9 @@ function Workflow.ModuleStep:GetLabelAndTooltip()
 end
 
 -- create simple basic widget of some workflow steps
+-- show simple step initialization combobox in 2nd column: ignore or enable module first 
 function Workflow.ModuleStep:CreateSimpleBasicWidget()
+    -- enable module by default
     self.WidgetBasicDefaultValue = 2
 
     self.BasicValues = { _("ignore"), _("enable") }
@@ -152,8 +156,9 @@ function Workflow.ModuleStep:CreateSimpleBasicWidget()
         }
 end
 
--- create empty invisible basic widget
+-- show empty invisible step initialization combobox in 2nd column
 function Workflow.ModuleStep:CreateEmptyBasicWidget()
+    -- do nothing by default
     self.WidgetBasicDefaultValue = 1
 
     self.BasicValues = { '' }
@@ -382,14 +387,25 @@ end
 ---------------------------------------------------------------
 
 -- base class of workflow steps with ComboBox widget
+-- some basic settings that are overwritten in derived classes
 Workflow.StepComboBox = Workflow.ModuleStep:new():new
     {
-        -- some basic settings that are overwritten in derived classes
+        -- darktable internal module name abbreviation
         OperationNameInternal = nil,
+        
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings 
         WidgetStackValue = nil,
+
+        -- array of configuration values ​​selectable by the user
         ConfigurationValues = nil,
-        WidgetUnchangedStepConfigurationValue = nil,
-        WidgetDefaultStepConfiguationValue = nil,
+
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        ConfigurationValueUnchangedIndex = nil,
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        ConfigurationValueDefaultIndex = nil,
+
+        -- run single step directly, if selection / combobox / setting was changed by user
         RunSingleStepOnSettingsChange = true,
     }
 
@@ -410,7 +426,7 @@ end
 
 -- choose default step setting
 function Workflow.StepComboBox:EnableDefaultStepConfiguation()
-    self.Widget.value = self.WidgetDefaultStepConfiguationValue
+    self.Widget.value = self.ConfigurationValueDefaultIndex
 end
 
 -- choose default basic setting

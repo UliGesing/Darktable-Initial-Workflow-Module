@@ -44,18 +44,20 @@
 
   Every workflow step contains of constructor, init and run functions. Example:
 
-  StepCompressHistoryStack = WorkflowStepCombobox:new():new {[...]}
+  StepCompressHistoryStack = WorkflowStepCombobox:new():new {}
   to create the new instance.
+
+  table.insert(WorkflowSteps, StepCompressHistoryStack)
+  to collect all steps and execute them later on.
+
+  function StepCompressHistoryStack:PostConstructor()
+  to define common variables for each module step.
 
   function StepCompressHistoryStack:Init()
   to define combobox values and create the widget.
 
   function StepCompressHistoryStack:Run()
   to execute the step
-
-  table.insert(WorkflowSteps, StepCompressHistoryStack)
-  to collect all steps and execute them later on.
-
 
   It is not possible to debug your script code directly. If you change your script code,
   you have to restart darktable to apply your changes. But you can run dt.gui.action
@@ -113,25 +115,43 @@ local function _ReverseTranslation(msgid)
 end
 
 function WorkflowSteps.CreateWorkflowSteps()
-    StepCompressHistoryStack = Workflow.StepComboBox:new():new
-        {
-            -- operation = nil: ignore this module during module reset
-            OperationNameInternal = nil,
-            WidgetStackValue = WidgetStack.Settings,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 2,
-            Label = _dt("compress history stack"),
-            Tooltip = _(
-                "Generate the shortest history stack that reproduces the current image. This removes your current history snapshots.")
-        }
+    ---------------------------------------------------------------
+    --- This function contains the implementation of all workflow steps.
+    --- Every step configures a darktable module.
+    ---------------------------------------------------------------
 
+    StepCompressHistoryStack = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepCompressHistoryStack)
 
+    function StepCompressHistoryStack:PostConstructor()
+        -- darktable internal module name abbreviation
+        -- operation = nil: ignore this module during module reset
+        self.OperationNameInternal = nil
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Settings
+
+        -- array of configuration values ​​selectable by the user
+        self.ConfigurationValues = { _dt("no"), _dt("yes") }
+
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 2
+
+        self.Label = _dt("compress history stack")
+
+        self.Tooltip = _(
+            "Generate the shortest history stack that reproduces the current image. This removes your current history snapshots.")
+    end
+
     function StepCompressHistoryStack:Init()
+        -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
+        -- show empty invisible step initialization combobox in 2nd column (settings subpage)
         self:CreateEmptyBasicWidget()
 
-        self.ConfigurationValues = { _dt("no"), _dt("yes") }
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -156,23 +176,15 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepDynamicRangeSceneToDisplay = Workflow.StepComboBox:new():new
-        {
-            -- this step refers to different modules
-            OperationNameInternal = 'Filmic or Sigmoid',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 6,
-            Label = _dtConcat({ "filmic rgb", ' / ', "sigmoid" }),
-            Tooltip = _(
-                "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others.")
-        }
-
+    StepDynamicRangeSceneToDisplay = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepDynamicRangeSceneToDisplay)
 
-    function StepDynamicRangeSceneToDisplay:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepDynamicRangeSceneToDisplay:PostConstructor()
+        -- darktable internal module name abbreviation
+        -- this step refers to different modules
+        self.OperationNameInternal = 'Filmic or Sigmoid'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
         self.filmicAutoTuneLevels = _dtConcat({ "filmic", ' ', "auto tune levels" })
         self.filmicHighlightReconstruction = _dtConcat({ "filmic", ' + ', "highlight reconstruction" })
@@ -180,6 +192,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.sigmoidAces100Preset = _dtConcat({ "sigmoid", ' ', "ACES 100-nit like" })
         self.sigmoidNeutralGrayPreset = _dtConcat({ "sigmoid", ' ', "neutral gray" })
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -190,6 +203,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             self.sigmoidNeutralGrayPreset
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 6
+
+        self.Label = _dtConcat({ "filmic rgb", ' / ', "sigmoid" })
+
+        self.Tooltip = _(
+            "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others.")
+    end
+
+    function StepDynamicRangeSceneToDisplay:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -292,29 +324,42 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceGlobalSaturation = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'colorbalancergb',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 1,
-            Label = _dtConcat({ "color balance rgb", ' ', "saturation" }),
-            Tooltip = _("Adjust global saturation in color balance rgb module.")
-        }
-
-    -- remove workflow steps for global chroma and saturation
-    -- Keep implementation to reactivate it if needed
+    StepColorBalanceGlobalSaturation = Workflow.StepComboBox:new():new {}
+    -- workflow steps for global saturation was removed
+    -- implementation was kept to reactivate it if needed
+    -- remove "--" in the following line if desired.
     -- table.insert(Workflow.ModuleSteps, StepColorBalanceGlobalSaturation)
 
-    function StepColorBalanceGlobalSaturation:Init()
-        self:CreateLabelWidget()
-        self:CreateSimpleBasicWidget()
+    function StepColorBalanceGlobalSaturation:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'colorbalancergb'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"), 0, 5, 10, 15, 20, 25, 30, 35
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        self.Label = _dtConcat({ "color balance rgb", ' ', "saturation" })
+
+        self.Tooltip = _("Adjust global saturation in color balance rgb module.")
+    end
+
+    function StepColorBalanceGlobalSaturation:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show simple step initialization combobox in 2nd column: ignore or enable module first
+        self:CreateSimpleBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -341,29 +386,42 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceGlobalChroma = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'colorbalancergb',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 1,
-            Label = _dtConcat({ "color balance rgb", ' ', "chroma" }),
-            Tooltip = _("Adjust global chroma in color balance rgb module.")
-        }
-
-    -- remove workflow steps for global chroma and saturation
-    -- Keep implementation to reactivate it if needed
+    StepColorBalanceGlobalChroma = Workflow.StepComboBox:new():new {}
+    -- workflow steps for global chroma was removed
+    -- implementation was kept to reactivate it if needed
+    -- remove "--" in the following line if desired.
     -- table.insert(Workflow.ModuleSteps, StepColorBalanceGlobalChroma)
 
-    function StepColorBalanceGlobalChroma:Init()
-        self:CreateLabelWidget()
-        self:CreateSimpleBasicWidget()
+    function StepColorBalanceGlobalChroma:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'colorbalancergb'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"), 0, 5, 10, 15, 20, 25, 30, 35
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        Label = _dtConcat({ "color balance rgb", ' ', "chroma" })
+
+        self.Tooltip = _("Adjust global chroma in color balance rgb module.")
+    end
+
+    function StepColorBalanceGlobalChroma:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show simple step initialization combobox in 2nd column: ignore or enable module first
+        self:CreateSimpleBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -390,27 +448,40 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceContrast = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'colorbalancergb',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 6,
-            Label = _dtConcat({ "color balance rgb", ' ', "contrast" }),
-            Tooltip = _("Adjust brilliance in color balance rgb module to add contrast (darker shadows and brighter highlights). You can combine this with sigmoid neutral gray preset.")
-        }
-
+    StepColorBalanceContrast = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepColorBalanceContrast)
 
-    function StepColorBalanceContrast:Init()
-        self:CreateLabelWidget()
-        self:CreateSimpleBasicWidget()
+    function StepColorBalanceContrast:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'colorbalancergb'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"), 0, 5, 10, 15, 20, 25, 30
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        self.Label = _dtConcat({ "color balance rgb", ' ', "contrast" })
+
+        self.Tooltip = _(
+            "Adjust brilliance in color balance rgb module to add contrast (darker shadows and brighter highlights). You can combine this with sigmoid neutral gray preset.")
+    end
+
+    function StepColorBalanceContrast:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show simple step initialization combobox in 2nd column: ignore or enable module first
+        self:CreateSimpleBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -438,31 +509,44 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceRGBMasks = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'colorbalancergb',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 2,
-            Label = _dtConcat({ "color balance rgb", ' ', "masks" }),
-            Tooltip = _(
-                "Set auto pickers of the module mask and peak white and gray luminance value to normalize the power setting in the 4 ways tab.")
-        }
-
+    StepColorBalanceRGBMasks = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepColorBalanceRGBMasks)
 
-    function StepColorBalanceRGBMasks:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepColorBalanceRGBMasks:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'colorbalancergb'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
-        self.WidgetBasicDefaultValue = 3 -- enable instead of reset
-
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
             _("peak white & grey fulcrum")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 2
+
+        self.Label = _dtConcat({ "color balance rgb", ' ', "masks" })
+
+        self.Tooltip = _(
+            "Set auto pickers of the module mask and peak white and gray luminance value to normalize the power setting in the 4 ways tab.")
+    end
+
+    function StepColorBalanceRGBMasks:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- overwrite default behaviour
+        self.WidgetBasicDefaultValue = 3 -- enable instead of reset
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -492,22 +576,16 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorBalanceRGB = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'colorbalancergb',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 5,
-            Label = _dtConcat({ 'color balance rgb', ' ', 'basic colorfulness' }),
-            Tooltip = _("Choose a predefined basic colorfulness preset for your color-grading.")
-        }
-
+    StepColorBalanceRGB = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepColorBalanceRGB)
 
-    function StepColorBalanceRGB:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepColorBalanceRGB:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'colorbalancergb'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -517,6 +595,24 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("vibrant colors")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 5
+
+        self.Label = _dtConcat({ 'color balance rgb', ' ', 'basic colorfulness' })
+
+        self.Tooltip = _("Choose a predefined basic colorfulness preset for your color-grading.")
+    end
+
+    function StepColorBalanceRGB:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -544,31 +640,23 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepContrastEqualizer = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'atrous',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 1,
-            Label = _dt("contrast equalizer"),
-            Tooltip = _(
-                "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect.")
-        }
-
+    StepContrastEqualizer = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepContrastEqualizer)
 
-    function StepContrastEqualizer:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepContrastEqualizer:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'atrous'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
         self.clarity010 = _dtConcat({ "clarity", ', ', "mix", ' ', "0.10" })
         self.clarity025 = _dtConcat({ "clarity", ', ', "mix", ' ', "0.25" })
         self.clarity050 = _dtConcat({ "clarity", ', ', "mix", ' ', "0.50" })
-
         self.denoise010 = _dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.10" })
         self.denoise025 = _dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.25" })
         self.denoise050 = _dtConcat({ "denoise & sharpen", ', ', "mix", ' ', "0.50" })
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -580,6 +668,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             self.denoise050
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        self.Label = _dt("contrast equalizer")
+
+        self.Tooltip = _(
+            "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect.")
+    end
+
+    function StepContrastEqualizer:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -629,22 +736,16 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorLookupTable = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'colorchecker',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 2,
-            Label = _dtConcat({ "color look up table" }),
-            Tooltip = _("Use LUTs to modify the color mapping, perform color corrections or apply looks. You can choose a given preset.")
-        }
-
+    StepColorLookupTable = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepColorLookupTable)
 
-    function StepColorLookupTable:Init()
-        self:CreateLabelWidget()
-        self:CreateSimpleBasicWidget()
+    function StepColorLookupTable:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'colorchecker'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -658,6 +759,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("it8 skin tones")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 2
+
+        self.Label = _dtConcat({ "color look up table" })
+
+        self.Tooltip = _(
+            "Use LUTs to modify the color mapping, perform color corrections or apply looks. You can choose a given preset.")
+    end
+
+    function StepColorLookupTable:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show simple step initialization combobox in 2nd column: ignore or enable module first
+        self:CreateSimpleBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -684,24 +804,16 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepDiffuseOrSharpen = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'diffuse',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 8,
-            Label = _dt("diffuse or sharpen"),
-            Tooltip = _(
-                "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect.")
-        }
-
+    StepDiffuseOrSharpen = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepDiffuseOrSharpen)
 
-    function StepDiffuseOrSharpen:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepDiffuseOrSharpen:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'diffuse'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
-
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -715,6 +827,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("sharpness | normal")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 8
+
+        self.Label = _dt("diffuse or sharpen")
+
+        self.Tooltip = _(
+            "Adjust luminance and chroma contrast. Apply choosen preset (clarity or denoise & sharpen). Choose different values to adjust the strength of the effect.")
+    end
+
+    function StepDiffuseOrSharpen:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -741,23 +872,16 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepToneEqualizerMask = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'toneequal',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 4,
-            Label = _dtConcat({ "tone equalizer", ' ', "masking" }),
-            Tooltip = _(
-                "Apply automatic mask contrast and exposure compensation. Auto adjust the contrast and average exposure.")
-        }
-
+    StepToneEqualizerMask = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepToneEqualizerMask)
 
-    function StepToneEqualizerMask:Init()
-        self:CreateLabelWidget()
-        self:CreateSimpleBasicWidget()
+    function StepToneEqualizerMask:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'toneequal'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -766,6 +890,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             _("exposure & contrast comp."),
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 4
+
+        self.Label = _dtConcat({ "tone equalizer", ' ', "masking" })
+
+        self.Tooltip = _(
+            "Apply automatic mask contrast and exposure compensation. Auto adjust the contrast and average exposure.")
+    end
+
+    function StepToneEqualizerMask:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show simple step initialization combobox in 2nd column: ignore or enable module first
+        self:CreateSimpleBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -832,35 +975,47 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepToneEqualizer = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'toneequal',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 1,
-            Label = _dtConcat({ 'tone equalizer', ' ', 'compress shadows-highlights' }),
-            Tooltip = _(
-                "Use preset to compress shadows and highlights with exposure-independent guided filter (eigf) (soft, medium or strong).")
-        }
-
+    StepToneEqualizer = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepToneEqualizer)
 
-    local labelMedium = _dtConcat({ "EIGF", ' ', "medium" })
-    local labelSoft = _dtConcat({ "EIGF", ' ', "soft" })
-    local labelStrong = _dtConcat({ "EIGF", ' ', "strong" })
+    function StepToneEqualizer:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'toneequal'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
-    function StepToneEqualizer:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+        self.labelMedium = _dtConcat({ "EIGF", ' ', "medium" })
+        self.labelSoft = _dtConcat({ "EIGF", ' ', "soft" })
+        self.labelStrong = _dtConcat({ "EIGF", ' ', "strong" })
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
-            labelMedium,
-            labelSoft,
-            labelStrong
+            self.labelMedium,
+            self.labelSoft,
+            self.labelStrong
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        self.Label = _dtConcat({ 'tone equalizer', ' ', 'compress shadows-highlights' })
+
+        self.Tooltip = _(
+            "Use preset to compress shadows and highlights with exposure-independent guided filter (eigf) (soft, medium or strong).")
+    end
+
+    function StepToneEqualizer:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -882,34 +1037,27 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        if (selection == labelMedium) then
+        if (selection == self.labelMedium) then
             GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows@<highlights', 'EIGF | medium')
-        elseif (selection == labelSoft) then
+        elseif (selection == self.labelSoft) then
             GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows@<highlights', 'EIGF | soft')
-        elseif (selection == labelStrong) then
+        elseif (selection == self.labelStrong) then
             GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows@<highlights', 'EIGF | strong')
         end
     end
 
     ---------------------------------------------------------------
 
-    StepExposureCorrection = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'exposure',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 1,
-            Label = _dt("exposure"),
-            Tooltip = _(
-                "Automatically adjust the exposure correction. Remove the camera exposure bias, useful if you exposed the image to the right.")
-        }
-
+    StepExposureCorrection = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepExposureCorrection)
 
-    function StepExposureCorrection:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepExposureCorrection:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'exposure'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -917,6 +1065,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             _("adjust & compensate bias"),
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        self.Label = _dt("exposure")
+
+        self.Tooltip = _(
+            "Automatically adjust the exposure correction. Remove the camera exposure bias, useful if you exposed the image to the right.")
+    end
+
+    function StepExposureCorrection:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -952,30 +1119,42 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepLensCorrection = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'lens',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 2,
-            Label = _dt("lens correction"),
-            Tooltip = _("Enable and reset lens correction module."),
-        }
-
+    StepLensCorrection = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepLensCorrection)
 
-    function StepLensCorrection:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepLensCorrection:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'lens'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
         self.lensfunSelection = _dt("Lensfun database")
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
             self.lensfunSelection,
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 2
+
+        self.Label = _dt("lens correction")
+
+        self.Tooltip = _("Enable and reset lens correction module.")
+    end
+
+    function StepLensCorrection:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1020,25 +1199,37 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepDenoiseProfiled = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'denoiseprofile',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 1,
-            Label = _dt("denoise (profiled)"),
-            Tooltip = _(
-                "Enable denoise (profiled) module. There is nothing to configure, just enable or reset this module.")
-        }
-
+    StepDenoiseProfiled = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepDenoiseProfiled)
 
-    function StepDenoiseProfiled:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepDenoiseProfiled:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'denoiseprofile'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues = { _("unchanged") }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        self.Label = _dt("denoise (profiled)")
+
+        self.Tooltip = _(
+            "Enable denoise (profiled) module. There is nothing to configure, just enable or reset this module.")
+    end
+
+    function StepDenoiseProfiled:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1063,23 +1254,16 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepChromaticAberrations = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'cacorrect',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 2,
-            Label = _dt("chromatic aberrations"),
-            Tooltip = _(
-                "Correct chromatic aberrations. Distinguish between Bayer sensor and other camera sensors. This operation uses the corresponding correction module and disables the other.")
-        }
-
+    StepChromaticAberrations = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepChromaticAberrations)
 
-    function StepChromaticAberrations:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepChromaticAberrations:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'cacorrect'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -1087,6 +1271,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             _("other sensors")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 2
+
+        self.Label = _dt("chromatic aberrations")
+
+        self.Tooltip = _(
+            "Correct chromatic aberrations. Distinguish between Bayer sensor and other camera sensors. This operation uses the corresponding correction module and disables the other.")
+    end
+
+    function StepChromaticAberrations:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1158,40 +1361,16 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorCalibrationIlluminant = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'channelmixerrgb',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-
-            -- see EnableDefaultStepConfiguation() override
-            WidgetDefaultStepConfiguationValue = nil,
-            Label = _dtConcat({ "color calibration", ' ', "illuminant" }),
-            Tooltip = _(
-                "Perform color space corrections in color calibration module. Select the illuminant. The type of illuminant assumed to have lit the scene. By default unchanged for the legacy workflow.")
-        }
-
-    -- distinguish between modern and legacy workflow
-    -- keep value unchanged (1), if using legacy workflow
-    -- depends on darktable preference settings
-    function StepColorCalibrationIlluminant:EnableDefaultStepConfiguation()
-        -- "unchanged: scene referred default"
-        self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 1 or 1
-    end
-
+    StepColorCalibrationIlluminant = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepColorCalibrationIlluminant)
 
-    -- combobox values see darktable typedef enum dt_illuminant_t
-    -- github/darktable/src/common/illuminants.h
-    -- github/darktable/po/darktable.pot
-    -- github/darktable/build/lib/darktable/plugins/introspection_channelmixerrgb.c
+    function StepColorCalibrationIlluminant:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'channelmixerrgb'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
-    function StepColorCalibrationIlluminant:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
-
-        self.WidgetBasicDefaultValue = 3 -- enable instead of reset
-
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),                                 -- additional value
@@ -1210,6 +1389,42 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("as shot in camera")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        -- see EnableDefaultStepConfiguation() override
+        self.ConfigurationValueDefaultIndex = nil
+
+        self.Label = _dtConcat({ "color calibration", ' ', "illuminant" })
+
+        self.Tooltip = _(
+            "Perform color space corrections in color calibration module. Select the illuminant. The type of illuminant assumed to have lit the scene. By default unchanged for the legacy workflow.")
+    end
+
+    -- distinguish between modern and legacy workflow
+    -- keep value unchanged (1), if using legacy workflow
+    -- depends on darktable preference settings
+    function StepColorCalibrationIlluminant:EnableDefaultStepConfiguation()
+        -- "unchanged: scene referred default"
+        self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 1 or 1
+    end
+
+    -- combobox values see darktable typedef enum dt_illuminant_t
+    -- github/darktable/src/common/illuminants.h
+    -- github/darktable/po/darktable.pot
+    -- github/darktable/build/lib/darktable/plugins/introspection_channelmixerrgb.c
+
+    function StepColorCalibrationIlluminant:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- overwrite default behaviour
+        self.WidgetBasicDefaultValue = 3 -- enable instead of reset
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1272,25 +1487,18 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepColorCalibrationAdaptation = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'channelmixerrgb',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 3,
-            Label = _dtConcat({ "color calibration", ' ', "adaptation" }),
-            Tooltip = _(
-                "Perform color space corrections in color calibration module. Select the adaptation. The working color space in which the module will perform its chromatic adaptation transform and channel mixing.")
-        }
-
+    StepColorCalibrationAdaptation = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepColorCalibrationAdaptation)
 
-    -- combobox values see darktable typedef enum dt_adaptation_t
+    function StepColorCalibrationAdaptation:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'channelmixerrgb'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
-    function StepColorCalibrationAdaptation:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+        -- combobox values see darktable typedef enum dt_adaptation_t
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"), -- additional value
@@ -1301,6 +1509,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("none (bypass)")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 3
+
+        self.Label = _dtConcat({ "color calibration", ' ', "adaptation" })
+
+        self.Tooltip = _(
+            "Perform color space corrections in color calibration module. Select the adaptation. The working color space in which the module will perform its chromatic adaptation transform and channel mixing.")
+    end
+
+    function StepColorCalibrationAdaptation:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1336,23 +1563,16 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepHighlightReconstruction = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'highlights',
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 2,
-            Label = _dt("highlight reconstruction"),
-            Tooltip = _(
-                "Reconstruct color information for clipped pixels. Select an appropriate reconstruction methods to reconstruct the missing data from unclipped channels and/or neighboring pixels.")
-        }
-
+    StepHighlightReconstruction = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepHighlightReconstruction)
 
-    function StepHighlightReconstruction:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepHighlightReconstruction:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'highlights'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -1363,6 +1583,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("guided laplacians")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 2
+
+        self.Label = _dt("highlight reconstruction")
+
+        self.Tooltip = _(
+            "Reconstruct color information for clipped pixels. Select an appropriate reconstruction methods to reconstruct the missing data from unclipped channels and/or neighboring pixels.")
+    end
+
+    function StepHighlightReconstruction:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1398,33 +1637,16 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepWhiteBalance = Workflow.StepComboBox:new():new
-        {
-            OperationNameInternal = 'temperature',
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetStackValue = WidgetStack.Modules,
-
-            -- see EnableDefaultStepConfiguation() override
-            WidgetDefaultStepConfiguationValue = nil,
-            Label = _("white balance"),
-            Tooltip = _(
-                "Adjust the white balance of the image by altering the temperature. By default unchanged for the legacy workflow.")
-        }
-
-
-    -- distinguish between modern and legacy workflow
-    -- keep value unchanged, if using legacy workflow
-    -- depends on darktable preference settings
-    function StepWhiteBalance:EnableDefaultStepConfiguation()
-        self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 6 or 1
-    end
-
+    StepWhiteBalance = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepWhiteBalance)
 
-    function StepWhiteBalance:Init()
-        self:CreateLabelWidget()
-        self:CreateDefaultBasicWidget()
+    function StepWhiteBalance:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'temperature'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -1435,6 +1657,33 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("as shot to reference")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        -- see EnableDefaultStepConfiguation() override
+        self.ConfigurationValueDefaultIndex = nil
+
+        self.Label = _("white balance")
+
+        self.Tooltip = _(
+            "Adjust the white balance of the image by altering the temperature. By default unchanged for the legacy workflow.")
+    end
+
+    -- distinguish between modern and legacy workflow
+    -- keep value unchanged, if using legacy workflow
+    -- depends on darktable preference settings
+    function StepWhiteBalance:EnableDefaultStepConfiguation()
+        self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 6 or 1
+    end
+
+    function StepWhiteBalance:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateDefaultBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1470,24 +1719,35 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepCreator = Workflow.StepTextEntry:new():new
-        {
-            -- operation = nil: ignore this module during module reset
-            OperationNameInternal = nil,
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 2,
-            WidgetDefaultStepConfiguationValue = 3,
-            Label = _dtConcat({ 'metadata', ' ', 'creator' }),
-            Tooltip = _("Creator of this image. Enter your name or contact address. Leave this field blank if you don't want to change the current value. After reloading your image you can find this value as full text in metadata editor and image information module. This value is exported to jpg meta data.")
-        }
-
+    StepCreator = Workflow.StepTextEntry:new():new()
     table.insert(Workflow.ModuleSteps, StepCreator)
 
+    function StepCreator:PostConstructor()
+        -- darktable internal module name abbreviation
+        -- operation = nil: ignore this module during module reset
+        self.OperationNameInternal = nil
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
+
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 2
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 3
+
+        self.Label = _dtConcat({ 'metadata', ' ', 'creator' })
+
+        self.Tooltip = _(
+            "Creator of this image. Enter your name or contact address. Leave this field blank if you don't want to change the current value. After reloading your image you can find this value as full text in metadata editor and image information module. This value is exported to jpg meta data.")
+    end
+
     function StepCreator:Init()
+        -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
+        -- show empty invisible step initialization combobox in 2nd column (settings subpage)
         self:CreateEmptyBasicWidget()
 
-        -- https://docs.darktable.org/lua/stable/lua.api.manual/types/lua_entry/
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('entry')
             {
                 -- changed_callback does not exist for lua_entry
@@ -1522,23 +1782,17 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepCreativeCommonLicense = Workflow.StepComboBox:new():new
-        {
-            -- operation = nil: ignore this module during module reset
-            OperationNameInternal = "creator and license",
-            WidgetStackValue = WidgetStack.Modules,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 1,
-            Label = _dtConcat({ 'metadata', ' ', 'license' }),
-            Tooltip = _("Choose a creative common license. After reloading your image you can find this value as full text in metadata editor and image information module. This value is exported to jpg meta data.")
-        }
-
+    StepCreativeCommonLicense = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepCreativeCommonLicense)
 
-    function StepCreativeCommonLicense:Init()
-        self:CreateLabelWidget()
-        self:CreateEmptyBasicWidget()
+    function StepCreativeCommonLicense:PostConstructor()
+        -- darktable internal module name abbreviation
+        -- operation = nil: ignore this module during module reset
+        self.OperationNameInternal = "creator and license"
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
@@ -1551,6 +1805,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             "CC BY-SA"
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        self.Label = _dtConcat({ 'metadata', ' ', 'license' })
+
+        self.Tooltip = _(
+            "Choose a creative common license. After reloading your image you can find this value as full text in metadata editor and image information module. This value is exported to jpg meta data.")
+    end
+
+    function StepCreativeCommonLicense:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show empty invisible step initialization combobox in 2nd column (settings subpage)
+        self:CreateEmptyBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1600,28 +1873,40 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepResetModuleHistory = Workflow.StepComboBox:new():new
-        {
-            -- operation = nil: ignore this module during module reset
-            OperationNameInternal = nil,
-            WidgetStackValue = WidgetStack.Settings,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 1,
-            Label = _("discard complete history"),
-            Tooltip = _("Reset all modules of the whole pixelpipe and discard complete history.")
-        }
-
+    StepResetModuleHistory = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepResetModuleHistory)
 
-    function StepResetModuleHistory:Init()
-        self:CreateLabelWidget()
-        self:CreateEmptyBasicWidget()
+    function StepResetModuleHistory:PostConstructor()
+        -- darktable internal module name abbreviation
+        -- operation = nil: ignore this module during module reset
+        self.OperationNameInternal = nil
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Settings
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _dt("no"), _dt("yes")
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        self.Label = _("discard complete history")
+
+        self.Tooltip = _("Reset all modules of the whole pixelpipe and discard complete history.")
+    end
+
+    function StepResetModuleHistory:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show empty invisible step initialization combobox in 2nd column (settings subpage)
+        self:CreateEmptyBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1650,26 +1935,38 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepShowModulesDuringExecution = Workflow.StepComboBox:new():new
-        {
-            -- operation = nil: ignore this module during module reset
-            OperationNameInternal = nil,
-            WidgetStackValue = WidgetStack.Settings,
-            WidgetUnchangedStepConfigurationValue = 1,
-            WidgetDefaultStepConfiguationValue = 1,
-            Label = _("show modules"),
-            Tooltip = _(
-                "Show darkroom modules for enabled workflow steps during execution of this initial workflow. This makes the changes easier to understand.")
-        }
-
+    StepShowModulesDuringExecution = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepShowModulesDuringExecution)
 
-    function StepShowModulesDuringExecution:Init()
-        self:CreateLabelWidget()
-        self:CreateEmptyBasicWidget()
+    function StepShowModulesDuringExecution:PostConstructor()
+        -- darktable internal module name abbreviation
+        -- operation = nil: ignore this module during module reset
+        self.OperationNameInternal = nil
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Settings
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues = { _dt("no"), _dt("yes") }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 1
+
+        self.Label = _("show modules")
+
+        self.Tooltip = _(
+            "Show darkroom modules for enabled workflow steps during execution of this initial workflow. This makes the changes easier to understand.")
+    end
+
+    function StepShowModulesDuringExecution:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show empty invisible step initialization combobox in 2nd column (settings subpage)
+        self:CreateEmptyBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1689,26 +1986,38 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepRunSingleStepOnSettingsChange = Workflow.StepComboBox:new():new
-        {
-            -- operation = nil: ignore this module during module reset
-            OperationNameInternal = nil,
-            WidgetStackValue = WidgetStack.Settings,
-            WidgetUnchangedStepConfigurationValue = 2,
-            WidgetDefaultStepConfiguationValue = 2,
-            Label = _("run single steps on change"),
-            Tooltip = _(
-                "When settings change, execute individual workflow steps. Configure a single module. This allows you to see the changes made by each configuration without having to execute the entire workflow.")
-        }
-
+    StepRunSingleStepOnSettingsChange = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepRunSingleStepOnSettingsChange)
 
-    function StepRunSingleStepOnSettingsChange:Init()
-        self:CreateLabelWidget()
-        self:CreateEmptyBasicWidget()
+    function StepRunSingleStepOnSettingsChange:PostConstructor()
+        -- darktable internal module name abbreviation
+        -- operation = nil: ignore this module during module reset
+        self.OperationNameInternal = nil
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Settings
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues = { _dt("no"), _dt("yes") }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 2
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 2
+
+        self.Label = _("when making changes, execute individual steps directly.")
+
+        self.Tooltip = _(
+            "If a setting in this module is changed, the corresponding workflow step is executed directly. The associated individual module is configured. This allows you to see the changes made by each configuration without having to run the entire workflow.")
+    end
+
+    function StepRunSingleStepOnSettingsChange:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show empty invisible step initialization combobox in 2nd column (settings subpage)
+        self:CreateEmptyBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,
@@ -1728,24 +2037,17 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     ---------------------------------------------------------------
 
-    StepTimeout = Workflow.StepComboBox:new():new
-        {
-            -- operation = nil: ignore this module during module reset
-            OperationNameInternal = nil,
-            WidgetStackValue = WidgetStack.Settings,
-            WidgetUnchangedStepConfigurationValue = 2,
-            WidgetDefaultStepConfiguationValue = 3,
-            Label = _("timeout value"),
-            Tooltip = _(
-                "Some calculations take a certain amount of time. Depending on the hardware equipment also longer.This script waits and attempts to detect timeouts. If steps take much longer than expected, those steps will be aborted. You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status).")
-        }
-
+    StepTimeout = Workflow.StepComboBox:new():new {}
     table.insert(Workflow.ModuleSteps, StepTimeout)
 
-    function StepTimeout:Init()
-        self:CreateLabelWidget()
-        self:CreateEmptyBasicWidget()
+    function StepTimeout:PostConstructor()
+        -- darktable internal module name abbreviation
+        -- operation = nil: ignore this module during module reset
+        self.OperationNameInternal = nil
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Settings
 
+        -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             '500',
@@ -1756,6 +2058,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             '5000'
         }
 
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 2
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 3
+
+        self.Label = _("timeout value")
+
+        self.Tooltip = _(
+            "Some calculations take a certain amount of time. Depending on the hardware equipment also longer.This script waits and attempts to detect timeouts. If steps take much longer than expected, those steps will be aborted. You can configure the default timeout (ms). Before and after each step of the workflow, the script waits this time. In other places also a multiple (loading an image) or a fraction (querying a status).")
+    end
+
+    function StepTimeout:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show empty invisible step initialization combobox in 2nd column (settings subpage)
+        self:CreateEmptyBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
             {
                 changed_callback = Workflow.ComboBoxChangedCallback,

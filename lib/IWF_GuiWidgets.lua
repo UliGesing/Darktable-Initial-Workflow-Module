@@ -142,7 +142,7 @@ ResetAllModuleMainSettingsWidget = dt.new_widget('combobox')
                             elseif (selection == _("unchanged")) then
                                 -- choose 'unchanged' step setting
                                 -- configuration keeps unchanged during script execution
-                                step.Widget.value = step.WidgetUnchangedStepConfigurationValue
+                                step.Widget.value = step.ConfigurationValueUnchangedIndex
                             end
 
                             -- sleep for a short moment to give callback function a chance to run

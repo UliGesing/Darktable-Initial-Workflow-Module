@@ -263,6 +263,11 @@ end
 local function InstallInitialWorkflowModule()
   LogHelper.Info(_("create widget in lighttable and darkroom panels"))
 
+    -- call post constructor first
+  for i, step in ipairs(Workflow.ModuleSteps) do
+    step:PostConstructor()
+  end
+
   -- initialize workflow steps
   for i, step in ipairs(Workflow.ModuleSteps) do
     step:Init()
