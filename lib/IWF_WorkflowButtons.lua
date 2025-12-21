@@ -369,11 +369,18 @@ function WorkflowButtons.CreateWorkflowButtons()
 
     ---------------------------------------------------------------
 
+    local ignoreModulesDuringReset = {
+        StepTimeout,
+        StepRunSingleStepOnSettingsChange,
+        StepCreator,
+        StepCreativeCommonLicense
+    }
+
     -- select default basic configuration for each step
     -- called via module reset control
     local function SetAllDefaultModuleConfigurations()
         for i, step in ipairs(Workflow.ModuleSteps) do
-            if (step ~= StepTimeout) and (step ~= StepRunSingleStepOnSettingsChange) then
+            if (not Helper.Contains(ignoreModulesDuringReset, step)) then
                 step:EnableDefaultBasicConfiguation()
                 step:EnableDefaultStepConfiguation()
             end

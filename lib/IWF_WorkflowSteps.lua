@@ -182,15 +182,24 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepDynamicRangeSceneToDisplay:PostConstructor()
         -- darktable internal module name abbreviation
         -- this step refers to different modules
-        self.OperationNameInternal = 'Filmic or Sigmoid'
+        self.OperationNameInternal = 'Filmic - Sigmoid - AgX'
+
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
 
         self.filmicAutoTuneLevels = _dtConcat({ "filmic", ' ', "auto tune levels" })
         self.filmicHighlightReconstruction = _dtConcat({ "filmic", ' + ', "highlight reconstruction" })
-        self.sigmoidDefault = _dtConcat({ "sigmoid", ' ', "default" })
+
+        self.sigmoidDefault = _dtConcat({ "sigmoid", ' ', "scene-referred default" })
         self.sigmoidAces100Preset = _dtConcat({ "sigmoid", ' ', "ACES 100-nit like" })
         self.sigmoidNeutralGrayPreset = _dtConcat({ "sigmoid", ' ', "neutral gray" })
+
+        self.agxDefault = _dtConcat({ "agx" })
+        self.agxDefaultAutoTune = _dtConcat({ "agx", ' + ', "auto tune levels" })
+        self.agxBlenderBasePreset = _dtConcat({ "agx", ' ', "blender-like", ' ', "base" })
+        self.agxBlenderBasePresetAutoTune = _dtConcat({ "agx", ' ', "blender", ' ', "base", ' + ', 'auto tune' })
+        self.agxSmoothBasePreset = _dtConcat({ "agx", ' ', "smooth", ' ', "base" })
+        self.agxSmoothBasePresetAutoTune = _dtConcat({ "agx", ' ', "smooth", ' ', "base", ' + ', 'auto tune' })
 
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
@@ -200,19 +209,25 @@ function WorkflowSteps.CreateWorkflowSteps()
             self.filmicHighlightReconstruction,
             self.sigmoidDefault,
             self.sigmoidAces100Preset,
-            self.sigmoidNeutralGrayPreset
+            self.sigmoidNeutralGrayPreset,
+            self.agxDefault,
+            self.agxDefaultAutoTune,
+            self.agxBlenderBasePreset,
+            self.agxBlenderBasePresetAutoTune,
+            self.agxSmoothBasePreset,
+            self.agxSmoothBasePresetAutoTune
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
         self.ConfigurationValueUnchangedIndex = 1
 
         -- step configurationvalue array index, used if module settings are reset to "default"
-        self.ConfigurationValueDefaultIndex = 6
+        self.ConfigurationValueDefaultIndex = 10
 
-        self.Label = _dtConcat({ "filmic rgb", ' / ', "sigmoid" })
+        self.Label = _dtConcat({ "filmic", '/', "sigmoid", '/', "agx" })
 
         self.Tooltip = _(
-            "Use Filmic or Sigmoid to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic levels of black + white relative exposure. Or use Sigmoid with one of its presets. Use only one of Filmic, Sigmoid or Basecurve, this module disables the others.")
+            "Use Filmic, Sigmoid or AgX to expand or contract the dynamic range of the scene to fit the dynamic range of the display. Auto tune filmic or agx levels of black + white relative exposure. Or use a predefined preset. Use only one of Filmic, Sigmoid, AgX or Basecurve, other modules are disabled.")
     end
 
     function StepDynamicRangeSceneToDisplay:Init()
@@ -231,6 +246,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             }
     end
 
+    -- true, if one of filmic module configurations was selected
     function StepDynamicRangeSceneToDisplay:FilmicSelected()
         return Helper.Contains(
             { self.filmicAutoTuneLevels,
@@ -238,6 +254,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             }, self.Widget.value)
     end
 
+    -- true, if one of sigmoid module configurations was selected
     function StepDynamicRangeSceneToDisplay:SigmoidSelected()
         return Helper.Contains(
             { self.sigmoidDefault,
@@ -246,8 +263,20 @@ function WorkflowSteps.CreateWorkflowSteps()
             }, self.Widget.value)
     end
 
+    -- true, if one of AgX module configurations was selected
+    function StepDynamicRangeSceneToDisplay:AgXSelected()
+        return Helper.Contains(
+            { self.agxDefault,
+                self.agxDefaultAutoTune,
+                self.agxBlenderBasePreset,
+                self.agxBlenderBasePresetAutoTune,
+                self.agxSmoothBasePreset,
+                self.agxSmoothBasePresetAutoTune
+            }, self.Widget.value)
+    end
+
     -- override base class function
-    -- distinguish between filmic and sigmoid module
+    -- distinguish between filmic, sigmoid and agx module
     function StepDynamicRangeSceneToDisplay:OperationName()
         if (self:FilmicSelected()) then
             return 'filmicrgb'
@@ -257,7 +286,11 @@ function WorkflowSteps.CreateWorkflowSteps()
             return 'sigmoid'
         end
 
-        return 'sigmoid'
+        if (self:AgXSelected()) then
+            return 'agx'
+        end
+
+        return 'agx'
     end
 
     function StepDynamicRangeSceneToDisplay:Run()
@@ -273,14 +306,20 @@ function WorkflowSteps.CreateWorkflowSteps()
             return false
         end
 
-        if (self:FilmicSelected()) then
-            GuiAction.DisableDarkroomModule('iop/sigmoid')
-            GuiAction.DisableDarkroomModule('iop/basecurve')
+        -- use only one of Filmic, Sigmoid, AgX or Basecurve
+        -- other modules are disabled.
+        GuiAction.DisableDarkroomModule('iop/basecurve')
+
+        if (not self:FilmicSelected()) then
+            GuiAction.DisableDarkroomModule('iop/filmicrgb')
         end
 
-        if (self:SigmoidSelected()) then
-            GuiAction.DisableDarkroomModule('iop/filmicrgb')
-            GuiAction.DisableDarkroomModule('iop/basecurve')
+        if (not self:SigmoidSelected()) then
+            GuiAction.DisableDarkroomModule('iop/sigmoid')
+        end
+
+        if (not self:AgXSelected()) then
+            GuiAction.DisableDarkroomModule('iop/agx')
         end
 
         -- evaluate basic widget
@@ -294,6 +333,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
+        -- configure filmic module
         if (self:FilmicSelected()) then
             GuiAction.ButtonOffOn('iop/filmicrgb/auto tune levels')
 
@@ -307,9 +347,10 @@ function WorkflowSteps.CreateWorkflowSteps()
             end
         end
 
+        -- configure sigmoid module
         if (self:SigmoidSelected()) then
             if (selection == self.sigmoidDefault) then
-                -- use default settings, nothing to do
+                GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'scene-referred default')
             end
 
             if (selection == self.sigmoidNeutralGrayPreset) then
@@ -318,6 +359,35 @@ function WorkflowSteps.CreateWorkflowSteps()
 
             if (selection == self.sigmoidAces100Preset) then
                 GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'ACES 100-nit like')
+            end
+        end
+
+        -- configure agx module
+        if (self:AgXSelected()) then
+            if (selection == self.agxDefault) then
+                -- use default settings, nothing to do
+            end
+
+            if (selection == self.agxDefaultAutoTune) then
+                GuiAction.Do("iop/agx/exposure range/auto tune levels", 0, '', 'toggle', 1.0)
+            end
+
+            if (selection == self.agxBlenderBasePreset) then
+                GuiAction.SelectModulePreset('iop/agx/preset/', '', 'blender-like|base')
+            end
+
+            if (selection == self.agxBlenderBasePresetAutoTune) then
+                GuiAction.SelectModulePreset('iop/agx/preset/', '', 'blender-like|base')
+                GuiAction.Do("iop/agx/exposure range/auto tune levels", 0, '', 'toggle', 1.0)
+            end
+
+            if (selection == self.agxSmoothBasePreset) then
+                GuiAction.SelectModulePreset('iop/agx/preset/', '', 'smooth|base')
+            end
+
+            if (selection == self.agxSmoothBasePresetAutoTune) then
+                GuiAction.SelectModulePreset('iop/agx/preset/', '', 'smooth|base')
+                GuiAction.Do("iop/agx/exposure range/auto tune levels", 0, '', 'toggle', 1.0)
             end
         end
     end
@@ -1057,12 +1127,15 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
 
+        self.AutoExposureAdjustment = _("auto exposure adjustment")
+        self.AutoExposureAndCompensateCameraExposure = _("auto and camera compensation")
+
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
-            _("adjust exposure correction"),
-            _("adjust & compensate bias"),
+            self.AutoExposureAdjustment,
+            self.AutoExposureAndCompensateCameraExposure
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
@@ -1105,9 +1178,13 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        GuiAction.ButtonOffOn('iop/exposure/exposure')
+        if (selection == self.AutoExposureAdjustment) then
+            GuiAction.ButtonOffOn('iop/exposure/exposure')
+        end
 
-        if (selection == _("adjust & compensate bias")) then
+        if (selection == self.AutoExposureAndCompensateCameraExposure) then
+            GuiAction.ButtonOffOn('iop/exposure/exposure')
+
             local checkbox = GuiAction.GetValue('iop/exposure/compensate exposure bias', '')
             if (checkbox == 0) then
                 GuiAction.Do('iop/exposure/compensate exposure bias', 0, '', 'on', 1.0)
@@ -1463,7 +1540,6 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         -- detect custom value from picture
         if (selection == _dt("set white balance to detected from area")) then
-            -- dt.gui.action("iop/channelmixerrgb/picker", "", "toggle", 1,000, 0)
             GuiAction.Do('iop/channelmixerrgb/picker', 0, '', 'toggle', 1.0)
             return
         end
@@ -1728,6 +1804,9 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.OperationNameInternal = nil
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
+
+        -- array of configuration values ​​selectable by the user
+        self.ConfigurationValues = {}
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
         self.ConfigurationValueUnchangedIndex = 2

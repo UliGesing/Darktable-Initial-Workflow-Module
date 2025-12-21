@@ -78,7 +78,8 @@ local moduleTestIgnoreSteps =
 {
   StepResetModuleHistory,
   StepTimeout,
-  StepRunSingleStepOnSettingsChange
+  StepRunSingleStepOnSettingsChange,
+  StepCreator
 }
 
 -- check, if file was modified
