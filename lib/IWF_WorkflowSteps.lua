@@ -233,7 +233,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepDynamicRangeSceneToDisplay:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -610,7 +610,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepColorBalanceRGBMasks:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- overwrite default behaviour
@@ -679,7 +679,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepColorBalanceRGB:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -753,7 +753,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepContrastEqualizer:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -912,7 +912,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepDiffuseOrSharpen:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -1082,7 +1082,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepToneEqualizer:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -1153,7 +1153,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepExposureCorrection:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -1228,7 +1228,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepLensCorrection:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -1303,7 +1303,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepDenoiseProfiled:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -1326,6 +1326,70 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         if (selection == _("unchanged")) then
             return
+        end
+    end
+
+    ---------------------------------------------------------------
+
+    StepDemosaicCaptureSharpen = Workflow.StepComboBox:new():new {}
+    table.insert(Workflow.ModuleSteps, StepDemosaicCaptureSharpen)
+
+    function StepDemosaicCaptureSharpen:PostConstructor()
+        -- darktable internal module name abbreviation
+        self.OperationNameInternal = 'demosaic'
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Modules
+
+        self.CaptureSharpen = _dt("capture sharpen")
+
+        -- array of configuration values ​​selectable by the user
+        self.ConfigurationValues =
+        {
+            _("unchanged"),
+            self.CaptureSharpen,
+        }
+
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 1
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 2
+
+        self.Label = _dt("demosaic")
+
+        self.Tooltip = _("Reconstruct pixels from sensor data and recover details lost due to in-camera blurring.")
+    end
+
+    function StepDemosaicCaptureSharpen:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        self:CreateEmptyBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
+        self.Widget = dt.new_widget('combobox')
+            {
+                changed_callback = Workflow.ComboBoxChangedCallback,
+                label = ' ', -- use separate label widget
+                tooltip = self:GetLabelAndTooltip(),
+                table.unpack(self.ConfigurationValues)
+            }
+    end
+
+    function StepDemosaicCaptureSharpen:Run()
+        -- evaluate basic widget
+        if (not self:RunBasicWidget()) then
+            return
+        end
+
+        local selection = self.Widget.value
+
+        if (selection == _("unchanged")) then
+            return
+        end
+
+        if (selection == self.CaptureSharpen) then
+            GuiAction.Do('iop/demosaic/capture sharpen', 0, '', 'toggle', 1.0)
         end
     end
 
@@ -1363,7 +1427,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepChromaticAberrations:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -1495,7 +1559,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepColorCalibrationIlluminant:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- overwrite default behaviour
@@ -1600,7 +1664,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepColorCalibrationAdaptation:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -1674,7 +1738,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepHighlightReconstruction:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
@@ -1756,7 +1820,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepWhiteBalance:Init()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
-        -- show step initialization comb-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
+        -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
         self:CreateDefaultBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
