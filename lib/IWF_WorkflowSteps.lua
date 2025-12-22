@@ -130,8 +130,11 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Settings
 
+        self.ConfigNo = _dt("no")
+        self.ConfigYes = _dt("yes")
+
         -- array of configuration values ​​selectable by the user
-        self.ConfigurationValues = { _dt("no"), _dt("yes") }
+        self.ConfigurationValues = { self.ConfigNo, self.ConfigYes }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
         self.ConfigurationValueUnchangedIndex = 1
@@ -169,7 +172,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         local selection = self.Widget.value
 
-        if (selection == _dt("yes")) then
+        if (selection == self.ConfigYes) then
             GuiAction.Do('lib/history/compress history stack', 0, '', '', 1.0)
         end
     end
@@ -1410,12 +1413,15 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
 
+        self.ConfigBayerSensor = _("Bayer sensor")
+        self.ConfigOtherSensors = _("other sensors")
+
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
-            _("Bayer sensor"),
-            _("other sensors")
+            self.ConfigBayerSensor,
+            self.ConfigOtherSensors
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
@@ -1448,13 +1454,13 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepChromaticAberrations:BayerSensorSelected()
         return Helper.Contains(
-            { _("Bayer sensor")
+            { self.ConfigBayerSensor
             }, self.Widget.value)
     end
 
     function StepChromaticAberrations:OtherSensorSelected()
         return Helper.Contains(
-            { _("other sensors")
+            { self.ConfigOtherSensors
             }, self.Widget.value)
     end
 
@@ -2041,11 +2047,11 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Settings
 
+        self.ConfigNo = _dt("no")
+        self.ConfigYes = _dt("yes")
+
         -- array of configuration values ​​selectable by the user
-        self.ConfigurationValues =
-        {
-            _dt("no"), _dt("yes")
-        }
+        self.ConfigurationValues = { self.ConfigNo, self.ConfigYes }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
         self.ConfigurationValueUnchangedIndex = 1
@@ -2082,11 +2088,11 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         local selection = self.Widget.value
 
-        if (selection == _dt("no")) then
+        if (selection == self.ConfigNo) then
             return
         end
 
-        if (selection == _dt("yes")) then
+        if (selection == self.ConfigYes) then
             GuiAction.Do('lib/history', 0, 'reset', '', 1.0)
         end
     end
@@ -2103,8 +2109,11 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Settings
 
+        self.ConfigNo = _dt("no")
+        self.ConfigYes = _dt("yes")
+
         -- array of configuration values ​​selectable by the user
-        self.ConfigurationValues = { _dt("no"), _dt("yes") }
+        self.ConfigurationValues = { self.ConfigNo, self.ConfigYes }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
         self.ConfigurationValueUnchangedIndex = 1
@@ -2139,7 +2148,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     end
 
     function StepShowModulesDuringExecution:Value()
-        return self.Widget.value == _dt("yes")
+        return self.Widget.value == self.ConfigYes)
     end
 
     ---------------------------------------------------------------
@@ -2154,8 +2163,11 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Settings
 
+        self.ConfigNo = _dt("no")
+        self.ConfigYes = _dt("yes")
+
         -- array of configuration values ​​selectable by the user
-        self.ConfigurationValues = { _dt("no"), _dt("yes") }
+        self.ConfigurationValues = { self.ConfigNo, self.ConfigYes }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
         self.ConfigurationValueUnchangedIndex = 2
@@ -2190,7 +2202,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     end
 
     function StepRunSingleStepOnSettingsChange:Value()
-        return self.Widget.value == _dt("yes")
+        return self.Widget.value == self.ConfigYes
     end
 
     ---------------------------------------------------------------
