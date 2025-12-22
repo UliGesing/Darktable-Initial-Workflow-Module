@@ -98,6 +98,12 @@ function Workflow.ModuleStep:InitDependingOnCurrentView()
     -- do nothing by default
 end
 
+-- default implementation, do nothing
+-- this function is overriden by derived classes
+function Workflow.ModuleStep:EnableDefaultBasicConfiguation()
+    -- do nothing
+end
+
 -- create default basic widget of most workflow steps
 -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first 
 function Workflow.ModuleStep:CreateDefaultBasicWidget()
