@@ -588,11 +588,13 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
 
+        self.PeakWhiteAndGreyFulcrum = _("peak white & grey fulcrum")
+
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
-            _("peak white & grey fulcrum")
+            self.PeakWhiteAndGreyFulcrum
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
@@ -638,7 +640,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        if (selection == _("peak white & grey fulcrum")) then
+        if (selection == self.PeakWhiteAndGreyFulcrum) then
             GuiAction.ButtonOffOn('iop/colorbalancergb/white fulcrum')
             GuiAction.ButtonOffOn('iop/colorbalancergb/contrast gray fulcrum')
         end
@@ -951,13 +953,17 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
 
+        self.ConfigMaskExposureCompensation = _("mask exposure compensation")
+        self.ConfigMaskContrastCompensation = _("mask contrast compensation")
+        self.ConfigMaskExposureAndContrastCompensation = _("exposure & contrast comp.")
+
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
-            _("mask exposure compensation"),
-            _("mask contrast compensation"),
-            _("exposure & contrast comp."),
+            self.ConfigMaskExposureCompensation,
+            self.ConfigMaskContrastCompensation,
+            self.ConfigMaskExposureAndContrastCompensation,
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
@@ -1005,8 +1011,8 @@ function WorkflowSteps.CreateWorkflowSteps()
         GuiAction.DoWithoutEvent('iop/toneequal/page', 0, 'advanced', '', 1.0)
 
         -- exposure compensation
-        if ((selection == _("mask exposure compensation"))
-                or (selection == _("exposure & contrast comp."))) then
+        if ((selection == self.ConfigMaskExposureCompensation)
+                or (selection == self.ConfigMaskExposureAndContrastCompensation)) then
             --
             local path = 'iop/toneequal/mask exposure compensation'
 
@@ -1023,8 +1029,8 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         -- contrast compensation
-        if ((selection == _("mask contrast compensation"))
-                or (selection == _("exposure & contrast comp."))) then
+        if ((selection == self.ConfigMaskContrastCompensation)
+                or (selection == self.ConfigMaskExposureAndContrastCompensation)) then
             --
             local path = 'iop/toneequal/mask contrast compensation'
 
@@ -1054,17 +1060,17 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
 
-        self.labelMedium = _dtConcat({ "EIGF", ' ', "medium" })
-        self.labelSoft = _dtConcat({ "EIGF", ' ', "soft" })
-        self.labelStrong = _dtConcat({ "EIGF", ' ', "strong" })
+        self.ConfigMedium = _dtConcat({ "EIGF", ' ', "medium" })
+        self.ConfigSoft = _dtConcat({ "EIGF", ' ', "soft" })
+        self.ConfigStrong = _dtConcat({ "EIGF", ' ', "strong" })
 
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
-            self.labelMedium,
-            self.labelSoft,
-            self.labelStrong
+            self.ConfigMedium,
+            self.ConfigSoft,
+            self.ConfigStrong
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
@@ -1107,11 +1113,11 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        if (selection == self.labelMedium) then
+        if (selection == self.ConfigMedium) then
             GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows@<highlights', 'EIGF | medium')
-        elseif (selection == self.labelSoft) then
+        elseif (selection == self.ConfigSoft) then
             GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows@<highlights', 'EIGF | soft')
-        elseif (selection == self.labelStrong) then
+        elseif (selection == self.ConfigStrong) then
             GuiAction.SelectModulePreset('iop/toneequal/preset/', 'compress shadows@<highlights', 'EIGF | strong')
         end
     end
@@ -1511,11 +1517,15 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
 
+        self.ConfigDetectWhiteBalanceFromArea = _dt("set white balance to detected from area")
+
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
-            _("unchanged"),                                 -- additional value
-            _dt("set white balance to detected from area"), -- additional value
+            _("unchanged"),
+            -- additional value
+            self.ConfigDetectWhiteBalanceFromArea,
+            -- predefined values
             _dt("same as pipeline (D50)"),
             _dt("A (incandescent)"),
             _dt("D (daylight)"),
@@ -1524,9 +1534,6 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("LED (LED light)"),
             _dt("Planckian (black body)"),
             _dt("custom"),
-            -- these presets are ditched...
-            -- _dt("(AI) detect from image surfaces..."),
-            -- _dt("(AI) detect from image edges..."),
             _dt("as shot in camera")
         }
 
@@ -1603,7 +1610,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- set illuminant
 
         -- detect custom value from picture
-        if (selection == _dt("set white balance to detected from area")) then
+        if (selection == self.ConfigDetectWhiteBalanceFromArea) then
             GuiAction.Do('iop/channelmixerrgb/picker', 0, '', 'toggle', 1.0)
             return
         end
@@ -1935,17 +1942,35 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
 
+        self.licenseFullText = {}
+
+        self.ConfigAllRightsReserved = "all rights reserved"
+        self.ConfigCCBY = "CC BY"
+        self.ConfigCCBYNC = "CC BY-NC"
+        self.ConfigCCBYNCND = "CC BY-NC-ND"
+        self.ConfigCCBYNCSA = "CC BY-NC-SA"
+        self.ConfigCCBYND = "CC BY-ND"
+        self.ConfigCCBYSA = "CC BY-SA"
+
+        self.licenseFullText[self.ConfigAllRightsReserved] = "all rights reserved"
+        self.licenseFullText[self.ConfigCCBY] = "Creative Commons Attribution (CC BY)"
+        self.licenseFullText[self.ConfigCCBYNC] = "Creative Commons Attribution-NonCommercial (CC BY-NC)"
+        self.licenseFullText[self.ConfigCCBYNCND] = "Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)"
+        self.licenseFullText[self.ConfigCCBYNCSA] = "Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)"
+        self.licenseFullText[self.ConfigCCBYND] = "Creative Commons Attribution-NoDerivs (CC BY-ND)"
+        self.licenseFullText[self.ConfigCCBYSA] = "Creative Commons Attribution-ShareAlike (CC BY-SA)"
+
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
             _("unchanged"),
-            "all rights reserved",
-            "CC BY",
-            "CC BY-NC",
-            "CC BY-NC-ND",
-            "CC BY-NC-SA",
-            "CC BY-ND",
-            "CC BY-SA"
+            self.ConfigAllRightsReserved,
+            self.ConfigCCBY,
+            self.ConfigCCBYNC,
+            self.ConfigCCBYNCND,
+            self.ConfigCCBYNCSA,
+            self.ConfigCCBYND,
+            self.ConfigCCBYSA
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
@@ -1982,16 +2007,6 @@ function WorkflowSteps.CreateWorkflowSteps()
         return false
     end
 
-    local licenseFullText = {}
-
-    licenseFullText["all rights reserved"] = "all rights reserved"
-    licenseFullText["CC BY"] = "Creative Commons Attribution (CC BY)"
-    licenseFullText["CC BY-NC"] = "Creative Commons Attribution-NonCommercial (CC BY-NC)"
-    licenseFullText["CC BY-NC-ND"] = "Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)"
-    licenseFullText["CC BY-NC-SA"] = "Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)"
-    licenseFullText["CC BY-ND"] = "Creative Commons Attribution-NoDerivs (CC BY-ND)"
-    licenseFullText["CC BY-SA"] = "Creative Commons Attribution-ShareAlike (CC BY-SA)"
-
     function StepCreativeCommonLicense:Run()
         -- evaluate basic widget
         if (not self:RunBasicWidget()) then
@@ -2009,7 +2024,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         local currentImage = dt.gui.views.darkroom.display_image()
-        rights = licenseFullText[rights]
+        rights = self.licenseFullText[rights]
         LogHelper.Info(_dtConcat({ "rights", " = ", rights }))
         currentImage.rights = rights
     end
