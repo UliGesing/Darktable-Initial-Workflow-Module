@@ -31,13 +31,15 @@
 
 local Workflow = {}
 
-function Workflow.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _GuiAction)
+function Workflow.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _GuiAction, _ModuleName, _ModuleVersion)
     dt = _dt
     LogHelper = _LogHelper
     Helper = _Helper
     EventHelper = _EventHelper
     GuiTranslation = _TranslationHelper
     GuiAction = _GuiAction
+    ModuleName = _ModuleName
+    ModuleVersion = _ModuleVersion
 end
 
 -- return translation from local .po / .mo file
@@ -233,61 +235,8 @@ end
 
 ---------------------------------------------------------------
 
-local PreferencePresetName = "Current"
-local PreferencePrefixBasic = "Basic"
-local PreferencePrefixConfiguration = "Config"
-
--- save current selections of this workflow step
--- used to restore settings after starting darktable
-function Workflow.ModuleStep:SavePreferenceValue()
-    -- check, if there are any changes
-    -- preferences are saved with english names and values
-    -- user interfase uses translated names and values
-
-    -- save any changes of the configuration combobox value
-    local prefix = PreferencePresetName .. ":" .. PreferencePrefixConfiguration .. ":"
-    local preferenceName = prefix .. _ReverseTranslation(self.Label)
-    local preferenceValue = dt.preferences.read(ModuleName, preferenceName, 'string')
-    local configurationValue = _ReverseTranslation(self.Widget.value)
-
-    if (preferenceValue ~= configurationValue) then
-        dt.preferences.write(ModuleName, preferenceName, 'string', configurationValue)
-    end
-
-    -- save any changes of the basic combobox value
-    local prefixBasic = PreferencePresetName .. ":" .. PreferencePrefixBasic .. ":"
-    local preferenceBasicName = prefixBasic .. _ReverseTranslation(self.Label)
-    local preferenceBasicValue = dt.preferences.read(ModuleName, preferenceBasicName, 'string')
-    local basicValue = _ReverseTranslation(self.WidgetBasic.value)
-
-    if (preferenceBasicValue ~= basicValue) then
-        dt.preferences.write(ModuleName, preferenceBasicName, 'string', basicValue)
-    end
-end
-
--- read saved value from darktable preferences
--- used to restore settings after starting darktable
-function Workflow.ModuleStep:ReadPreferenceConfigurationValue()
-    -- preferences are saved with english names and values
-    -- user intercase uses translated names and values
-    local prefix = PreferencePresetName .. ":" .. PreferencePrefixConfiguration .. ":"
-    local preferenceName = prefix .. _ReverseTranslation(self.Label)
-    local preferenceValue = _(dt.preferences.read(ModuleName, preferenceName, 'string'))
-
-    -- get combo box index of saved preference value
-    for i, configurationValue in ipairs(self.ConfigurationValues) do
-        if (preferenceValue == configurationValue) then
-            if (self.Widget.value ~= i) then
-                self.Widget.value = i
-            end
-            return
-        end
-    end
-
-    self:EnableDefaultStepConfiguation()
-end
-
--- select widget value
+-- set basic widget value
+-- this is one of ignore, enable, reset or disable
 -- get combo box index of given value
 function Workflow.ModuleStep:SetWidgetBasicValue(value)
     for i, basicValue in ipairs(self.BasicValues) do
@@ -318,14 +267,78 @@ function Workflow.ModuleStep:SetWidgetBasicValue(value)
     self:EnableDefaultBasicConfiguation()
 end
 
+---------------------------------------------------------------
+
+local PreferencePresetName = "Current"
+local PreferencePrefixBasic = "Basic"
+local PreferencePrefixConfiguration = "Config"
+
+-- get single preference name 
+-- current script version is used to store preferences separately for each version
+-- a new version resets the preferences to their default values after starting darktable
+function Workflow.ModuleStep:GetPreferenceName(prefix, label)
+    return PreferencePresetName ..":" .. ModuleVersion .. ":" .. prefix .. ":" .. _ReverseTranslation(label)
+end
+
+-- read single preference value
+function Workflow.ModuleStep:GetPreferenceValue(preferenceName)
+    return dt.preferences.read(ModuleName, preferenceName, 'string')
+end
+
+-- save current module settings to preferences
+-- used to restore settings after starting darktable
+function Workflow.ModuleStep:SavePreferenceValue(prefix, label, currentValue)
+    local preferenceName = self:GetPreferenceName(prefix, label)
+    local preferenceValue = self:GetPreferenceValue(preferenceName)
+
+    -- preferences are saved with english names and values
+    -- user interfase uses translated names and values
+    local currentValueReverseTranslated = _ReverseTranslation(currentValue)
+
+    -- check, if there are any changes
+    if (preferenceValue ~= currentValueReverseTranslated) then
+        dt.preferences.write(ModuleName, preferenceName, 'string', currentValueReverseTranslated)
+    end
+end
+
+-- save current configurations of this workflow step
+-- used to restore settings after starting darktable
+function Workflow.ModuleStep:SavePreferenceStepSettings()
+    -- save any changes of the configuration (combobox) value
+    self:SavePreferenceValue(PreferencePrefixConfiguration, self.Label, self.Widget.value)
+
+    -- save any changes of the basic combobox value
+    -- this is one of ignore, enable, reset or disable
+    self:SavePreferenceValue(PreferencePrefixBasic, self.Label, self.WidgetBasic.value)
+end
+
+-- read saved value from darktable preferences
+-- used to restore settings after starting darktable
+function Workflow.ModuleStep:ReadPreferenceConfigurationValue()
+    -- get stored preference value
+    local preferenceName = self:GetPreferenceName(PreferencePrefixConfiguration, self.Label)
+    local preferenceValue = self:GetPreferenceValue(preferenceName)
+
+    -- get combo box index of saved preference value
+    for i, configurationValue in ipairs(self.ConfigurationValues) do
+        if (preferenceValue == configurationValue) then
+            -- check, if there are any differences
+            if (self.Widget.value ~= i) then
+                self.Widget.value = i
+            end
+            return
+        end
+    end
+
+    self:EnableDefaultStepConfiguation()
+end
+
 -- read saved value from darktable preferences
 -- used to restore settings after starting darktable
 function Workflow.ModuleStep:ReadPreferenceBasicValue()
-    -- preferences are saved separately for each user interface language
-    -- user intercase uses translated names and values
-    local prefixBasic = PreferencePresetName .. ":" .. PreferencePrefixBasic .. ":"
-    local preferenceBasicName = prefixBasic .. _ReverseTranslation(self.Label)
-    local preferenceBasicValue = _(dt.preferences.read(ModuleName, preferenceBasicName, 'string'))
+    -- get stored preference value
+    local preferenceBasicName = self:GetPreferenceName(PreferencePrefixBasic, self.Label)
+    local preferenceBasicValue = self:GetPreferenceValue(preferenceBasicName)
     self:SetWidgetBasicValue(preferenceBasicValue)
 end
 
@@ -343,46 +356,26 @@ Workflow.StepTextEntry = Workflow.ModuleStep:new():new
     {
     }
 
-
 -- save current selections of this workflow step
 -- used to restore settings after starting darktable
-function Workflow.StepTextEntry:SavePreferenceValue()
-    -- check, if there are any changes
-    -- preferences are saved with english names and values
-    -- user interfase uses translated names and values
-
-    -- save any changes of the configuration combobox value
-    local prefix = PreferencePresetName .. ":" .. PreferencePrefixConfiguration .. ":"
-    local preferenceName = prefix .. _ReverseTranslation(self.Label)
-    local preferenceValue = dt.preferences.read(ModuleName, preferenceName, 'string')
-
+function Workflow.StepTextEntry:SavePreferenceStepSettings()
+    -- save any changes of the configuration (combobox) value
     -- lua_entry: use text property instead of value property
-    local configurationValue = _ReverseTranslation(self.Widget.text)
-
-    if (preferenceValue ~= configurationValue) then
-        dt.preferences.write(ModuleName, preferenceName, 'string', configurationValue)
-    end
+    self:SavePreferenceValue(PreferencePrefixConfiguration, self.Label, self.Widget.text)
 
     -- save any changes of the basic combobox value
-    local prefixBasic = PreferencePresetName .. ":" .. PreferencePrefixBasic .. ":"
-    local preferenceBasicName = prefixBasic .. _ReverseTranslation(self.Label)
-    local preferenceBasicValue = dt.preferences.read(ModuleName, preferenceBasicName, 'string')
-    local basicValue = _ReverseTranslation(self.WidgetBasic.value)
-
-    if (preferenceBasicValue ~= basicValue) then
-        dt.preferences.write(ModuleName, preferenceBasicName, 'string', basicValue)
-    end
+    -- this is one of ignore, enable, reset or disable
+    self:SavePreferenceValue(PreferencePrefixBasic, self.Label, self.WidgetBasic.value)
 end
 
 -- read saved value from darktable preferences
 -- used to restore settings after starting darktable
 function Workflow.StepTextEntry:ReadPreferenceConfigurationValue()
-    -- preferences are saved with english names and values
-    -- user intercase uses translated names and values
-    local prefix = PreferencePresetName .. ":" .. PreferencePrefixConfiguration .. ":"
-    local preferenceName = prefix .. _ReverseTranslation(self.Label)
-    local preferenceValue = _(dt.preferences.read(ModuleName, preferenceName, 'string'))
+    -- get stored preference value
+    local preferenceName = self:GetPreferenceName(PreferencePrefixConfiguration, self.Label)
+    local preferenceValue = self:GetPreferenceValue(preferenceName)
 
+    -- check, if there are any differences
     if (self.Widget.text ~= preferenceValue) then
         self.Widget.text = preferenceValue
     end
@@ -548,7 +541,7 @@ function Workflow.ComboBoxChangedCallback(widget)
     end
 
     -- save current setting
-    step:SavePreferenceValue()
+    step:SavePreferenceStepSettings()
 
     -- run single step
     Workflow.RunSingleStep(step)
