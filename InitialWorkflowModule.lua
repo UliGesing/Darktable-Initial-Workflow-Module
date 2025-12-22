@@ -45,7 +45,13 @@
 
 ---------------------------------------------------------------
 
+-- unique identifier, used to register this Initial Workflow Module
 local ModuleName = 'InitialWorkflowModule'
+
+-- current version of this Initial Workflow Module
+-- current script version is used to store preferences separately for each version
+-- a new version resets the preferences to their default values after starting darktable
+local ModuleVersion = "2.0"
 
 local dt = require 'darktable'
 
@@ -128,12 +134,12 @@ StartupMessage(_("script outputs are in English"))
 -- check darktable API version: darktable version 5.0 is needed
 local du = require 'lib/dtutils'
 local function CheckApiVersion()
-  local apiCheck, err = pcall(function() du.check_min_api_version('9.4.0', ModuleName) end)
+  local apiCheck, err = pcall(function() du.check_min_api_version('9.6.0', ModuleName) end)
   if (apiCheck) then
     StartupMessage(string.format(_("darktable version with appropriate lua API detected: %s"),
       'dt' .. dt.configuration.version))
   else
-    StartupMessage(_("this script needs at least darktable 5.0 API to run"))
+    StartupMessage(_("this script needs at least darktable 5.4 API to run"))
     return false
   end
 
@@ -162,7 +168,7 @@ GuiAction.Init(dt, LogHelper, Helper, EventHelper, GuiTranslation)
 local Workflow
 success, Workflow = prequire('lib.IWF_Workflow')
 if not success then return end
-Workflow.Init(dt, LogHelper, Helper, EventHelper, GuiTranslation, GuiAction)
+Workflow.Init(dt, LogHelper, Helper, EventHelper, GuiTranslation, GuiAction, ModuleName, ModuleVersion)
 
 -- create stack widget, used to display subpages
 local WidgetStack =

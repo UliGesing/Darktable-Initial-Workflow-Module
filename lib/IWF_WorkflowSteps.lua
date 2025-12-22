@@ -92,7 +92,7 @@ end
 
 -- called from darktable exit event
 function WorkflowSteps.OnDarktableExit()
-    StepCreator:SavePreferenceValue()
+    StepCreator:SavePreferenceStepSettings()
 end
 
 -- return translation from local .po / .mo file
@@ -2148,7 +2148,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     end
 
     function StepShowModulesDuringExecution:Value()
-        return self.Widget.value == self.ConfigYes)
+        return self.Widget.value == self.ConfigYes
     end
 
     ---------------------------------------------------------------
