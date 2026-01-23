@@ -193,9 +193,11 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.filmicAutoTuneLevels = _dtConcat({ "filmic", ' ', "auto tune levels" })
         self.filmicHighlightReconstruction = _dtConcat({ "filmic", ' + ', "highlight reconstruction" })
 
-        self.sigmoidDefault = _dtConcat({ "sigmoid", ' ', "scene-referred default" })
+        self.sigmoidDefault = _dtConcat({ "sigmoid", ' ', "default" })
         self.sigmoidAces100Preset = _dtConcat({ "sigmoid", ' ', "ACES 100-nit like" })
+        self.sigmoidReinhard = _dtConcat({ "sigmoid", ' ', "Reinhard" })
         self.sigmoidNeutralGrayPreset = _dtConcat({ "sigmoid", ' ', "neutral gray" })
+        self.sigmoidSmooth = _dtConcat({ "sigmoid", ' ', "smooth" })
 
         self.agxDefault = _dtConcat({ "agx" })
         self.agxDefaultAutoTune = _dtConcat({ "agx", ' + ', "auto tune levels" })
@@ -212,7 +214,9 @@ function WorkflowSteps.CreateWorkflowSteps()
             self.filmicHighlightReconstruction,
             self.sigmoidDefault,
             self.sigmoidAces100Preset,
+            self.sigmoidReinhard,
             self.sigmoidNeutralGrayPreset,
+            self.sigmoidSmooth,
             self.agxDefault,
             self.agxDefaultAutoTune,
             self.agxBlenderBasePreset,
@@ -261,8 +265,10 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepDynamicRangeSceneToDisplay:SigmoidSelected()
         return Helper.Contains(
             { self.sigmoidDefault,
+                self.sigmoidAces100Preset,
+                self.sigmoidReinhard,
                 self.sigmoidNeutralGrayPreset,
-                self.sigmoidAces100Preset
+                self.sigmoidSmooth
             }, self.Widget.value)
     end
 
@@ -353,16 +359,25 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- configure sigmoid module
         if (self:SigmoidSelected()) then
             if (selection == self.sigmoidDefault) then
-                GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'scene-referred default')
+                -- use default settings, nothing to do
+            end
+
+            if (selection == self.sigmoidAces100Preset) then
+                GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'ACES 100-nit like')
+            end
+
+            if (selection == self.sigmoidReinhard) then
+                GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'Reinhard')
             end
 
             if (selection == self.sigmoidNeutralGrayPreset) then
                 GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'neutral gray')
             end
 
-            if (selection == self.sigmoidAces100Preset) then
-                GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'ACES 100-nit like')
+            if (selection == self.sigmoidSmooth) then
+                GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'smooth')
             end
+
         end
 
         -- configure agx module
@@ -830,7 +845,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("Fuji Monochrome emulation"),
             _dt("Fuji Provia emulation"),
             _dt("Fuji Velvia emulation"),
-            _dt("Helmholtz/Kohlrausch monochrome"),
+            _dt("Helmholtz@<Kohlrausch monochrome"),
             _dt("it8 skin tones")
         }
 
