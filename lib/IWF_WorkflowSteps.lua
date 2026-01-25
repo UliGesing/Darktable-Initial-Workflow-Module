@@ -2190,7 +2190,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- step configurationvalue array index, used if module settings are reset to "default"
         self.ConfigurationValueDefaultIndex = 2
 
-        self.Label = _("when making changes, execute individual steps directly.")
+        self.Label = _("apply changes directly after input")
 
         self.Tooltip = _(
             "If a setting in this module is changed, the corresponding workflow step is executed directly. The associated individual module is configured. This allows you to see the changes made by each configuration without having to run the entire workflow.")

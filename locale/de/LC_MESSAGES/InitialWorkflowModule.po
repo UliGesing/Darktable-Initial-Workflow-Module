@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-06 15:46+0100\n"
+"POT-Creation-Date: 2026-01-25 17:29+0100\n"
 "PO-Revision-Date: 2023-06-10 10:27+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -702,7 +702,7 @@ msgstr ""
 "Workflow anwenden. Dadurch sind die Einstellungen leichter nachzuvollziehen."
 
 #: lib/IWF_WorkflowSteps.lua:2193
-msgid "when making changes, execute individual steps directly."
+msgid "apply changes directly after input"
 msgstr "führe bei einer Änderung einzelne Schritte direkt aus."
 
 #: lib/IWF_WorkflowSteps.lua:2196
