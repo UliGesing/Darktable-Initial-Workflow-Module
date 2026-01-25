@@ -37,35 +37,36 @@
 
 #### Subpage "Modules"
 
-- Choose "show modules" and adapt your personal configuration for each step of the entire workflow. Several steps and configurations are offered, see the tooltips within the module for more information. Each step of the workflow addresses a module of the pipeline in the darktable darkroom view. Your settings are saved in darktable preferences and restored after the next start of the application
+- Choose "show modules" and adapt your personal configuration for each step of the entire workflow. Several steps and configurations are offered, see the tooltips within the module for more information. Each step of the workflow addresses a module of the pipeline in the darktable darkroom view. Your settings made here are saved in darktable preferences and restored after the next start of the application. After updating to a new major version of this script, your settings will be reset to their default values.
 
 >><img src="ReadmeImages/ScreenshotModuleDefaults.png" width=450>
 
 - Every step provides two configurations: The first one is a basic configuration that is applied before actually performing the main configuration. You can decide, if you want to ignore, enable, reset or disable the module. There are various possibilities:
 
 >><img src="ReadmeImages/ScreenshotModuleStepConfigurationBasic.png" width=100>
->- The predefined <code>default</code> value (one of the following) can be set.
->- The workflow step can be <code>ignored</code> at all, the corresponding module remains unchanged, regardless of the second setting.
->- The module can first be <code>enabled</code> in order to apply the selected configuration afterwards, based on current module settings.
->- A module <code>reset</code> can be carried out, the selected configuration is then applied based on default module settings.
->- The module can be <code>disabled</code> without making any further changes and regardless of the second setting.
+>- The predefined <code>default</code> value (one of the following) can be set. The workflow step can be <code>ignored</code> at all, the corresponding module remains unchanged, regardless of the second setting. The module can first be <code>enabled</code> in order to apply the selected configuration afterwards, based on current module settings. A module <code>reset</code> can be carried out, the selected configuration is then applied based on default module settings. The module can be <code>disabled</code> without making any further changes and regardless of the second setting.
 
-- The second configuration depends on your first and basic configuration. If the basic configuration is set to <code>reset</code> or <code>enable</code>, the second configuration is applied. If you choose <code>unchanged</code>, the corresponding module keeps unchanged (apart from the basic configuration above). Each step offers several choices, for example:
+- The second configuration depends on your first and basic configuration. If the basic configuration is set to <code>reset</code> or <code>enable</code>, the second configuration is applied after the selected base configuration. If you choose <code>unchanged</code>, the corresponding module keeps unchanged (apart from the basic configuration above). Each step offers several choices, for example:
 <br>
 >><img src="ReadmeImages/ScreenshotModuleStepConfigurationFilmic.png" width=250>
-
 <br>
+
 - Via <code>all module basics</code> and <code>all module settings</code> you can select standard configurations for all steps.
+<br>
+>><img src="ReadmeImages/ScreenshotAllModuleSettings.png" width=450>
+<br>
 
 #### Subpage "Settings"
 
-- Choose "show settings" and adapt the common settings. Several common settings are offered, see the tooltips for more information. Your settings are saved in darktable preferences and restored after the next start of the application.
+- Choose "show settings" and adapt the common settings. Several common settings are offered, see the tooltips for more information. Your settings are saved in darktable preferences and restored after the next start of the application. After updating to a new major version of this script, your settings will be reset to their default values.
 
 >><img src="ReadmeImages/ScreenshotCommonSettingsSubpage.png" width=450>
 
-- Do you want to know more about what the individual steps of the workflow change? You can activate <code>show modules</code>. During script execution in darkroom view, modules are displayed as changes are made. This way you will see the changes made. Best practices: Select <code>ignore</code> for all steps. Then activate <code>enable</code> or <code>reset</code> for the step that interests you and configure it. With <code>run</code> only this one configuration is executed and the affected module is displayed.
+- Do you want to know more about what the individual steps of the workflow change? You can activate <code>show modules</code>. During script execution in darkroom view, modules are displayed as changes are made. This way you will see the changes made.
 
-- Via <code>all common settings</code> you can select standard configurations for these settings. You can activate or deactive all common settings. 
+- With <code>apply changes directly after input</code> your configuration will be applied directly without running the script. If a setting in this module is changed, the corresponding workflow step is executed directly. The associated individual module is configured. This allows you to see the changes made by each configuration without having to run the entire workflow. This helps you understand the changes made through the configuration.
+
+- Via <code>all common settings</code> you can select standard configurations for all these settings. You can activate or deactive all common settings whtin this subpage. 
 
 ### Execution
 
@@ -86,11 +87,11 @@
 
 ### Prerequisites
 
-- This script requires darktable 5.0. The script was developed and tested on Linux (Arch-based EndeavourOs), but it should also work on Windows. You need darktable and Lua installed on your machine. See darktable documentation for your first steps: https://docs.darktable.org/usermanual and choose chapter "Scripting with Lua" in the left panel.
+- This script requires darktable 5.4. The script was developed and tested on Linux (Arch-based EndeavourOs), but it should also work on Windows. You need darktable and Lua installed on your machine. See darktable documentation for your first steps: https://docs.darktable.org/usermanual/development/en/ and choose chapter "Scripting with Lua" in the left panel.
 
 ### Lua examples folder
 
-Some examples and contributed scripts come with your darktable lua installation. The initial module script can be installed at the same place.
+Some examples and contributed scripts come with your darktable lua installation. The initial workflow module script can be installed at the same place.
 
 - lua script folders on Linux: <br><code>/home/[user_name]/.config/darktable/lua/examples</code>
 
