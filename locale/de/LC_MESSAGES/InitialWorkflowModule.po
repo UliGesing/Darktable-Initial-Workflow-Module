@@ -53,19 +53,18 @@ msgstr "Modul in Leuchttisch- und Dunkelkammer-Ansicht erstellen"
 #: lib/IWF_EventHelper.lua:112 lib/IWF_EventHelper.lua:120
 #, lua-format
 msgid "try again after %d ms waiting for event %s"
-msgstr ""
+msgstr "neuer Versuch nach %d ms Warten auf event %s"
 
 #: lib/IWF_EventHelper.lua:128
-#, fuzzy, lua-format
+#, lua-format
 msgid "timeout after %d ms waiting for event %s"
 msgstr ""
-"Timeout nach %d ms beim Warten auf das Event %s - evtl. sollten Sie die "
-"Einstellung des Timeout-Werts anpassen."
+"Timeout nach %d ms beim Warten auf das Event %s"
 
 #: lib/IWF_EventHelper.lua:131 lib/IWF_EventHelper.lua:134
 #, lua-format
 msgid "OK - %s"
-msgstr ""
+msgstr "OK - %s"
 
 #: lib/IWF_EventHelper.lua:162
 msgid ""
@@ -736,12 +735,3 @@ msgstr ""
 #, lua-format
 msgid "step timeout = %s ms"
 msgstr "Zeitlimit / Timeout dieses Schritts = %s ms"
-
-#~ msgid "currently selected module preset differs"
-#~ msgstr "es ist aktuell ein anderes Modul-Preset ausgewählt"
-
-#~ msgid "Adjust global saturation in color balance rgb module."
-#~ msgstr "Passt die globale Saettigung im Farbbalance-RGB-Modul an."
-
-#~ msgid "Adjust global chroma in color balance rgb module."
-#~ msgstr "Passt die globale Chroma im Farbbalance-RGB-Modul an."
