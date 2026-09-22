@@ -310,10 +310,14 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
+        LogHelper.Info('==============================')
+
         if (basic == _("disable")) then
             GuiAction.DisableDarkroomModule(self:OperationPath())
             return false
         end
+
+        LogHelper.Info(_("use only one tone mapper: Enable only one of Filmic, Sigmoid, AgX or Basecurve."))
 
         -- use only one of Filmic, Sigmoid, AgX or Basecurve
         -- other modules are disabled.
@@ -377,7 +381,6 @@ function WorkflowSteps.CreateWorkflowSteps()
             if (selection == self.sigmoidSmooth) then
                 GuiAction.SelectModulePreset('iop/sigmoid/preset/', '', 'smooth')
             end
-
         end
 
         -- configure agx module
@@ -1448,7 +1451,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.Label = _dtConcat({ "color calibration", ' ', "illuminant" })
 
         self.Tooltip = _(
-            "Perform color space corrections in color calibration module. Select the illuminant. The type of illuminant assumed to have lit the scene. By default unchanged for the legacy workflow.")
+            "Perform color space corrections in color calibration module. Select the illuminant. The type of illuminant assumed to have lit the scene. By default unchanged (same as whitebalance module).")
     end
 
     -- distinguish between modern and legacy workflow
@@ -1715,7 +1718,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.Label = _("white balance")
 
         self.Tooltip = _(
-            "Adjust the white balance of the image by altering the temperature. By default unchanged for the legacy workflow.")
+            "Adjust the white balance of the image by altering the temperature. By default unchanged.")
     end
 
     -- distinguish between modern and legacy workflow

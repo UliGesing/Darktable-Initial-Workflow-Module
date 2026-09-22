@@ -131,15 +131,15 @@ StartupMessage(string.format(_("script executed from path %s"), scriptFilePath))
 StartupMessage(string.format(_("script translation files in %s"), scriptLocalePath))
 StartupMessage(_("script outputs are in English"))
 
--- check darktable API version: darktable version 5.0 is needed
+-- check darktable API version: darktable version 5.6 is needed
 local du = require 'lib/dtutils'
 local function CheckApiVersion()
-  local apiCheck, err = pcall(function() du.check_min_api_version('9.6.0', ModuleName) end)
+  local apiCheck, err = pcall(function() du.check_min_api_version('9.7.0', ModuleName) end)
   if (apiCheck) then
     StartupMessage(string.format(_("darktable version with appropriate lua API detected: %s"),
       'dt' .. dt.configuration.version))
   else
-    StartupMessage(_("this script needs at least darktable 5.4 API to run"))
+    StartupMessage(_("this script needs at least darktable 5.6 API to run"))
     return false
   end
 
