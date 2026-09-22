@@ -31,7 +31,8 @@
 
 local Workflow = {}
 
-function Workflow.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _GuiAction, _ModuleName, _ModuleVersion)
+function Workflow.Init(_dt, _LogHelper, _Helper, _EventHelper, _TranslationHelper, _GuiAction, _ModuleName,
+                       _ModuleVersion)
     dt = _dt
     LogHelper = _LogHelper
     Helper = _Helper
@@ -90,8 +91,19 @@ end
 -- message at the beginning of a step
 function Workflow.ModuleStep:LogStepMessage()
     LogHelper.Info('==============================')
+
+    local currentValue
+
+    if (self ~= StepCreator) then
+        ---@diagnostic disable-next-line: undefined-field
+        currentValue = self.Widget.value
+    else
+        ---@diagnostic disable-next-line: undefined-field
+        currentValue = self.Widget.text
+    end
+
     ---@diagnostic disable-next-line: undefined-field
-    LogHelper.Info(string.format(_("selection = %s - %s"), self.WidgetBasic.value, self.Widget.value))
+    LogHelper.Info(string.format(_("selection = %s - %s"), self.WidgetBasic.value, currentValue))
 end
 
 -- handle view changed event (lighttable / darkroom view)
@@ -107,7 +119,7 @@ function Workflow.ModuleStep:EnableDefaultBasicConfiguation()
 end
 
 -- create default basic widget of most workflow steps
--- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first 
+-- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
 function Workflow.ModuleStep:CreateDefaultBasicWidget()
     -- enable module by default
     self.WidgetBasicDefaultValue = 3
@@ -148,7 +160,7 @@ function Workflow.ModuleStep:GetLabelAndTooltip()
 end
 
 -- create simple basic widget of some workflow steps
--- show simple step initialization combobox in 2nd column: ignore or enable module first 
+-- show simple step initialization combobox in 2nd column: ignore or enable module first
 function Workflow.ModuleStep:CreateSimpleBasicWidget()
     -- enable module by default
     self.WidgetBasicDefaultValue = 2
@@ -179,16 +191,17 @@ function Workflow.ModuleStep:CreateEmptyBasicWidget()
 end
 
 -- evaluate basic widget, common for most workflow steps
-function Workflow.ModuleStep:RunBasicWidget()
+function Workflow.ModuleStep:RunDefaultBasicWidget()
     local basic = self.WidgetBasic.value
-    if (basic == '') then
-        return true
-    end
-
     if (basic == _("ignore")) then
         return false
     end
 
+    if (basic == '') then
+        return true
+    end
+
+    LogHelper.Screen(self.Label)
     self:LogStepMessage()
 
     if (basic == _("disable")) then
@@ -213,14 +226,15 @@ end
 -- evaluate basic widget, common for some workflow steps
 function Workflow.ModuleStep:RunSimpleBasicWidget()
     local basic = self.WidgetBasic.value
-    if (basic == '') then
-        return true
-    end
-
     if (basic == _("ignore")) then
         return false
     end
 
+    if (basic == '') then
+        return true
+    end
+
+    LogHelper.Screen(self.Label)
     self:LogStepMessage()
 
     if (basic == _("enable")) then
@@ -273,11 +287,11 @@ local PreferencePresetName = "Current"
 local PreferencePrefixBasic = "Basic"
 local PreferencePrefixConfiguration = "Config"
 
--- get single preference name 
+-- get single preference name
 -- current script version is used to store preferences separately for each version
 -- a new version resets the preferences to their default values after starting darktable
 function Workflow.ModuleStep:GetPreferenceName(prefix, label)
-    return PreferencePresetName ..":" .. ModuleVersion .. ":" .. prefix .. ":" .. _ReverseTranslation(label)
+    return PreferencePresetName .. ":" .. ModuleVersion .. ":" .. prefix .. ":" .. _ReverseTranslation(label)
 end
 
 -- read single preference value
@@ -356,6 +370,27 @@ Workflow.StepTextEntry = Workflow.ModuleStep:new():new
     {
     }
 
+-- enable flag
+function Workflow.StepTextEntry:EnableRunSingleStepOnSettingsChange()
+    -- do nothing for StepTextEntry
+end
+
+-- disable flag
+function Workflow.StepTextEntry:DisableRunSingleStepOnSettingsChange()
+    -- do nothing for StepTextEntry
+end
+
+-- choose default basic setting
+function Workflow.StepTextEntry:EnableDefaultBasicConfiguation()
+    self.WidgetBasic.value = self.WidgetBasicDefaultValue
+end
+
+-- returns internal operation name like 'colorbalancergb' or 'atrous'
+function Workflow.StepTextEntry:OperationName()
+    return self.OperationNameInternal
+end
+
+
 -- save current selections of this workflow step
 -- used to restore settings after starting darktable
 function Workflow.StepTextEntry:SavePreferenceStepSettings()
@@ -391,8 +426,8 @@ Workflow.StepComboBox = Workflow.ModuleStep:new():new
     {
         -- darktable internal module name abbreviation
         OperationNameInternal = nil,
-        
-        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings 
+
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         WidgetStackValue = nil,
 
         -- array of configuration values ​​selectable by the user
@@ -522,10 +557,9 @@ function Workflow.RunSingleStep(step)
         -- show corresponding darkroom module
         GuiAction.ShowDarkroomModule(step:OperationPath())
     end
-    
+
     -- execute workflow step
     LogHelper.CurrentStep = step.Label
-    LogHelper.Screen(step.Label)
     step:Run()
     LogHelper.CurrentStep = ''
 

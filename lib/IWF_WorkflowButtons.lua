@@ -82,14 +82,12 @@ local function ProcessWorkflowSteps()
     GuiAction.HideDarkroomModule("iop/colorout")
 
     -- execute all workflow steps
-    -- the order is from bottom to top, along the pixel pipeline.
     for i = 1, #Workflow.ModuleSteps do
+        -- the order is from bottom to top, along the pixel pipeline.
         local step = Workflow.ModuleSteps[#Workflow.ModuleSteps + 1 - i]
-        LogHelper.CurrentStep = step.Label
-
-        LogHelper.Screen(step.Label) -- instead of dt.print()
 
         -- execute workflow step
+        LogHelper.CurrentStep = step.Label
         step:Run()
 
         -- sleep for a short moment to give stop_job callback function a chance to run

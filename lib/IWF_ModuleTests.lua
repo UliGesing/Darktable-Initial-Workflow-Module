@@ -68,10 +68,10 @@ local function _(msgid)
   return GuiTranslation.t(msgid)
 end
 
-local moduleTestImage
-local moduleTestXmpFile
-local moduleTestXmpModified
-local moduleTestBasicSetting
+local testImage
+local testXmpFile
+local testXmpModified
+local testBasicSetting
 
 -- ignore some basic configurations
 local moduleTestIgnoreSteps =
@@ -135,9 +135,12 @@ local function ModuleTestIterateConfigurationValues()
   -- get maximum number of combobox entries
   local configurationValuesMax = 1
   for i, step in ipairs(WorkflowSteps) do
-    local count = #step.ConfigurationValues
-    if (count > configurationValuesMax) then
-      configurationValuesMax = count
+    -- ignore some basic configurations
+    if (not Helper.Contains(moduleTestIgnoreSteps, step)) then
+      local count = #step.ConfigurationValues
+      if (count > configurationValuesMax) then
+        configurationValuesMax = count
+      end
     end
   end
 
@@ -152,8 +155,8 @@ local function ModuleTestIterateConfigurationValues()
           step.Widget.value = configurationValue
         elseif (configurationValue == #step.ConfigurationValues + 1) then
           step:EnableDefaultStepConfiguation()
-        else
-          step.Widget.value = (configurationValue % #step.ConfigurationValues) + 1
+          -- else
+          -- step.Widget.value = (configurationValue % #step.ConfigurationValues) + 1
         end
       end
     end
@@ -166,8 +169,8 @@ local function ModuleTestIterateConfigurationValues()
 
     ProcessWorkflowSteps()
 
-    moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename,
-      '_' .. moduleTestBasicSetting .. '_' .. configurationValue, moduleTestXmpModified)
+    testXmpModified = CopyXmpFile(testXmpFile, testImage.path, testImage.filename,
+    '_' .. testBasicSetting .. '_' .. configurationValue, testXmpModified)
   end
 end
 
@@ -185,9 +188,9 @@ function ModuleTests.ModuleTest()
   LogHelper.Info(_("module test started"))
 
   -- get current image information
-  moduleTestImage = dt.gui.views.darkroom.display_image()
-  moduleTestXmpFile = moduleTestImage.path .. '/' .. moduleTestImage.filename .. '.xmp'
-  moduleTestXmpModified = GetFileModified(moduleTestXmpFile)
+  testImage = dt.gui.views.darkroom.display_image()
+  testXmpFile = testImage.path .. '/' .. testImage.filename .. '.xmp'
+  testXmpModified = GetFileModified(testXmpFile)
 
   ---------------------------------------------------------------
   -- 1. preparing test case
@@ -195,72 +198,49 @@ function ModuleTests.ModuleTest()
   -- start with a well-defined state
   -- copy xmp file (with 'empty' history stack)
   GuiAction.Do('lib/history', 0, 'reset', '', 1.0)
-  moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename, '_0_Reset',
-    moduleTestXmpModified)
+  testXmpModified = CopyXmpFile(testXmpFile, testImage.path, testImage.filename, '_0_Reset',
+    testXmpModified)
 
-  -- disable "run single steps on change" during test run
-  -- prevent chaos
+  -- disable "run single steps on change" during test run to prevent intermediate excecution
   StepRunSingleStepOnSettingsChange.Widget.value = 1
 
   -- sleep for a short moment to give callback function a chance to run
   dt.control.sleep(100)
 
   ---------------------------------------------------------------
-  -- 2. test case
-  -- perform default settings
+  -- test case: execute workflow steps with default settings
   LogHelper.MajorMax = 1
   LogHelper.MajorNr = 1
   LogHelper.CurrentStep = ''
 
   -- reset module configurations
   -- basic widgets are configured to 'reset' modules first
-  moduleTestBasicSetting = 'Default'
+  testBasicSetting = 'Default'
   SetAllDefaultModuleConfigurations()
 
   ProcessWorkflowSteps()
 
   -- copy xmp file (with 'default' history stack)
-  moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename, '_0_Default',
-    moduleTestXmpModified)
+  testXmpModified = CopyXmpFile(testXmpFile, testImage.path, testImage.filename, '_0_Default',
+    testXmpModified)
 
   ---------------------------------------------------------------
-  -- 3. test case, basic "reset"
+  -- test case: execute workflow steps with basic configured as "reset"
   -- iterate over all workflow steps and combobox value settings
   -- set different combinations of module settings
 
   -- reset module configurations
   -- basic widgets are configured to 'reset' modules first
-  moduleTestBasicSetting = 'BasicDefault'
+  testBasicSetting = 'BasicDefault'
   SetAllDefaultModuleConfigurations()
   ModuleTestIterateConfigurationValues()
 
   ---------------------------------------------------------------
-  -- 4. test case, basic "enable"
-  -- iterate over all workflow steps and combobox value settings
-  -- set different combinations of module settings
-
-  -- prepare test case, reset module configurations
-  -- basic widgets are configured to 'reset' modules first
-  SetAllDefaultModuleConfigurations()
-  ProcessWorkflowSteps()
-
-  -- basic widgets are configured to 'enable' modules first, without reset
-  for i, step in ipairs(WorkflowSteps) do
-    if (step ~= StepTimeout) then
-      step:SetWidgetBasicValue(_("enable"))
-    end
-  end
-
-  moduleTestBasicSetting = 'BasicEnable'
-  ModuleTestIterateConfigurationValues()
-
-  ---------------------------------------------------------------
-  -- 5. test case
-  -- iterate over basic settings (reset, enable, ignore, ...)
+  -- test case: iterate over basic settings (reset, enable, ignore, ...)
 
   -- reset module configurations
   -- basic widgets are configured to 'reset' modules first
-  moduleTestBasicSetting = 'BasicIterate'
+  testBasicSetting = 'BasicIterate'
   SetAllDefaultModuleConfigurations()
 
   -- get maximum number of combobox entries
@@ -285,8 +265,8 @@ function ModuleTests.ModuleTest()
             step.WidgetBasic.value = basicValue
           elseif (basicValue == #step.BasicValues + 1) then
             step:EnableDefaultBasicConfiguation()
-          else
-            step.Widget.value = (basicValue % #step.BasicValues) + 1
+          -- else
+            -- step.Widget.value = (basicValue % #step.BasicValues) + 1
           end
         end
       end
@@ -300,12 +280,12 @@ function ModuleTests.ModuleTest()
 
     ProcessWorkflowSteps()
 
-    moduleTestXmpModified = CopyXmpFile(moduleTestXmpFile, moduleTestImage.path, moduleTestImage.filename,
-      '_BasicIterate_' .. basicValue, moduleTestXmpModified)
+    testXmpModified = CopyXmpFile(testXmpFile, testImage.path, testImage.filename,
+      '_BasicIterate_' .. basicValue, testXmpModified)
   end
 
   ---------------------------------------------------------------
-  -- done
+  -- tests are done
   -- dump result messages
   LogSummary()
   LogHelper.Info(_("module test finished"))

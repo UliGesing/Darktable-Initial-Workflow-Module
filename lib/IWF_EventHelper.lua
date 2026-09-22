@@ -66,22 +66,16 @@ function EventHelper.WaitForEventBase:EventReceivedFlagSet()
 end
 
 -- execute embedded function and wait for given EventType
-function EventHelper.WaitForEventBase:Do(embeddedFunction)
-    -- register event
-    self:EventReceivedFlagReset()
-
+function EventHelper.WaitForEventBase:DoInternal(embeddedFunction, durationMax)
     dt.destroy_event(ModuleName, self.EventType)
     dt.register_event(ModuleName, self.EventType, self.EventReceivedFunction)
-
-    -- LogHelper.Info(indent .. string.format(_("wait for event %s"), self.EventType))
 
     -- execute given function
     embeddedFunction()
 
     -- wait for registered event
     local duration = 0
-    local durationMax = StepTimeout:Value() * 5
-    local period = StepTimeout:Value() / 10
+    local period = math.max(100, StepTimeout:Value() / 10)
     local output = '..'
 
     while (not self.EventReceivedFlag) or (duration < period) do
@@ -94,17 +88,53 @@ function EventHelper.WaitForEventBase:Do(embeddedFunction)
         duration = duration + period
 
         if (duration >= durationMax) then
-            local timeoutMessage = string.format(
-                _("timeout after %d ms waiting for event %s - increase timeout setting and try again"), durationMax, self
-                .EventType)
-            LogHelper.Info(timeoutMessage)
-            LogHelper.SummaryMessage(timeoutMessage)
             break
         end
     end
 
     -- unregister event
     dt.destroy_event(ModuleName, self.EventType)
+end
+
+-- execute embedded function and wait for given EventType
+function EventHelper.WaitForEventBase:Do(embeddedFunction)
+    -- LogHelper.Info(indent .. string.format(_("wait for event %s"), self.EventType))
+
+    -- register event
+    self:EventReceivedFlagReset()
+
+    -- maximum duration depends on current timeout setting
+    local durationMax = math.max(2000, StepTimeout:Value() * 10)
+    -- call embedded function - first try
+    self:DoInternal(embeddedFunction, durationMax)
+
+    if (not self.EventReceivedFlag) then
+        LogHelper.Info(string.format(_("try again after %d ms waiting for event %s"), durationMax, self.EventType))
+
+        -- wait longer...
+        durationMax = durationMax * 2
+        -- call embedded function - try again...
+        self:DoInternal(embeddedFunction, durationMax)
+
+        if (not self.EventReceivedFlag) then
+            LogHelper.Info(string.format(_("try again after %d ms waiting for event %s"), durationMax, self.EventType))
+
+            -- wait longer...
+            durationMax = durationMax * 2
+            -- call embedded function - try again...
+            self:DoInternal(embeddedFunction, durationMax)
+
+            if (not self.EventReceivedFlag) then
+                LogHelper.Info(string.format(_("timeout after %d ms waiting for event %s"), durationMax, self.EventType))
+                LogHelper.SummaryMessage("timeout - failed to apply setting")
+            else
+                LogHelper.Info(string.format(_("OK - %s"), self.EventType))
+            end
+        else
+            LogHelper.Info(string.format(_("OK - %s"), self.EventType))
+        end
+    end
+
     self:EventReceivedFlagReset()
 end
 

@@ -141,7 +141,7 @@ local ModulePresetPath = {}
 -- this function returns the new full preset path
 -- presetPath == nil: concat modulePath and presetName
 -- presetPath == '': concat _builtin_, modulePath and presetName
--- presetPath not empty: concat all with '|' 
+-- presetPath not empty: concat all with '|'
 function GuiAction.GetPresetPath(modulePath, presetPath, presetName)
     if presetPath == nil then
         return modulePath .. presetName
@@ -164,11 +164,12 @@ function GuiAction.SelectModulePreset(modulePath, presetPath, presetName)
     if (GuiAction.ConvertValueToBoolean(buttonState)) then
         LogHelper.Info(indent .. _("disable currently selected module preset to apply it again"))
         GuiAction.DoWithoutEvent(fullPath, 0, 'button', 'off', 1.0)
-    else
-        LogHelper.Info(indent .. _("currently selected module preset differs"))
+        -- else
+        -- LogHelper.Info(indent .. _("currently selected module preset differs"))
     end
 
     GuiAction.Do(fullPath, 0, 'button', 'on', 1.0)
+    Helper.ThreadSleep(StepTimeout:Value())
 end
 
 -- Push the button  addressed by the path. Turn it off, if necessary.

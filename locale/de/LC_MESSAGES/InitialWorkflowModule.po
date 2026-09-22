@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-25 17:29+0100\n"
+"POT-Creation-Date: 2026-09-21 18:25+0200\n"
 "PO-Revision-Date: 2023-06-10 10:27+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -50,16 +50,24 @@ msgstr "beende darktable"
 msgid "create widget in lighttable and darkroom panels"
 msgstr "Modul in Leuchttisch- und Dunkelkammer-Ansicht erstellen"
 
-#: lib/IWF_EventHelper.lua:98
+#: lib/IWF_EventHelper.lua:112 lib/IWF_EventHelper.lua:120
 #, lua-format
-msgid ""
-"timeout after %d ms waiting for event %s - increase timeout setting and try "
-"again"
+msgid "try again after %d ms waiting for event %s"
+msgstr ""
+
+#: lib/IWF_EventHelper.lua:128
+#, fuzzy, lua-format
+msgid "timeout after %d ms waiting for event %s"
 msgstr ""
 "Timeout nach %d ms beim Warten auf das Event %s - evtl. sollten Sie die "
 "Einstellung des Timeout-Werts anpassen."
 
-#: lib/IWF_EventHelper.lua:132
+#: lib/IWF_EventHelper.lua:131 lib/IWF_EventHelper.lua:134
+#, lua-format
+msgid "OK - %s"
+msgstr ""
+
+#: lib/IWF_EventHelper.lua:162
 msgid ""
 "loading image failed, reload is performed (this could indicate a timing "
 "problem)"
@@ -83,59 +91,55 @@ msgstr ""
 "das aktuell ausgewählte Modul-Preset wird deaktiviert und es erneut "
 "anzuwenden"
 
-#: lib/IWF_GuiAction.lua:168
-msgid "currently selected module preset differs"
-msgstr "es ist aktuell ein anderes Modul-Preset ausgewählt"
-
-#: lib/IWF_GuiAction.lua:176
+#: lib/IWF_GuiAction.lua:177
 #, lua-format
 msgid "push button off and on: %s"
 msgstr "Funktion (Button, Zauberstab) aus- und einschalten: %s"
 
-#: lib/IWF_GuiAction.lua:182
+#: lib/IWF_GuiAction.lua:183
 msgid "nothing to do, button is already inactive"
 msgstr "Es gibt nichts zu tun, die Funktion ist bereits inaktiv"
 
-#: lib/IWF_GuiAction.lua:191
+#: lib/IWF_GuiAction.lua:192
 #, lua-format
 msgid "show module if not visible: %s"
 msgstr "Modul anzeigen, falls nicht sichtbar: %s"
 
-#: lib/IWF_GuiAction.lua:198
+#: lib/IWF_GuiAction.lua:199
 msgid "module is already visible, nothing to do"
 msgstr "Modul ist bereits sichtbar, es gibt nichts zu tun"
 
-#: lib/IWF_GuiAction.lua:205
+#: lib/IWF_GuiAction.lua:206
 #, lua-format
 msgid "disable module if enabled: %s"
 msgstr "Modul deaktivieren, falls aktiviert: %s"
 
-#: lib/IWF_GuiAction.lua:210
+#: lib/IWF_GuiAction.lua:211
 msgid "module is already disabled, nothing to do"
 msgstr "Modul ist bereits deaktiviert, es gibt nichts zu tun"
 
-#: lib/IWF_GuiAction.lua:217
+#: lib/IWF_GuiAction.lua:218
 #, lua-format
 msgid "hide module if visible: %s"
 msgstr "Modul ausblenden, falls sichtbar: %s"
 
-#: lib/IWF_GuiAction.lua:222
+#: lib/IWF_GuiAction.lua:223
 msgid "module is already hidden, nothing to do"
 msgstr "Modul ist bereits ausgeblendet, es gibt nichts zu tun"
 
-#: lib/IWF_GuiAction.lua:229
+#: lib/IWF_GuiAction.lua:230
 #, lua-format
 msgid "enable module if disabled: %s"
 msgstr "Modul aktivieren, falls deaktiviert: %s"
 
-#: lib/IWF_GuiAction.lua:234
+#: lib/IWF_GuiAction.lua:235
 msgid "module is already enabled, nothing to do"
 msgstr "Modul ist bereits aktiviert, es gibt nichts zu tun"
 
 #: lib/IWF_GuiWidgets.lua:61 lib/IWF_GuiWidgets.lua:84
 #: lib/IWF_GuiWidgets.lua:100 lib/IWF_GuiWidgets.lua:124
 #: lib/IWF_GuiWidgets.lua:140 lib/IWF_GuiWidgets.lua:166
-#: lib/IWF_Workflow.lua:115 lib/IWF_Workflow.lua:122
+#: lib/IWF_Workflow.lua:127 lib/IWF_Workflow.lua:134
 msgid "default"
 msgstr "standard"
 
@@ -163,49 +167,46 @@ msgstr ""
 "dieses Moduls und wende die Konfiguration an. e) Deaktiviere das Modul und "
 "modifiziere die Einstellungen nicht."
 
-#: lib/IWF_GuiWidgets.lua:124 lib/IWF_Workflow.lua:115 lib/IWF_Workflow.lua:156
-#: lib/IWF_Workflow.lua:188 lib/IWF_Workflow.lua:220
-#: lib/IWF_WorkflowSteps.lua:309 lib/IWF_WorkflowSteps.lua:1500
+#: lib/IWF_GuiWidgets.lua:124 lib/IWF_Workflow.lua:127 lib/IWF_Workflow.lua:168
+#: lib/IWF_Workflow.lua:196 lib/IWF_Workflow.lua:229
+#: lib/IWF_WorkflowSteps.lua:309 lib/IWF_WorkflowSteps.lua:1380
 msgid "ignore"
 msgstr "ignorieren"
 
-#: lib/IWF_GuiWidgets.lua:124 lib/IWF_ModuleTests.lua:250
-#: lib/IWF_Workflow.lua:115 lib/IWF_Workflow.lua:156 lib/IWF_Workflow.lua:199
-#: lib/IWF_Workflow.lua:226
+#: lib/IWF_GuiWidgets.lua:124 lib/IWF_Workflow.lua:127 lib/IWF_Workflow.lua:168
+#: lib/IWF_Workflow.lua:212 lib/IWF_Workflow.lua:240
 msgid "enable"
 msgstr "aktivieren"
 
-#: lib/IWF_GuiWidgets.lua:124 lib/IWF_Workflow.lua:115 lib/IWF_Workflow.lua:204
+#: lib/IWF_GuiWidgets.lua:124 lib/IWF_Workflow.lua:127 lib/IWF_Workflow.lua:217
 msgid "reset"
 msgstr "zuruecksetzen"
 
-#: lib/IWF_GuiWidgets.lua:124 lib/IWF_Workflow.lua:115 lib/IWF_Workflow.lua:194
-#: lib/IWF_WorkflowSteps.lua:313 lib/IWF_WorkflowSteps.lua:1504
+#: lib/IWF_GuiWidgets.lua:124 lib/IWF_Workflow.lua:127 lib/IWF_Workflow.lua:207
+#: lib/IWF_WorkflowSteps.lua:313 lib/IWF_WorkflowSteps.lua:1384
 msgid "disable"
 msgstr "deaktivieren"
 
 #: lib/IWF_GuiWidgets.lua:142 lib/IWF_GuiWidgets.lua:166
 #: lib/IWF_WorkflowSteps.lua:212 lib/IWF_WorkflowSteps.lua:341
-#: lib/IWF_WorkflowSteps.lua:430 lib/IWF_WorkflowSteps.lua:468
-#: lib/IWF_WorkflowSteps.lua:492 lib/IWF_WorkflowSteps.lua:530
-#: lib/IWF_WorkflowSteps.lua:551 lib/IWF_WorkflowSteps.lua:590
-#: lib/IWF_WorkflowSteps.lua:614 lib/IWF_WorkflowSteps.lua:657
-#: lib/IWF_WorkflowSteps.lua:681 lib/IWF_WorkflowSteps.lua:723
-#: lib/IWF_WorkflowSteps.lua:752 lib/IWF_WorkflowSteps.lua:797
-#: lib/IWF_WorkflowSteps.lua:841 lib/IWF_WorkflowSteps.lua:888
-#: lib/IWF_WorkflowSteps.lua:909 lib/IWF_WorkflowSteps.lua:956
-#: lib/IWF_WorkflowSteps.lua:981 lib/IWF_WorkflowSteps.lua:1023
-#: lib/IWF_WorkflowSteps.lua:1088 lib/IWF_WorkflowSteps.lua:1130
-#: lib/IWF_WorkflowSteps.lua:1160 lib/IWF_WorkflowSteps.lua:1201
-#: lib/IWF_WorkflowSteps.lua:1237 lib/IWF_WorkflowSteps.lua:1276
-#: lib/IWF_WorkflowSteps.lua:1313 lib/IWF_WorkflowSteps.lua:1351
-#: lib/IWF_WorkflowSteps.lua:1372 lib/IWF_WorkflowSteps.lua:1411
-#: lib/IWF_WorkflowSteps.lua:1437 lib/IWF_WorkflowSteps.lua:1525
-#: lib/IWF_WorkflowSteps.lua:1546 lib/IWF_WorkflowSteps.lua:1614
-#: lib/IWF_WorkflowSteps.lua:1672 lib/IWF_WorkflowSteps.lua:1716
-#: lib/IWF_WorkflowSteps.lua:1746 lib/IWF_WorkflowSteps.lua:1790
-#: lib/IWF_WorkflowSteps.lua:1820 lib/IWF_WorkflowSteps.lua:1872
-#: lib/IWF_WorkflowSteps.lua:1987 lib/IWF_WorkflowSteps.lua:2043
+#: lib/IWF_WorkflowSteps.lua:427 lib/IWF_WorkflowSteps.lua:466
+#: lib/IWF_WorkflowSteps.lua:490 lib/IWF_WorkflowSteps.lua:533
+#: lib/IWF_WorkflowSteps.lua:557 lib/IWF_WorkflowSteps.lua:599
+#: lib/IWF_WorkflowSteps.lua:628 lib/IWF_WorkflowSteps.lua:673
+#: lib/IWF_WorkflowSteps.lua:717 lib/IWF_WorkflowSteps.lua:764
+#: lib/IWF_WorkflowSteps.lua:785 lib/IWF_WorkflowSteps.lua:832
+#: lib/IWF_WorkflowSteps.lua:857 lib/IWF_WorkflowSteps.lua:899
+#: lib/IWF_WorkflowSteps.lua:968 lib/IWF_WorkflowSteps.lua:1010
+#: lib/IWF_WorkflowSteps.lua:1040 lib/IWF_WorkflowSteps.lua:1081
+#: lib/IWF_WorkflowSteps.lua:1117 lib/IWF_WorkflowSteps.lua:1156
+#: lib/IWF_WorkflowSteps.lua:1193 lib/IWF_WorkflowSteps.lua:1231
+#: lib/IWF_WorkflowSteps.lua:1252 lib/IWF_WorkflowSteps.lua:1291
+#: lib/IWF_WorkflowSteps.lua:1317 lib/IWF_WorkflowSteps.lua:1405
+#: lib/IWF_WorkflowSteps.lua:1426 lib/IWF_WorkflowSteps.lua:1494
+#: lib/IWF_WorkflowSteps.lua:1552 lib/IWF_WorkflowSteps.lua:1596
+#: lib/IWF_WorkflowSteps.lua:1626 lib/IWF_WorkflowSteps.lua:1670
+#: lib/IWF_WorkflowSteps.lua:1700 lib/IWF_WorkflowSteps.lua:1752
+#: lib/IWF_WorkflowSteps.lua:1872 lib/IWF_WorkflowSteps.lua:1928
 msgid "unchanged"
 msgstr "unveraendert"
 
@@ -223,15 +224,15 @@ msgstr ""
 msgid "insert test button widget"
 msgstr "Test-Button erzeugen"
 
-#: lib/IWF_ModuleTests.lua:179 lib/IWF_WorkflowButtons.lua:440
+#: lib/IWF_ModuleTests.lua:182 lib/IWF_WorkflowButtons.lua:438
 msgid "module tests must be started from darkroom view"
 msgstr "Modultests bitte in der Dunkelkammer-Ansicht starten"
 
-#: lib/IWF_ModuleTests.lua:185
+#: lib/IWF_ModuleTests.lua:188
 msgid "module test started"
 msgstr "Modultest gestartet"
 
-#: lib/IWF_ModuleTests.lua:311
+#: lib/IWF_ModuleTests.lua:291
 msgid "module test finished"
 msgstr "Modultest abgeschlossen"
 
@@ -243,57 +244,57 @@ msgstr "initial workflow gestartet"
 msgid "process workflow steps"
 msgstr "Workflow-Schritte anwenden"
 
-#: lib/IWF_WorkflowButtons.lua:101
+#: lib/IWF_WorkflowButtons.lua:99
 msgid "workflow canceled"
 msgstr "Workflow wurde abgebrochen"
 
-#: lib/IWF_WorkflowButtons.lua:109
+#: lib/IWF_WorkflowButtons.lua:107
 msgid "workflow canceled - darktable shutting down"
 msgstr "Workflow wurde abgebrochen - darktable wird beendet"
 
-#: lib/IWF_WorkflowButtons.lua:134
+#: lib/IWF_WorkflowButtons.lua:132
 msgid "OK - script run without errors"
 msgstr "OK - Skript-Durchlauf ohne Fehler."
 
-#: lib/IWF_WorkflowButtons.lua:135 lib/IWF_WorkflowButtons.lua:143
+#: lib/IWF_WorkflowButtons.lua:133 lib/IWF_WorkflowButtons.lua:141
 msgid "initial workflow done"
 msgstr "initial workflow abgeschlossen."
 
-#: lib/IWF_WorkflowButtons.lua:169
+#: lib/IWF_WorkflowButtons.lua:167
 msgid "process selected images"
 msgstr "selektierte Bilder verarbeiten"
 
-#: lib/IWF_WorkflowButtons.lua:174
+#: lib/IWF_WorkflowButtons.lua:172
 msgid "no image selected"
 msgstr "kein Bild selektiert"
 
-#: lib/IWF_WorkflowButtons.lua:185
+#: lib/IWF_WorkflowButtons.lua:183
 msgid "switch to darkroom view"
 msgstr "Zur Dunkelkammer-Ansicht wechseln"
 
-#: lib/IWF_WorkflowButtons.lua:199
+#: lib/IWF_WorkflowButtons.lua:197
 #, lua-format
 msgid "load image number %s of %s"
 msgstr "Lade Bild Nummer %s von %s"
 
-#: lib/IWF_WorkflowButtons.lua:200
+#: lib/IWF_WorkflowButtons.lua:198
 #, lua-format
 msgid "image file = %s"
 msgstr "Bilddatei = %s"
 
-#: lib/IWF_WorkflowButtons.lua:204
+#: lib/IWF_WorkflowButtons.lua:202
 msgid "load new image into darkroom view"
 msgstr "Neues Bild in der Dunkelkammer-Ansicht laden"
 
-#: lib/IWF_WorkflowButtons.lua:219
+#: lib/IWF_WorkflowButtons.lua:217
 msgid "switch to lighttable view"
 msgstr "Zur Leuchttisch-Ansicht wechseln"
 
-#: lib/IWF_WorkflowButtons.lua:233
+#: lib/IWF_WorkflowButtons.lua:231
 msgid "run"
 msgstr "starten"
 
-#: lib/IWF_WorkflowButtons.lua:235
+#: lib/IWF_WorkflowButtons.lua:233
 msgid ""
 "Perform all configured steps in darkroom for an initial workflow. Perform "
 "the steps from bottom to top along the pixel pipeline."
@@ -302,23 +303,23 @@ msgstr ""
 "anwenden. Die Schritte werden von unten nach oben entlang der Pixelpipeline "
 "verarbeitet."
 
-#: lib/IWF_WorkflowButtons.lua:258 lib/IWF_WorkflowSteps.lua:2139
+#: lib/IWF_WorkflowButtons.lua:256 lib/IWF_WorkflowSteps.lua:2024
 msgid "show modules"
 msgstr "Module anzeigen"
 
-#: lib/IWF_WorkflowButtons.lua:260
+#: lib/IWF_WorkflowButtons.lua:258
 msgid "Show the subpage with the configuration of the modules."
 msgstr "Zeige die Unterseite mit den Konfigurationen für die Module."
 
-#: lib/IWF_WorkflowButtons.lua:277
+#: lib/IWF_WorkflowButtons.lua:275
 msgid "show settings"
 msgstr "Zeige die Einstellungen"
 
-#: lib/IWF_WorkflowButtons.lua:279
+#: lib/IWF_WorkflowButtons.lua:277
 msgid "Show the subpage with common settings."
 msgstr "Zeige die Unterseite mit den allgemeinen Einstellungen."
 
-#: lib/IWF_WorkflowButtons.lua:298
+#: lib/IWF_WorkflowButtons.lua:296
 msgid ""
 "Activate the module to rotate the image and adjust the perspective. Enabled "
 "in darkroom view."
@@ -326,13 +327,13 @@ msgstr ""
 "Das Modul aktivieren, um das Bild zu drehen und die Perspektive anzupassen. "
 "In der Dunkelkammer-Ansicht anwendbar."
 
-#: lib/IWF_WorkflowButtons.lua:324
+#: lib/IWF_WorkflowButtons.lua:322
 msgid "Activate the module to crop the image. Enabled in darkroom view."
 msgstr ""
 "Das Modul aktivieren, um das Bild zuzuschneiden. In der Dunkelkammer-Ansicht "
 "anwendbar."
 
-#: lib/IWF_WorkflowButtons.lua:351
+#: lib/IWF_WorkflowButtons.lua:349
 msgid ""
 "Show exposure module to adjust the exposure until the mid-tones are clear "
 "enough. Enabled in darkroom view."
@@ -340,7 +341,7 @@ msgstr ""
 "Das Belichtungsmodul anzeigen, um die Belichtung anzupassen, bis die "
 "Mitteltoene klar genug sind. In der Dunkelkammer-Ansicht anwendbar."
 
-#: lib/IWF_WorkflowButtons.lua:418
+#: lib/IWF_WorkflowButtons.lua:416
 msgid ""
 "Execute module tests. Used during development and deployment. Enabled in "
 "darkroom view."
@@ -348,11 +349,11 @@ msgstr ""
 "Modultests durchfuehren. Dies wird waehrend der Entwicklung und "
 "Bereitstellung des Skripts verwendet. In Dunkelkammer-Ansicht anwendbar."
 
-#: lib/IWF_WorkflowButtons.lua:433
+#: lib/IWF_WorkflowButtons.lua:431
 msgid "Custom Code"
 msgstr "Custom Code"
 
-#: lib/IWF_WorkflowButtons.lua:435
+#: lib/IWF_WorkflowButtons.lua:433
 msgid ""
 "Execute code from TestCustomCode.lua: This file contains some custom debug "
 "code. It can be changed without restarting darktable. Just edit, save and "
@@ -365,17 +366,17 @@ msgstr ""
 "Probieren Sie damit einzelne Lua-Befehle im Handumdrehen aus, z.B. "
 "dt.gui.action-Befehle. In der Dunkelkammer-Ansicht aktiviert."
 
-#: lib/IWF_WorkflowButtons.lua:447
+#: lib/IWF_WorkflowButtons.lua:445
 #, lua-format
 msgid "module test file not found: %s"
 msgstr "Modultest-Datei nicht gefunden: %s"
 
-#: lib/IWF_Workflow.lua:94
+#: lib/IWF_Workflow.lua:106
 #, lua-format
 msgid "selection = %s - %s"
 msgstr "Auswahl = %s - %s"
 
-#: lib/IWF_Workflow.lua:131
+#: lib/IWF_Workflow.lua:143
 msgid ""
 "basic setting: a) Select default value. b) Ignore this step / module and do "
 "nothing at all. c) Enable corresponding module and set selected module "
@@ -388,7 +389,7 @@ msgstr ""
 "wende die Konfiguration an. e) Deaktiviere das Modul und modifiziere die "
 "Einstellungen nicht."
 
-#: lib/IWF_Workflow.lua:162
+#: lib/IWF_Workflow.lua:174
 msgid "basic setting: Ignore this module or do corresponding configuration."
 msgstr ""
 "Grundeinstellung: Ignoriere dieses Modul oder wende die entsprechende "
@@ -416,19 +417,11 @@ msgstr ""
 "Voreinstellungen. Es wird nur eines der Module Filmic, Sigmoid, AgX oder "
 "Basiskurve zugleich aktiviert. Die jeweils anderen werden deaktiviert."
 
-#: lib/IWF_WorkflowSteps.lua:354 lib/IWF_WorkflowSteps.lua:1216
+#: lib/IWF_WorkflowSteps.lua:354 lib/IWF_WorkflowSteps.lua:1096
 msgid "checkbox already selected, nothing to do"
 msgstr "Einstellung bereits vorhanden, nichts zu tun"
 
-#: lib/IWF_WorkflowSteps.lua:441
-msgid "Adjust global saturation in color balance rgb module."
-msgstr "Passt die globale Saettigung im Farbbalance-RGB-Modul an."
-
-#: lib/IWF_WorkflowSteps.lua:503
-msgid "Adjust global chroma in color balance rgb module."
-msgstr "Passt die globale Chroma im Farbbalance-RGB-Modul an."
-
-#: lib/IWF_WorkflowSteps.lua:563
+#: lib/IWF_WorkflowSteps.lua:439
 msgid ""
 "Adjust brilliance in color balance rgb module to add contrast (darker "
 "shadows and brighter highlights). You can combine this with sigmoid neutral "
@@ -438,11 +431,11 @@ msgstr ""
 "( dunklere Schatten und hellere Lichter). Dies kann gut mit dem Sigmoid-"
 "Preset für neutrales Grau kombiniert werden."
 
-#: lib/IWF_WorkflowSteps.lua:609
+#: lib/IWF_WorkflowSteps.lua:485
 msgid "peak white & grey fulcrum"
 msgstr "max. Weiss- und Kontrast-Graupunkt"
 
-#: lib/IWF_WorkflowSteps.lua:627
+#: lib/IWF_WorkflowSteps.lua:503
 msgid ""
 "Set auto pickers of the module mask and peak white and gray luminance value "
 "to normalize the power setting in the 4 ways tab."
@@ -451,12 +444,12 @@ msgstr ""
 "Grauluminanz automatisch an, um die Potenzfunktion auf der Registerkarte 4 "
 "HSL zu normalisieren."
 
-#: lib/IWF_WorkflowSteps.lua:696
+#: lib/IWF_WorkflowSteps.lua:572
 msgid "Choose a predefined basic colorfulness preset for your color-grading."
 msgstr ""
 "Wähle ein vorhandenes Preset für die Farbkorrektur / Farbeinstellung aus."
 
-#: lib/IWF_WorkflowSteps.lua:770 lib/IWF_WorkflowSteps.lua:929
+#: lib/IWF_WorkflowSteps.lua:646 lib/IWF_WorkflowSteps.lua:805
 msgid ""
 "Adjust luminance and chroma contrast. Apply choosen preset (clarity or "
 "denoise & sharpen). Choose different values to adjust the strength of the "
@@ -466,7 +459,7 @@ msgstr ""
 "Voreinstellung anwenden (Klarheit oder entrauschen & schaerfen). Stellen Sie "
 "verschiedene Werte ein, um die Staerke des Effekts anzupassen."
 
-#: lib/IWF_WorkflowSteps.lua:861
+#: lib/IWF_WorkflowSteps.lua:737
 msgid ""
 "Use LUTs to modify the color mapping, perform color corrections or apply "
 "looks. You can choose a given preset."
@@ -474,19 +467,19 @@ msgstr ""
 "LUTs für die Farbzuordnung anwenden, Farbkorrekturen durchführen oder Looks "
 "anwenden. Wählen Sie ein vorhandenes Preset aus."
 
-#: lib/IWF_WorkflowSteps.lua:974
+#: lib/IWF_WorkflowSteps.lua:850
 msgid "mask exposure compensation"
 msgstr "Maskenbelichtung kompensieren"
 
-#: lib/IWF_WorkflowSteps.lua:975
+#: lib/IWF_WorkflowSteps.lua:851
 msgid "mask contrast compensation"
 msgstr "Maskenkontrast kompensieren"
 
-#: lib/IWF_WorkflowSteps.lua:976
+#: lib/IWF_WorkflowSteps.lua:852
 msgid "exposure & contrast comp."
 msgstr "Belichtung & Kontrast komp."
 
-#: lib/IWF_WorkflowSteps.lua:996
+#: lib/IWF_WorkflowSteps.lua:872
 msgid ""
 "Apply automatic mask contrast and exposure compensation. Auto adjust the "
 "contrast and average exposure."
@@ -494,7 +487,7 @@ msgstr ""
 "Automatische Anpassung der durchschnittlichen Belichtung und des Kontrasts "
 "der Maske."
 
-#: lib/IWF_WorkflowSteps.lua:1103
+#: lib/IWF_WorkflowSteps.lua:983
 msgid ""
 "Use preset to compress shadows and highlights with exposure-independent "
 "guided filter (eigf) (soft, medium or strong)."
@@ -503,15 +496,15 @@ msgstr ""
 "belichtungsunabhaengigen gefuehrten Filter (eigf) (gering, mittel oder "
 "stark) zu komprimieren."
 
-#: lib/IWF_WorkflowSteps.lua:1154
+#: lib/IWF_WorkflowSteps.lua:1034
 msgid "auto exposure adjustment"
 msgstr "automatische Belichtungsanpassung"
 
-#: lib/IWF_WorkflowSteps.lua:1155
+#: lib/IWF_WorkflowSteps.lua:1035
 msgid "auto and camera compensation"
 msgstr "auto Belichtung + BIAS kompensieren"
 
-#: lib/IWF_WorkflowSteps.lua:1174
+#: lib/IWF_WorkflowSteps.lua:1054
 msgid ""
 "Automatically adjust the exposure correction. Remove the camera exposure "
 "bias, useful if you exposed the image to the right."
@@ -520,21 +513,21 @@ msgstr ""
 "Belichtungskorrektur der Kamera. Dies ist hilfreich, wenn Sie das Bild nach "
 "rechts belichtet haben."
 
-#: lib/IWF_WorkflowSteps.lua:1249
+#: lib/IWF_WorkflowSteps.lua:1129
 msgid "Enable and reset lens correction module."
 msgstr "Objektivkorrektur aktivieren und zuruecksetzen."
 
-#: lib/IWF_WorkflowSteps.lua:1292
+#: lib/IWF_WorkflowSteps.lua:1172
 #, lua-format
 msgid "current correction method = %s"
 msgstr "Aktuelle Anpassung = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1296
+#: lib/IWF_WorkflowSteps.lua:1176
 #, lua-format
 msgid "nothing to do, correction method already = %s"
 msgstr "Nichts zu tun, Anpassung ist bereits = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1324
+#: lib/IWF_WorkflowSteps.lua:1204
 msgid ""
 "Enable denoise (profiled) module. There is nothing to configure, just enable "
 "or reset this module."
@@ -543,7 +536,7 @@ msgstr ""
 "konfigurieren, das Modul kann aktiviert oder auch zuvor zurueckgesetzt "
 "werden."
 
-#: lib/IWF_WorkflowSteps.lua:1384
+#: lib/IWF_WorkflowSteps.lua:1264
 msgid ""
 "Reconstruct pixels from sensor data and recover details lost due to in-"
 "camera blurring."
@@ -551,15 +544,15 @@ msgstr ""
 "Rekonstruiere Pixels aus den Sensordaten und stelle Details wieder her,die "
 "durch kamera-interne Unschärfe verloren gegangen sind."
 
-#: lib/IWF_WorkflowSteps.lua:1431
+#: lib/IWF_WorkflowSteps.lua:1311
 msgid "Bayer sensor"
 msgstr "Bayer-Sensor"
 
-#: lib/IWF_WorkflowSteps.lua:1432
+#: lib/IWF_WorkflowSteps.lua:1312
 msgid "other sensors"
 msgstr "andere Sensoren"
 
-#: lib/IWF_WorkflowSteps.lua:1451
+#: lib/IWF_WorkflowSteps.lua:1331
 msgid ""
 "Correct chromatic aberrations. Distinguish between Bayer sensor and other "
 "camera sensors. This operation uses the corresponding correction module and "
@@ -570,7 +563,7 @@ msgstr ""
 "Konfiguration nutzt das passende Korrekturmodul und deaktiviert das jeweils "
 "andere."
 
-#: lib/IWF_WorkflowSteps.lua:1571
+#: lib/IWF_WorkflowSteps.lua:1451
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "illuminant. The type of illuminant assumed to have lit the scene. By default "
@@ -581,30 +574,30 @@ msgstr ""
 "es die Szene beleuchtet hat. Als Standardvorgabe wird hier beim Legacy-"
 "Workflow keine Einstellung vorgenommen."
 
-#: lib/IWF_WorkflowSteps.lua:1623
+#: lib/IWF_WorkflowSteps.lua:1503
 #, lua-format
 msgid "color calibration adaption = %s"
 msgstr "Farbkalibrierung Anpassung = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1625
+#: lib/IWF_WorkflowSteps.lua:1505
 msgid "illuminant cannot be set"
 msgstr "Leuchtmittel kann nicht eingestellt werden"
 
-#: lib/IWF_WorkflowSteps.lua:1628
+#: lib/IWF_WorkflowSteps.lua:1508
 msgid "illuminant can be set"
 msgstr "Leuchtmittel kann eingestellt werden"
 
-#: lib/IWF_WorkflowSteps.lua:1648
+#: lib/IWF_WorkflowSteps.lua:1528
 #, lua-format
 msgid "current illuminant = %s"
 msgstr "Aktuelles Leuchtmittel = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1652
+#: lib/IWF_WorkflowSteps.lua:1532
 #, lua-format
 msgid "nothing to do, illuminant already = %s"
 msgstr "Nichts zu tun, Leuchtmittel bereits = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1689
+#: lib/IWF_WorkflowSteps.lua:1569
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "adaptation. The working color space in which the module will perform its "
@@ -614,17 +607,17 @@ msgstr ""
 "die Art der Adaption. Der Farbraum, in dem das Modul seine chromatische "
 "Anpassung und Kanalmischung vornimmt."
 
-#: lib/IWF_WorkflowSteps.lua:1724
+#: lib/IWF_WorkflowSteps.lua:1604
 #, lua-format
 msgid "current adaptation = %s"
 msgstr "Aktuelle Anpassung = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1728
+#: lib/IWF_WorkflowSteps.lua:1608
 #, lua-format
 msgid "nothing to do, adaptation already = %s"
 msgstr "Nichts zu tun, Anpassung bereits = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1763
+#: lib/IWF_WorkflowSteps.lua:1643
 msgid ""
 "Reconstruct color information for clipped pixels. Select an appropriate "
 "reconstruction methods to reconstruct the missing data from unclipped "
@@ -634,21 +627,21 @@ msgstr ""
 "Sie eine geeignete Rekonstruktionsmethode, um die fehlenden Daten aus nicht "
 "abgeschnittenen Kanaelen und/oder benachbarten Pixeln zu rekonstruieren."
 
-#: lib/IWF_WorkflowSteps.lua:1798 lib/IWF_WorkflowSteps.lua:1880
+#: lib/IWF_WorkflowSteps.lua:1678 lib/IWF_WorkflowSteps.lua:1760
 #, lua-format
 msgid "current value = %s"
 msgstr "Aktueller Wert = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1802 lib/IWF_WorkflowSteps.lua:1884
+#: lib/IWF_WorkflowSteps.lua:1682 lib/IWF_WorkflowSteps.lua:1764
 #, lua-format
 msgid "nothing to do, value already = %s"
 msgstr "Nichts zu tun, Wert ist bereits = %s"
 
-#: lib/IWF_WorkflowSteps.lua:1835
+#: lib/IWF_WorkflowSteps.lua:1715
 msgid "white balance"
 msgstr "Weissabgleich"
 
-#: lib/IWF_WorkflowSteps.lua:1838
+#: lib/IWF_WorkflowSteps.lua:1718
 msgid ""
 "Adjust the white balance of the image by altering the temperature. By "
 "default unchanged for the legacy workflow."
@@ -656,7 +649,7 @@ msgstr ""
 "Passen Sie den Weissabgleich des Bildes mit der passenden Temperatur an. Als "
 "Standardvorgabe wird hier beim Legacy-Workflow keine Einstellung vorgenommen."
 
-#: lib/IWF_WorkflowSteps.lua:1912
+#: lib/IWF_WorkflowSteps.lua:1792
 msgid ""
 "Creator of this image. Enter your name or contact address. Leave this field "
 "blank if you don't want to change the current value. After reloading your "
@@ -669,11 +662,11 @@ msgstr ""
 "Bildinformation-Modul angezeigt. Dieser Wert wird in die jpg Metadaten "
 "exportiert."
 
-#: lib/IWF_WorkflowSteps.lua:1927
+#: lib/IWF_WorkflowSteps.lua:1807
 msgid "empty, tag keeps unchanged"
 msgstr "leer, Tag bleibt unverändert"
 
-#: lib/IWF_WorkflowSteps.lua:2006
+#: lib/IWF_WorkflowSteps.lua:1891
 msgid ""
 "Choose a creative common license. After reloading your image you can find "
 "this value as full text in metadata editor and image information module. "
@@ -683,17 +676,17 @@ msgstr ""
 "wurde, wird dieser Wert im Metadaten-Editor und im Bildinformation-Modul "
 "angezeigt. Dieser Wert wird in die jpg Metadaten exportiert."
 
-#: lib/IWF_WorkflowSteps.lua:2077
+#: lib/IWF_WorkflowSteps.lua:1962
 msgid "discard complete history"
 msgstr "Verlauf ganz verwerfen"
 
-#: lib/IWF_WorkflowSteps.lua:2079
+#: lib/IWF_WorkflowSteps.lua:1964
 msgid "Reset all modules of the whole pixelpipe and discard complete history."
 msgstr ""
 "Verwerfe alle Einstellungen der Module der gesamten Pixelpipeline und den "
 "kompletten Verlauf."
 
-#: lib/IWF_WorkflowSteps.lua:2142
+#: lib/IWF_WorkflowSteps.lua:2027
 msgid ""
 "Show darkroom modules for enabled workflow steps during execution of this "
 "initial workflow. This makes the changes easier to understand."
@@ -701,11 +694,11 @@ msgstr ""
 "Module in der Dunkelkammer anzeigen, dabei die Konfigurationen im Initial-"
 "Workflow anwenden. Dadurch sind die Einstellungen leichter nachzuvollziehen."
 
-#: lib/IWF_WorkflowSteps.lua:2193
+#: lib/IWF_WorkflowSteps.lua:2078
 msgid "apply changes directly after input"
 msgstr "führe bei einer Änderung einzelne Schritte direkt aus."
 
-#: lib/IWF_WorkflowSteps.lua:2196
+#: lib/IWF_WorkflowSteps.lua:2081
 msgid ""
 "If a setting in this module is changed, the corresponding workflow step is "
 "executed directly. The associated individual module is configured. This "
@@ -718,11 +711,11 @@ msgstr ""
 "Konfiguration nachzuvollziehen, ohne den gesamten Workflow ausführen zu "
 "müssen."
 
-#: lib/IWF_WorkflowSteps.lua:2252
+#: lib/IWF_WorkflowSteps.lua:2140
 msgid "timeout value"
 msgstr "Zeitlimit / Timeout"
 
-#: lib/IWF_WorkflowSteps.lua:2255
+#: lib/IWF_WorkflowSteps.lua:2143
 msgid ""
 "Some calculations take a certain amount of time. Depending on the hardware "
 "equipment also longer.This script waits and attempts to detect timeouts. If "
@@ -739,7 +732,16 @@ msgstr ""
 "anderen Stellen auch ein Vielfaches (Laden eines Bildes) oder ein Bruchteil "
 "davon (Abfragen eines aktuellen Wertes)."
 
-#: lib/IWF_WorkflowSteps.lua:2275
+#: lib/IWF_WorkflowSteps.lua:2163
 #, lua-format
 msgid "step timeout = %s ms"
 msgstr "Zeitlimit / Timeout dieses Schritts = %s ms"
+
+#~ msgid "currently selected module preset differs"
+#~ msgstr "es ist aktuell ein anderes Modul-Preset ausgewählt"
+
+#~ msgid "Adjust global saturation in color balance rgb module."
+#~ msgstr "Passt die globale Saettigung im Farbbalance-RGB-Modul an."
+
+#~ msgid "Adjust global chroma in color balance rgb module."
+#~ msgstr "Passt die globale Chroma im Farbbalance-RGB-Modul an."

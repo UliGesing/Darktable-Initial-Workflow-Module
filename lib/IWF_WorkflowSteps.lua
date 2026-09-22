@@ -202,9 +202,9 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.agxDefault = _dtConcat({ "agx" })
         self.agxDefaultAutoTune = _dtConcat({ "agx", ' + ', "auto tune levels" })
         self.agxBlenderBasePreset = _dtConcat({ "agx", ' ', "blender-like", ' ', "base" })
-        self.agxBlenderBasePresetAutoTune = _dtConcat({ "agx", ' ', "blender", ' ', "base", ' + ', 'auto tune' })
-        self.agxSmoothBasePreset = _dtConcat({ "agx", ' ', "smooth", ' ', "base" })
-        self.agxSmoothBasePresetAutoTune = _dtConcat({ "agx", ' ', "smooth", ' ', "base", ' + ', 'auto tune' })
+        self.agxBlenderBasePresetAutoTune = _dtConcat({ "agx", ' ', "blender-like", ' ', "base", ' + ', 'auto tune' })
+        self.agxSmoothBasePreset = _dtConcat({ "agx", ' ', "smooth" })
+        self.agxSmoothBasePresetAutoTune = _dtConcat({ "agx", ' ', "smooth", ' + ', 'auto tune' })
 
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
@@ -332,7 +332,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -400,138 +400,14 @@ function WorkflowSteps.CreateWorkflowSteps()
             end
 
             if (selection == self.agxSmoothBasePreset) then
-                GuiAction.SelectModulePreset('iop/agx/preset/', '', 'smooth|base')
+                GuiAction.SelectModulePreset('iop/agx/preset/', '', 'smooth')
             end
 
             if (selection == self.agxSmoothBasePresetAutoTune) then
-                GuiAction.SelectModulePreset('iop/agx/preset/', '', 'smooth|base')
+                GuiAction.SelectModulePreset('iop/agx/preset/', '', 'smooth')
                 GuiAction.Do("iop/agx/exposure range/auto tune levels", 0, '', 'toggle', 1.0)
             end
         end
-    end
-
-    ---------------------------------------------------------------
-
-    StepColorBalanceGlobalSaturation = Workflow.StepComboBox:new():new {}
-    -- workflow steps for global saturation was removed
-    -- implementation was kept to reactivate it if needed
-    -- remove "--" in the following line if desired.
-    -- table.insert(Workflow.ModuleSteps, StepColorBalanceGlobalSaturation)
-
-    function StepColorBalanceGlobalSaturation:PostConstructor()
-        -- darktable internal module name abbreviation
-        self.OperationNameInternal = 'colorbalancergb'
-        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
-        self.WidgetStackValue = WidgetStack.Modules
-
-        -- array of configuration values ​​selectable by the user
-        self.ConfigurationValues =
-        {
-            _("unchanged"), 0, 5, 10, 15, 20, 25, 30, 35
-        }
-
-        -- step configurationvalue array index, used if module settings are reset to "unchanged"
-        self.ConfigurationValueUnchangedIndex = 1
-
-        -- step configurationvalue array index, used if module settings are reset to "default"
-        self.ConfigurationValueDefaultIndex = 1
-
-        self.Label = _dtConcat({ "color balance rgb", ' ', "saturation" })
-
-        self.Tooltip = _("Adjust global saturation in color balance rgb module.")
-    end
-
-    function StepColorBalanceGlobalSaturation:Init()
-        -- show step label and tooltip in first column of the inital workflow module
-        self:CreateLabelWidget()
-        -- show simple step initialization combobox in 2nd column: ignore or enable module first
-        self:CreateSimpleBasicWidget()
-
-        -- show main combobox with configuration values in 3rd column
-        self.Widget = dt.new_widget('combobox')
-            {
-                changed_callback = Workflow.ComboBoxChangedCallback,
-                label = ' ', -- use separate label widget
-                tooltip = self:GetLabelAndTooltip(),
-                table.unpack(self.ConfigurationValues)
-            }
-    end
-
-    function StepColorBalanceGlobalSaturation:Run()
-        -- evaluate basic widget
-        if (not self:RunSimpleBasicWidget()) then
-            return
-        end
-
-        local selection = self.Widget.value
-
-        if (selection == _("unchanged")) then
-            return
-        end
-
-        GuiAction.SetValue('iop/colorbalancergb/global saturation', 0, 'value', 'set', selection / 100)
-    end
-
-    ---------------------------------------------------------------
-
-    StepColorBalanceGlobalChroma = Workflow.StepComboBox:new():new {}
-    -- workflow steps for global chroma was removed
-    -- implementation was kept to reactivate it if needed
-    -- remove "--" in the following line if desired.
-    -- table.insert(Workflow.ModuleSteps, StepColorBalanceGlobalChroma)
-
-    function StepColorBalanceGlobalChroma:PostConstructor()
-        -- darktable internal module name abbreviation
-        self.OperationNameInternal = 'colorbalancergb'
-        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
-        self.WidgetStackValue = WidgetStack.Modules
-
-        -- array of configuration values ​​selectable by the user
-        self.ConfigurationValues =
-        {
-            _("unchanged"), 0, 5, 10, 15, 20, 25, 30, 35
-        }
-
-        -- step configurationvalue array index, used if module settings are reset to "unchanged"
-        self.ConfigurationValueUnchangedIndex = 1
-
-        -- step configurationvalue array index, used if module settings are reset to "default"
-        self.ConfigurationValueDefaultIndex = 1
-
-        Label = _dtConcat({ "color balance rgb", ' ', "chroma" })
-
-        self.Tooltip = _("Adjust global chroma in color balance rgb module.")
-    end
-
-    function StepColorBalanceGlobalChroma:Init()
-        -- show step label and tooltip in first column of the inital workflow module
-        self:CreateLabelWidget()
-        -- show simple step initialization combobox in 2nd column: ignore or enable module first
-        self:CreateSimpleBasicWidget()
-
-        -- show main combobox with configuration values in 3rd column
-        self.Widget = dt.new_widget('combobox')
-            {
-                changed_callback = Workflow.ComboBoxChangedCallback,
-                label = ' ', -- use separate label widget
-                tooltip = self:GetLabelAndTooltip(),
-                table.unpack(self.ConfigurationValues)
-            }
-    end
-
-    function StepColorBalanceGlobalChroma:Run()
-        -- evaluate basic widget
-        if (not self:RunSimpleBasicWidget()) then
-            return
-        end
-
-        local selection = self.Widget.value
-
-        if (selection == _("unchanged")) then
-            return
-        end
-
-        GuiAction.SetValue('iop/colorbalancergb/global chroma', 0, 'value', 'set', selection / 100)
     end
 
     ---------------------------------------------------------------
@@ -648,7 +524,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepColorBalanceRGBMasks:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -714,7 +590,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepColorBalanceRGB:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -788,7 +664,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepContrastEqualizer:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -799,27 +675,27 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         if (selection == self.clarity010) then
-            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("clarity"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', "clarity")
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
             --
         elseif (selection == self.clarity025) then
-            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("clarity"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', "clarity")
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
             --
         elseif (selection == self.clarity050) then
-            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("clarity"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', "clarity")
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
             --
         elseif (selection == self.denoise010) then
-            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("denoise & sharpen"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', "denoise & sharpen")
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.10)
             --
         elseif (selection == self.denoise025) then
-            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("denoise & sharpen"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', "denoise & sharpen")
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.25)
             --
         elseif (selection == self.denoise050) then
-            GuiAction.SelectModulePreset('iop/atrous/preset/', '', _dt("denoise & sharpen"))
+            GuiAction.SelectModulePreset('iop/atrous/preset/', '', "denoise & sharpen")
             GuiAction.SetValue('iop/atrous/mix', 0, 'value', 'set', 0.5)
         end
     end
@@ -947,7 +823,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepDiffuseOrSharpen:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1014,7 +890,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepToneEqualizerMask:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1039,6 +915,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             -- (there are different states after the complete reset of the history stack and after the initialization of this module)
             local oldValue = GuiAction.DoWithoutEvent(path, 0, 'value', 'set', 0 / 0)
             GuiAction.SetValue(path, 0, 'value', 'set', oldValue + 0.1)
+            Helper.ThreadSleep(StepTimeout:Value())
 
             -- toggle button
             GuiAction.Do(path, 0, 'button', 'toggle', 1.0)
@@ -1053,8 +930,11 @@ function WorkflowSteps.CreateWorkflowSteps()
             local path = 'iop/toneequal/mask contrast compensation'
 
             -- workaround: move slider to initialize mask post-processing
+            -- otherwise this setting will not work reliably
+            -- (there are different states after the complete reset of the history stack and after the initialization of this module)
             local oldValue = GuiAction.DoWithoutEvent(path, 0, 'value', 'set', 0 / 0)
             GuiAction.SetValue(path, 0, 'value', 'set', oldValue + 0.1)
+            Helper.ThreadSleep(StepTimeout:Value())
 
             -- toggle button
             GuiAction.Do(path, 0, 'button', 'toggle', 1.0)
@@ -1121,7 +1001,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepToneEqualizer:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1192,7 +1072,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepExposureCorrection:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1267,7 +1147,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepLensCorrection:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1342,7 +1222,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepDenoiseProfiled:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1388,7 +1268,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
         -- show step initialization combobox in 2nd column: ignore, enable, reset or disable module first
-        self:CreateEmptyBasicWidget()
+        self:CreateSimpleBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
@@ -1402,7 +1282,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepDemosaicCaptureSharpen:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunSimpleBasicWidget()) then
             return
         end
 
@@ -1516,7 +1396,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1605,7 +1485,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepColorCalibrationIlluminant:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1707,7 +1587,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepColorCalibrationAdaptation:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1781,7 +1661,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepHighlightReconstruction:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1863,7 +1743,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepWhiteBalance:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunDefaultBasicWidget()) then
             return
         end
 
@@ -1901,10 +1781,10 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues = {}
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
-        self.ConfigurationValueUnchangedIndex = 2
+        self.ConfigurationValueUnchangedIndex = 1
 
         -- step configurationvalue array index, used if module settings are reset to "default"
-        self.ConfigurationValueDefaultIndex = 3
+        self.ConfigurationValueDefaultIndex = 1
 
         self.Label = _dtConcat({ 'metadata', ' ', 'creator' })
 
@@ -1916,7 +1796,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
         -- show empty invisible step initialization combobox in 2nd column (settings subpage)
-        self:CreateEmptyBasicWidget()
+        self:CreateSimpleBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('entry')
@@ -1932,6 +1812,11 @@ function WorkflowSteps.CreateWorkflowSteps()
     end
 
     function StepCreator:Run()
+        -- evaluate basic widget
+        if (not self:RunSimpleBasicWidget()) then
+            return
+        end
+
         local creatorName = self.Widget.text
 
         if (creatorName == nil) or (creatorName == "") then
@@ -1959,7 +1844,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     function StepCreativeCommonLicense:PostConstructor()
         -- darktable internal module name abbreviation
         -- operation = nil: ignore this module during module reset
-        self.OperationNameInternal = "creator and license"
+        self.OperationNameInternal = nil
         -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
         self.WidgetStackValue = WidgetStack.Modules
 
@@ -2010,7 +1895,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- show step label and tooltip in first column of the inital workflow module
         self:CreateLabelWidget()
         -- show empty invisible step initialization combobox in 2nd column (settings subpage)
-        self:CreateEmptyBasicWidget()
+        self:CreateSimpleBasicWidget()
 
         -- show main combobox with configuration values in 3rd column
         self.Widget = dt.new_widget('combobox')
@@ -2030,7 +1915,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
     function StepCreativeCommonLicense:Run()
         -- evaluate basic widget
-        if (not self:RunBasicWidget()) then
+        if (not self:RunSimpleBasicWidget()) then
             return
         end
 
@@ -2185,10 +2070,10 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues = { self.ConfigNo, self.ConfigYes }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
-        self.ConfigurationValueUnchangedIndex = 2
+        self.ConfigurationValueUnchangedIndex = 1
 
         -- step configurationvalue array index, used if module settings are reset to "default"
-        self.ConfigurationValueDefaultIndex = 2
+        self.ConfigurationValueDefaultIndex = 1
 
         self.Label = _("apply changes directly after input")
 
@@ -2235,6 +2120,9 @@ function WorkflowSteps.CreateWorkflowSteps()
         -- array of configuration values ​​selectable by the user
         self.ConfigurationValues =
         {
+            '50',
+            '100',
+            '200',
             '500',
             '1000',
             '2000',
@@ -2247,7 +2135,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValueUnchangedIndex = 2
 
         -- step configurationvalue array index, used if module settings are reset to "default"
-        self.ConfigurationValueDefaultIndex = 3
+        self.ConfigurationValueDefaultIndex = 2
 
         self.Label = _("timeout value")
 
