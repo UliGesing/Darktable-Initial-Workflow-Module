@@ -1296,7 +1296,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         if (selection == self.CaptureSharpen) then
-            GuiAction.Do('iop/demosaic/capture sharpen', 0, '', 'toggle', 1.0)
+            GuiAction.Do('iop/demosaic/enabled', 0, '', 'right-on', -1.0)
         end
     end
 
