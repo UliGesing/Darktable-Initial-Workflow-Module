@@ -90,7 +90,7 @@ end
 
 -- message at the beginning of a step
 function Workflow.ModuleStep:LogStepMessage()
-    LogHelper.Info('==============================')
+    LogHelper.Verbose('==============================')
 
     local currentValue
 
@@ -103,7 +103,7 @@ function Workflow.ModuleStep:LogStepMessage()
     end
 
     ---@diagnostic disable-next-line: undefined-field
-    LogHelper.Info(string.format(_("selection = %s - %s"), self.WidgetBasic.value, currentValue))
+    LogHelper.Major(string.format(_("selection = %s - %s"), self.WidgetBasic.value, currentValue))
 end
 
 -- handle view changed event (lighttable / darkroom view)
@@ -370,16 +370,6 @@ Workflow.StepTextEntry = Workflow.ModuleStep:new():new
     {
     }
 
--- enable flag
-function Workflow.StepTextEntry:EnableRunSingleStepOnSettingsChange()
-    -- do nothing for StepTextEntry
-end
-
--- disable flag
-function Workflow.StepTextEntry:DisableRunSingleStepOnSettingsChange()
-    -- do nothing for StepTextEntry
-end
-
 -- choose default basic setting
 function Workflow.StepTextEntry:EnableDefaultBasicConfiguation()
     self.WidgetBasic.value = self.WidgetBasicDefaultValue
@@ -389,7 +379,6 @@ end
 function Workflow.StepTextEntry:OperationName()
     return self.OperationNameInternal
 end
-
 
 -- save current selections of this workflow step
 -- used to restore settings after starting darktable
@@ -444,17 +433,22 @@ Workflow.StepComboBox = Workflow.ModuleStep:new():new
     }
 
 -- enable flag
-function Workflow.StepComboBox:EnableRunSingleStepOnSettingsChange()
+function Workflow:EnableRunSingleStepOnSettingsChange()
+    -- sleep for a short moment to give callback function a chance to run
+    -- callback function Workflow.ComboBoxChangedCallback calls Workflow.RunSingleStep
+    -- function Workflow.RunSingleStep checks the RunSingleStepOnSettingsChange flag
+    dt.control.sleep(100)
+
     self.RunSingleStepOnSettingsChange = true
 end
 
 -- disable flag
-function Workflow.StepComboBox:DisableRunSingleStepOnSettingsChange()
+function Workflow:DisableRunSingleStepOnSettingsChange()
     self.RunSingleStepOnSettingsChange = false
 end
 
 -- check flag
-function Workflow.StepComboBox:CheckRunSingleStepOnSettingsChange()
+function Workflow:CheckRunSingleStepOnSettingsChange()
     return self.RunSingleStepOnSettingsChange
 end
 
@@ -534,14 +528,14 @@ function Workflow.RunSingleStep(step)
     end
 
     -- run single step after configuration was changed, if configured accordingly.
-    -- user can enable this by activating "run single steps on change"
+    -- user can enable this by activating "apply changes directly after input"
     if (StepRunSingleStepOnSettingsChange:Value() == false) then
         return
     end
 
     -- return, if e.g. combobox "all module settings" was selected
     -- do not excecute a single step, if all configurations are changing, prevent chaos
-    if (not step:CheckRunSingleStepOnSettingsChange()) then
+    if (not Workflow:CheckRunSingleStepOnSettingsChange()) then
         return
     end
 

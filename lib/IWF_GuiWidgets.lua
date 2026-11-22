@@ -52,30 +52,25 @@ ResetAllCommonMainSettingsWidget = dt.new_widget('combobox')
             local selection = ResetAllCommonMainSettingsWidget.value
 
             if (selection ~= _dt("all common settings")) then
+                -- do not excecute a single step, if all configurations are changing, prevent chaos
+                Workflow:DisableRunSingleStepOnSettingsChange()
+
                 for i, step in ipairs(Workflow.ModuleSteps) do
                     if step.WidgetStackValue == WidgetStack.Settings then
                         if (step ~= StepTimeout) then
-                            -- do not excecute a single step, if all configurations are changing, prevent chaos
-                            step:DisableRunSingleStepOnSettingsChange()
-
                             if (selection == _("default")) then
-                                LogHelper.Info(step.Label)
+                                LogHelper.Verbose(step.Label)
                                 step:EnableDefaultStepConfiguation()
                             end
-
-                            -- sleep for a short moment to give callback function a chance to run
-                            -- callback function Workflow.ComboBoxChangedCallback calls Workflow.RunSingleStep
-                            -- function Workflow.RunSingleStep checks the RunSingleStepOnSettingsChange flag
-                            dt.control.sleep(100)
-
-                            -- set default
-                            step:EnableRunSingleStepOnSettingsChange()
                         end
                     end
                 end
 
                 -- reset to default selection
                 ResetAllCommonMainSettingsWidget.value = 1
+
+                -- set default
+                Workflow:EnableRunSingleStepOnSettingsChange()
             end
         end,
         label = ' ',
@@ -91,31 +86,24 @@ ResetAllModuleBasicSettingsWidget = dt.new_widget('combobox')
             local selection = ResetAllModuleBasicSettingsWidget.value
 
             if (selection ~= _dt("all module basics")) then
+                -- do not excecute a single step, if all configurations are changing, prevent chaos
+                Workflow:DisableRunSingleStepOnSettingsChange()
+
                 for i, step in ipairs(Workflow.ModuleSteps) do
                     if step.WidgetStackValue == WidgetStack.Modules then
-                        --if (step ~= StepCreator) then
-                            -- do not excecute a single step, if all configurations are changing, prevent chaos
-                            step:DisableRunSingleStepOnSettingsChange()
-
-                            if (selection == _("default")) then
-                                step:EnableDefaultBasicConfiguation()
-                            else
-                                step:SetWidgetBasicValue(selection)
-                            end
-
-                            -- sleep for a short moment to give callback function a chance to run
-                            -- callback function Workflow.ComboBoxChangedCallback calls Workflow.RunSingleStep
-                            -- function Workflow.RunSingleStep checks the RunSingleStepOnSettingsChange flag
-                            dt.control.sleep(100)
-
-                            -- set default
-                            step:EnableRunSingleStepOnSettingsChange()
-                        --end
+                        if (selection == _("default")) then
+                            step:EnableDefaultBasicConfiguation()
+                        else
+                            step:SetWidgetBasicValue(selection)
+                        end
                     end
                 end
 
                 -- reset to default selection
                 ResetAllModuleBasicSettingsWidget.value = 1
+
+                -- set default
+                Workflow:EnableRunSingleStepOnSettingsChange()
             end
         end,
         label = ' ',
@@ -131,12 +119,12 @@ ResetAllModuleMainSettingsWidget = dt.new_widget('combobox')
             local selection = ResetAllModuleMainSettingsWidget.value
 
             if (selection ~= _dt("all module settings")) then
+                -- do not excecute a single step, if all configurations are changing, prevent chaos
+                Workflow:DisableRunSingleStepOnSettingsChange()
+
                 for i, step in ipairs(Workflow.ModuleSteps) do
                     if step.WidgetStackValue == WidgetStack.Modules then
                         if (step ~= StepCreator) then
-                            -- do not excecute a single step, if all configurations are changing, prevent chaos
-                            step:DisableRunSingleStepOnSettingsChange()
-
                             if (selection == _("default")) then
                                 step:EnableDefaultStepConfiguation()
                             elseif (selection == _("unchanged")) then
@@ -144,20 +132,15 @@ ResetAllModuleMainSettingsWidget = dt.new_widget('combobox')
                                 -- configuration keeps unchanged during script execution
                                 step.Widget.value = step.ConfigurationValueUnchangedIndex
                             end
-
-                            -- sleep for a short moment to give callback function a chance to run
-                            -- callback function Workflow.ComboBoxChangedCallback calls Workflow.RunSingleStep
-                            -- function Workflow.RunSingleStep checks the RunSingleStepOnSettingsChange flag
-                            dt.control.sleep(100)
-
-                            -- set default
-                            step:EnableRunSingleStepOnSettingsChange()
                         end
                     end
                 end
 
                 -- reset to default selection
                 ResetAllModuleMainSettingsWidget.value = 1
+
+                -- set default
+                Workflow:EnableRunSingleStepOnSettingsChange()
             end
         end,
         label = ' ',
@@ -171,7 +154,7 @@ ResetAllModuleMainSettingsWidget = dt.new_widget('combobox')
 -- TEST button: Special buttons, used to perform module tests.
 local function GetWidgetTestButtons(widgets)
     if (ButtonModuleTest) then
-        LogHelper.Info(_("insert test button widget"))
+        LogHelper.Verbose(_("insert test button widget"))
         table.insert(widgets,
             dt.new_widget('box')
             {

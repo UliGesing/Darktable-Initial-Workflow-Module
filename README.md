@@ -66,6 +66,8 @@
 
 - With <code>apply changes directly after input</code> your configuration will be applied directly without running the script. If a setting in this module is changed, the corresponding workflow step is executed directly. The associated individual module is configured. This allows you to see the changes made by each configuration without having to run the entire workflow. This helps you understand the changes made through the configuration.
 
+- Use <code>script log mode</code> to configure script runtime messages. You can execute darktable with additional parameters '-d lua' to get some loggings. This is very helpful to see what is going on during script execution and to identify errors. This setting configures, how many messages are written.
+
 - Via <code>all common settings</code> you can select standard configurations for all these settings. You can activate or deactive all common settings whtin this subpage. 
 
 ### Execution

@@ -145,7 +145,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.Label = _dt("compress history stack")
 
         self.Tooltip = _(
-            "Generate the shortest history stack that reproduces the current image. This removes your current history snapshots.")
+            "After script run, generate the shortest history stack that reproduces the current image. This removes your current history snapshots.")
     end
 
     function StepCompressHistoryStack:Init()
@@ -310,14 +310,14 @@ function WorkflowSteps.CreateWorkflowSteps()
             return
         end
 
-        LogHelper.Info('==============================')
+        LogHelper.Verbose('==============================')
 
         if (basic == _("disable")) then
             GuiAction.DisableDarkroomModule(self:OperationPath())
             return false
         end
 
-        LogHelper.Info(_("use only one tone mapper: Enable only one of Filmic, Sigmoid, AgX or Basecurve."))
+        LogHelper.Verbose(_("use only one tone mapper: Enable only one of Filmic, Sigmoid, AgX or Basecurve."))
 
         -- use only one of Filmic, Sigmoid, AgX or Basecurve
         -- other modules are disabled.
@@ -355,7 +355,7 @@ function WorkflowSteps.CreateWorkflowSteps()
                 if (checkbox == 0) then
                     GuiAction.Do('iop/filmicrgb/enable highlight reconstruction', 0, '', 'on', 1.0)
                 else
-                    LogHelper.Info(indent .. _("checkbox already selected, nothing to do"))
+                    LogHelper.Verbose(indent .. _("checkbox already selected, nothing to do"))
                 end
             end
         end
@@ -1096,7 +1096,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             if (checkbox == 0) then
                 GuiAction.Do('iop/exposure/compensate exposure bias', 0, '', 'on', 1.0)
             else
-                LogHelper.Info(indent .. _("checkbox already selected, nothing to do"))
+                LogHelper.Verbose(indent .. _("checkbox already selected, nothing to do"))
             end
         end
     end
@@ -1171,11 +1171,11 @@ function WorkflowSteps.CreateWorkflowSteps()
             local currentSelection = lensCorrectionValues[-currentSelectionIndex]
 
             if (self.lensfunSelection ~= currentSelection) then
-                LogHelper.Info(indent ..
+                LogHelper.Verbose(indent ..
                     string.format(_("current correction method = %s"), Helper.Quote(currentSelection)))
                 GuiAction.Do('iop/lens/correction method', 0, 'selection', 'item:Lensfun database', 1.0)
             else
-                LogHelper.Info(indent ..
+                LogHelper.Verbose(indent ..
                     string.format(_("nothing to do, correction method already = %s"), Helper.Quote(currentSelection)))
             end
         end
@@ -1296,7 +1296,12 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         if (selection == self.CaptureSharpen) then
-            GuiAction.Do('iop/demosaic/enabled', 0, '', 'right-on', -1.0)
+            local checkbox = GuiAction.GetValue('iop/demosaic/enabled', '')
+            if (checkbox == 0) then
+                GuiAction.Do('iop/demosaic/enabled', 0, '', 'right-on', -1.0)
+            else
+                LogHelper.Verbose(indent .. _("checkbox already selected, nothing to do"))
+            end
         end
     end
 
@@ -1503,12 +1508,12 @@ function WorkflowSteps.CreateWorkflowSteps()
         local adaptationSelection = StepColorCalibrationAdaptation:GetConfigurationValueFromSelectionIndex(
             adaptationSelectionIndex)
 
-        LogHelper.Info(indent .. string.format(_("color calibration adaption = %s"), adaptationSelection))
+        LogHelper.Verbose(indent .. string.format(_("color calibration adaption = %s"), adaptationSelection))
         if (adaptationSelection == _dt("none (bypass)")) then
-            LogHelper.Info(indent .. _("illuminant cannot be set"))
+            LogHelper.Verbose(indent .. _("illuminant cannot be set"))
             return
         else
-            LogHelper.Info(indent .. _("illuminant can be set"))
+            LogHelper.Verbose(indent .. _("illuminant can be set"))
         end
 
         -- set illuminant
@@ -1527,11 +1532,13 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
+        LogHelper.Verbose("current selection: " .. currentSelection)
+
         if (selection ~= currentSelection) then
-            LogHelper.Info(indent .. string.format(_("current illuminant = %s"), Helper.Quote(currentSelection)))
+            LogHelper.Verbose(indent .. string.format(_("current illuminant = %s"), Helper.Quote(currentSelection)))
             GuiAction.Do('iop/channelmixerrgb/illuminant', 0, 'selection', 'item:' .. _ReverseTranslation(selection), 1.0)
         else
-            LogHelper.Info(indent ..
+            LogHelper.Verbose(indent ..
                 string.format(_("nothing to do, illuminant already = %s"), Helper.Quote(currentSelection)))
         end
     end
@@ -1604,10 +1611,10 @@ function WorkflowSteps.CreateWorkflowSteps()
         local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
         if (selection ~= currentSelection) then
-            LogHelper.Info(indent .. string.format(_("current adaptation = %s"), Helper.Quote(currentSelection)))
+            LogHelper.Verbose(indent .. string.format(_("current adaptation = %s"), Helper.Quote(currentSelection)))
             GuiAction.Do('iop/channelmixerrgb/adaptation', 0, 'selection', 'item:' .. _ReverseTranslation(selection), 1.0)
         else
-            LogHelper.Info(indent ..
+            LogHelper.Verbose(indent ..
                 string.format(_("nothing to do, adaptation already = %s"), Helper.Quote(currentSelection)))
         end
     end
@@ -1678,10 +1685,10 @@ function WorkflowSteps.CreateWorkflowSteps()
         local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
         if (selection ~= currentSelection) then
-            LogHelper.Info(indent .. string.format(_("current value = %s"), Helper.Quote(currentSelection)))
+            LogHelper.Verbose(indent .. string.format(_("current value = %s"), Helper.Quote(currentSelection)))
             GuiAction.Do('iop/highlights/method', 0, 'selection', 'item:' .. _ReverseTranslation(selection), 1.0)
         else
-            LogHelper.Info(indent ..
+            LogHelper.Verbose(indent ..
                 string.format(_("nothing to do, value already = %s"), Helper.Quote(currentSelection)))
         end
     end
@@ -1704,8 +1711,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("as shot"),
             _dt("from image area"),
             _dt("user modified"),
-            _dt("camera reference"),
-            _dt("as shot to reference")
+            _dt("camera reference")
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
@@ -1760,10 +1766,10 @@ function WorkflowSteps.CreateWorkflowSteps()
         local currentSelection = self:GetConfigurationValueFromSelectionIndex(currentSelectionIndex)
 
         if (selection ~= currentSelection) then
-            LogHelper.Info(indent .. string.format(_("current value = %s"), Helper.Quote(currentSelection)))
+            LogHelper.Verbose(indent .. string.format(_("current value = %s"), Helper.Quote(currentSelection)))
             GuiAction.Do('iop/temperature/settings/' .. _ReverseTranslation(selection), 0, '', '', 1.0)
         else
-            LogHelper.Info(indent ..
+            LogHelper.Verbose(indent ..
                 string.format(_("nothing to do, value already = %s"), Helper.Quote(currentSelection)))
         end
     end
@@ -1827,7 +1833,7 @@ function WorkflowSteps.CreateWorkflowSteps()
         end
 
         local currentImage = dt.gui.views.darkroom.display_image()
-        LogHelper.Info(_dtConcat({ "creator", " = ", creatorName }))
+        LogHelper.Verbose(_dtConcat({ "creator", " = ", creatorName }))
         currentImage.creator = creatorName
     end
 
@@ -1934,7 +1940,7 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         local currentImage = dt.gui.views.darkroom.display_image()
         rights = self.licenseFullText[rights]
-        LogHelper.Info(_dtConcat({ "rights", " = ", rights }))
+        LogHelper.Verbose(_dtConcat({ "rights", " = ", rights }))
         currentImage.rights = rights
     end
 
@@ -2073,10 +2079,10 @@ function WorkflowSteps.CreateWorkflowSteps()
         self.ConfigurationValues = { self.ConfigNo, self.ConfigYes }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
-        self.ConfigurationValueUnchangedIndex = 1
+        self.ConfigurationValueUnchangedIndex = 2
 
         -- step configurationvalue array index, used if module settings are reset to "default"
-        self.ConfigurationValueDefaultIndex = 1
+        self.ConfigurationValueDefaultIndex = 2
 
         self.Label = _("apply changes directly after input")
 
@@ -2163,12 +2169,90 @@ function WorkflowSteps.CreateWorkflowSteps()
     end
 
     function StepTimeout:Run()
-        LogHelper.Info(string.format(_("step timeout = %s ms"), self:Value()))
+        LogHelper.Verbose(string.format(_("step timeout = %s ms"), self:Value()))
     end
 
     function StepTimeout:Value()
         return tonumber(self.Widget.value)
     end
+
+    ---------------------------------------------------------------
+
+    StepScriptLogMode = Workflow.StepComboBox:new():new {}
+    table.insert(Workflow.ModuleSteps, StepScriptLogMode)
+
+    function StepScriptLogMode:PostConstructor()
+        -- darktable internal module name abbreviation
+        -- operation = nil: ignore this module during module reset
+        self.OperationNameInternal = nil
+        -- select subpage containing this step: WidgetStack.Modules or WidgetStack.Settings
+        self.WidgetStackValue = WidgetStack.Settings
+
+        self.LogModeNone = _dt("none")
+        self.LogModeErrorsOnly = _dt("errors only")
+        self.LogModeMajor = _dt("major")
+        self.LogModeVerbose = _dt("verbose")
+
+        -- array of configuration values ​​selectable by the user
+        self.ConfigurationValues =
+        {
+            self.LogModeNone,
+            self.LogModeErrorsOnly,
+            self.LogModeMajor,
+            self.LogModeVerbose
+        }
+
+        -- step configurationvalue array index, used if module settings are reset to "unchanged"
+        self.ConfigurationValueUnchangedIndex = 3
+
+        -- step configurationvalue array index, used if module settings are reset to "default"
+        self.ConfigurationValueDefaultIndex = 3
+
+        self.Label = _("script log mode")
+
+        self.Tooltip = _("You can execute darktable with additional parameters '-d lua' to get some loggings. This is very helpful to see what is going on during script execution and to identify errors. This setting configures, how many messages are written.")
+    end
+
+    function StepScriptLogMode:Init()
+        -- show step label and tooltip in first column of the inital workflow module
+        self:CreateLabelWidget()
+        -- show empty invisible step initialization combobox in 2nd column (settings subpage)
+        self:CreateEmptyBasicWidget()
+
+        -- show main combobox with configuration values in 3rd column
+        self.Widget = dt.new_widget('combobox')
+            {
+                changed_callback = Workflow.ComboBoxChangedCallback,
+                label = ' ', -- use separate label widget
+                tooltip = self:GetLabelAndTooltip(),
+                table.unpack(self.ConfigurationValues)
+            }
+    end
+
+    function StepScriptLogMode:Run()
+        -- do nothing...
+    end
+
+    function StepScriptLogMode:None()
+        return self.Widget.value == self.LogModeNone
+    end
+
+    function StepScriptLogMode:ErrorsOnly()
+        return self.Widget.value == self.LogModeErrorsOnly
+    end
+
+    function StepScriptLogMode:Major()
+        return self.Widget.value == self.LogModeMajor
+    end
+
+    function StepScriptLogMode:Verbose()
+        if self.Widget == nil then
+            return false
+        end
+
+        return self.Widget.value == self.LogModeVerbose
+    end
+
 end
 
 return WorkflowSteps

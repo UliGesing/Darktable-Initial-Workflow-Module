@@ -62,7 +62,7 @@ end
 -- perform the specified effect on the path and element of an action
 -- see https://docs.darktable.org/lua/stable/lua.api.manual/darktable/gui/action/
 function GuiAction.DoInternal(path, instance, element, effect, speed, waitForPipeline)
-    LogHelper.Info('dt.gui.action(' ..
+    LogHelper.Verbose('dt.gui.action(' ..
         Helper.Quote(path) ..
         ',' ..
         instance ..
@@ -100,7 +100,7 @@ function GuiAction.GetValue(path, element)
     -- use 0/0 == NaN as parameter to indicate this read-action
     local value = GuiAction.DoWithoutEvent(path, 0, element, '', 0 / 0)
 
-    LogHelper.Info(indent ..
+    LogHelper.Verbose(indent ..
         'get ' ..
         Helper.Quote(path) ..
         ' ' .. element .. ' = ' .. Helper.NumberToString(value, 'NaN', 'nil'))
@@ -121,7 +121,7 @@ function GuiAction.SetValue(path, instance, element, effect, speed)
     local digitsFactor = 10 ^ (digits or 0)
     value = math.floor(value * digitsFactor + 0.5) / digitsFactor
 
-    LogHelper.Info(indent ..
+    LogHelper.Verbose(indent ..
         'get ' ..
         Helper.Quote(path) ..
         ' ' .. element .. ' = ' .. Helper.NumberToString(value, 'NaN', 'nil'))
@@ -129,7 +129,7 @@ function GuiAction.SetValue(path, instance, element, effect, speed)
     if (value ~= speed) then
         GuiAction.Do(path, instance, element, effect, speed)
     else
-        LogHelper.Info(indent ..
+        LogHelper.Verbose(indent ..
             string.format(_("nothing to do, value already equals to %s"),
                 Helper.Quote(Helper.NumberToString(value))))
     end
@@ -158,14 +158,12 @@ end
 function GuiAction.SelectModulePreset(modulePath, presetPath, presetName)
     local fullPath = GuiAction.GetPresetPath(modulePath, presetPath, presetName)
 
-    LogHelper.Info(string.format(_("select module preset: %s"), Helper.Quote(fullPath)))
+    LogHelper.Verbose(string.format(_("select module preset: %s"), Helper.Quote(fullPath)))
 
     local buttonState = GuiAction.GetValue(fullPath, 'button')
     if (GuiAction.ConvertValueToBoolean(buttonState)) then
-        LogHelper.Info(indent .. _("disable currently selected module preset to apply it again"))
+        LogHelper.Verbose(indent .. _("disable currently selected module preset to apply it again"))
         GuiAction.DoWithoutEvent(fullPath, 0, 'button', 'off', 1.0)
-        -- else
-        -- LogHelper.Info(indent .. _("currently selected module preset differs"))
     end
 
     GuiAction.Do(fullPath, 0, 'button', 'on', 1.0)
@@ -174,13 +172,13 @@ end
 
 -- Push the button  addressed by the path. Turn it off, if necessary.
 function GuiAction.ButtonOffOn(path)
-    LogHelper.Info(string.format(_("push button off and on: %s"), Helper.Quote(path)))
+    LogHelper.Verbose(string.format(_("push button off and on: %s"), Helper.Quote(path)))
 
     local buttonState = GuiAction.GetValue(path, 'button')
     if (GuiAction.ConvertValueToBoolean(buttonState)) then
         GuiAction.DoWithoutEvent(path, 0, 'button', 'off', 1.0)
     else
-        LogHelper.Info(indent .. _("nothing to do, button is already inactive"))
+        LogHelper.Verbose(indent .. _("nothing to do, button is already inactive"))
     end
 
     GuiAction.Do(path, 0, 'button', 'on', 1.0)
@@ -189,50 +187,50 @@ end
 -- show given darkroom module
 function GuiAction.ShowDarkroomModule(moduleName)
     -- check if the module is already displayed
-    LogHelper.Info(string.format(_("show module if not visible: %s"), moduleName))
+    LogHelper.Verbose(string.format(_("show module if not visible: %s"), moduleName))
     local visible = GuiAction.GetValue(moduleName, 'show')
     if (not GuiAction.ConvertValueToBoolean(visible)) then
         dt.gui.panel_show('DT_UI_PANEL_RIGHT')
         Helper.ThreadSleep(StepTimeout:Value() / 2)
         GuiAction.DoWithoutEvent(moduleName, 0, 'show', '', 1.0)
     else
-        LogHelper.Info(indent .. _("module is already visible, nothing to do"))
+        LogHelper.Verbose(indent .. _("module is already visible, nothing to do"))
     end
 end
 
 -- disable given darkroom module
 function GuiAction.DisableDarkroomModule(moduleName)
     -- check if the module is already activated
-    LogHelper.Info(string.format(_("disable module if enabled: %s"), moduleName))
+    LogHelper.Verbose(string.format(_("disable module if enabled: %s"), moduleName))
     local status = GuiAction.GetValue(moduleName, 'enable')
     if (GuiAction.ConvertValueToBoolean(status)) then
         GuiAction.Do(moduleName, 0, 'enable', '', 1.0)
     else
-        LogHelper.Info(indent .. _("module is already disabled, nothing to do"))
+        LogHelper.Verbose(indent .. _("module is already disabled, nothing to do"))
     end
 end
 
 -- hide given darkroom module
 function GuiAction.HideDarkroomModule(moduleName)
     -- check if the module is already hidden
-    LogHelper.Info(string.format(_("hide module if visible: %s"), moduleName))
+    LogHelper.Verbose(string.format(_("hide module if visible: %s"), moduleName))
     local visible = GuiAction.GetValue(moduleName, 'show')
     if (GuiAction.ConvertValueToBoolean(visible)) then
         GuiAction.DoWithoutEvent(moduleName, 0, 'show', '', 1.0)
     else
-        LogHelper.Info(indent .. _("module is already hidden, nothing to do"))
+        LogHelper.Verbose(indent .. _("module is already hidden, nothing to do"))
     end
 end
 
 -- enable given darkroom module
 function GuiAction.EnableDarkroomModule(moduleName)
     -- check if the module is already activated
-    LogHelper.Info(string.format(_("enable module if disabled: %s"), moduleName))
+    LogHelper.Verbose(string.format(_("enable module if disabled: %s"), moduleName))
     local status = GuiAction.GetValue(moduleName, 'enable')
     if (not GuiAction.ConvertValueToBoolean(status)) then
         GuiAction.Do(moduleName, 0, 'enable', '', 1.0)
     else
-        LogHelper.Info(indent .. _("module is already enabled, nothing to do"))
+        LogHelper.Verbose(indent .. _("module is already enabled, nothing to do"))
     end
 
     if (StepShowModulesDuringExecution:Value()) then
@@ -242,7 +240,7 @@ end
 
 -- reset given darkroom module
 function GuiAction.ResetDarkroomModule(moduleName)
-    LogHelper.Info(_dt("reset parameters") .. ' (' .. moduleName .. ')')
+    LogHelper.Verbose(_dt("reset parameters") .. ' (' .. moduleName .. ')')
     GuiAction.Do(moduleName, 0, 'reset', '', 1.0)
 end
 

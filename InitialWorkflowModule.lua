@@ -51,7 +51,7 @@ local ModuleName = 'InitialWorkflowModule'
 -- current version of this Initial Workflow Module
 -- current script version is used to store preferences separately for each version
 -- a new version resets the preferences to their default values after starting darktable
-local ModuleVersion = "2.0"
+local ModuleVersion = "2.1"
 
 local dt = require 'darktable'
 
@@ -131,15 +131,15 @@ StartupMessage(string.format(_("script executed from path %s"), scriptFilePath))
 StartupMessage(string.format(_("script translation files in %s"), scriptLocalePath))
 StartupMessage(_("script outputs are in English"))
 
--- check darktable API version: darktable version 5.6 is needed
+-- check darktable API version: darktable version 5.8 is needed
 local du = require 'lib/dtutils'
 local function CheckApiVersion()
-  local apiCheck, err = pcall(function() du.check_min_api_version('9.7.0', ModuleName) end)
+  local apiCheck, err = pcall(function() du.check_min_api_version('9.8.0', ModuleName) end)
   if (apiCheck) then
     StartupMessage(string.format(_("darktable version with appropriate lua API detected: %s"),
       'dt' .. dt.configuration.version))
   else
-    StartupMessage(_("this script needs at least darktable 5.6 API to run"))
+    StartupMessage(_("this script needs at least darktable 5.8 API to run"))
     return false
   end
 
@@ -251,7 +251,7 @@ end
 -- some comboboxes or buttons need a special handling
 -- see base class overrides for details
 local function ViewChangedEvent(event, old_view, new_view)
-  LogHelper.Info(string.format(_("view changed to %s"), new_view.name))
+  LogHelper.Verbose(string.format(_("view changed to %s"), new_view.name))
 
   if ((new_view == dt.gui.views.lighttable) and (old_view == dt.gui.views.darkroom)) then
     InstallModuleRegisterLib()
@@ -261,13 +261,13 @@ local function ViewChangedEvent(event, old_view, new_view)
 end
 
 local function EventOnDarktableExit()
-  LogHelper.Info(_("exit darktable."))
+  LogHelper.Verbose(_("exit darktable."))
   WorkflowSteps.OnDarktableExit()
 end
 
 -- main entry function to install the module at startup
 local function InstallInitialWorkflowModule()
-  LogHelper.Info(_("create widget in lighttable and darkroom panels"))
+  LogHelper.Verbose(_("create widget in lighttable and darkroom panels"))
 
     -- call post constructor first
   for i, step in ipairs(Workflow.ModuleSteps) do

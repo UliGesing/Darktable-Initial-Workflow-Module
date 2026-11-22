@@ -28,7 +28,7 @@ local log = require 'lib.dtutils.log'
 function LogHelper.Init()
     log.log_level(log.info) -- log.info or log.warn or log.debug
 
-    LogHelper.SummaryMessages = {}
+    LogHelper.ErrorMessages = {}
 
     LogHelper.CurrentStep = ''
     LogHelper.MajorNr = 0
@@ -43,7 +43,29 @@ function LogHelper.GetLogInfoText(text)
     return prefix .. LogHelper.CurrentStep .. ': ' .. text
 end
 
-function LogHelper.Info(text)
+function LogHelper.Verbose(text)
+    if StepScriptLogMode:Verbose() then
+        LogHelper.Log(text)
+    end
+end
+
+function LogHelper.Major(text)
+    if StepScriptLogMode:Verbose() or StepScriptLogMode:Major() then
+        LogHelper.Log(text)
+        LogHelper.Screen(text)
+    end
+end
+
+function LogHelper.Error(text)
+    if StepScriptLogMode:Verbose() or StepScriptLogMode:Major() or StepScriptLogMode:ErrorsOnly() then
+        LogHelper.Log(text)
+        LogHelper.Screen(text)
+        table.insert(LogHelper.ErrorMessages, LogHelper.GetLogInfoText(text))
+    end
+end
+
+
+function LogHelper.Log(text)
     log.msg(log.info, LogHelper.GetLogInfoText(text))
 end
 
@@ -51,14 +73,20 @@ function LogHelper.Screen(text)
     log.msg(log.screen, text)
 end
 
-function LogHelper.SummaryClear()
-    for k, v in pairs(LogHelper.SummaryMessages) do
-        LogHelper.SummaryMessages[k] = nil
+function LogHelper.DumpErrorMessages()
+    for index, message in ipairs(LogHelper.ErrorMessages) do
+        if message ~= nil then
+            LogHelper.Log(message)
+            LogHelper.Screen(message)
+        end
     end
 end
 
-function LogHelper.SummaryMessage(text)
-    table.insert(LogHelper.SummaryMessages, LogHelper.GetLogInfoText(text))
+function LogHelper.ClearErrorMessages()
+    LogHelper.ErrorMessages = {}
+--    for k, v in pairs(LogHelper.ErrorMessages) do
+--        LogHelper.ErrorMessages[k] = nil
+--    end
 end
 
 return LogHelper

@@ -62,7 +62,7 @@ end
 
 function EventHelper.WaitForEventBase:EventReceivedFlagSet()
     self.EventReceivedFlag = 1
-    -- LogHelper.Info(indent .. string.format(_("received event %s"), self.EventType))
+    -- LogHelper.Verbose(indent .. string.format(_("received event %s"), self.EventType))
 end
 
 -- execute embedded function and wait for given EventType
@@ -80,7 +80,7 @@ function EventHelper.WaitForEventBase:DoInternal(embeddedFunction, durationMax)
 
     while (not self.EventReceivedFlag) or (duration < period) do
         if ((duration > 0) and (duration % 500 == 0)) then
-            LogHelper.Info(output)
+            LogHelper.Verbose(output)
             output = output .. '.'
         end
 
@@ -98,7 +98,7 @@ end
 
 -- execute embedded function and wait for given EventType
 function EventHelper.WaitForEventBase:Do(embeddedFunction)
-    -- LogHelper.Info(indent .. string.format(_("wait for event %s"), self.EventType))
+    -- LogHelper.Verbose(indent .. string.format(_("wait for event %s"), self.EventType))
 
     -- register event
     self:EventReceivedFlagReset()
@@ -109,7 +109,7 @@ function EventHelper.WaitForEventBase:Do(embeddedFunction)
     self:DoInternal(embeddedFunction, durationMax)
 
     if (not self.EventReceivedFlag) then
-        LogHelper.Info(string.format(_("try again after %d ms waiting for event %s"), durationMax, self.EventType))
+        LogHelper.Major(string.format(_("try again after %d ms waiting for event %s"), durationMax, self.EventType))
 
         -- wait longer...
         durationMax = durationMax * 2
@@ -117,7 +117,7 @@ function EventHelper.WaitForEventBase:Do(embeddedFunction)
         self:DoInternal(embeddedFunction, durationMax)
 
         if (not self.EventReceivedFlag) then
-            LogHelper.Info(string.format(_("try again after %d ms waiting for event %s"), durationMax, self.EventType))
+            LogHelper.Major(string.format(_("try again after %d ms waiting for event %s"), durationMax, self.EventType))
 
             -- wait longer...
             durationMax = durationMax * 2
@@ -125,13 +125,12 @@ function EventHelper.WaitForEventBase:Do(embeddedFunction)
             self:DoInternal(embeddedFunction, durationMax)
 
             if (not self.EventReceivedFlag) then
-                LogHelper.Info(string.format(_("timeout after %d ms waiting for event %s"), durationMax, self.EventType))
-                LogHelper.SummaryMessage("timeout - failed to apply setting")
+                LogHelper.Error(string.format(_("timeout after %d ms waiting for event %s"), durationMax, self.EventType))
             else
-                LogHelper.Info(string.format(_("OK - %s"), self.EventType))
+                LogHelper.Verbose(string.format(_("OK - %s"), self.EventType))
             end
         else
-            LogHelper.Info(string.format(_("OK - %s"), self.EventType))
+            LogHelper.Verbose(string.format(_("OK - %s"), self.EventType))
         end
     end
 
@@ -160,8 +159,7 @@ EventHelper.WaitForImageLoaded = EventHelper.WaitForEventBase:new():new
 function EventHelper.WaitForImageLoaded:EventReceivedFunction(event, clean, image)
     if not clean then
         local message = _("loading image failed, reload is performed (this could indicate a timing problem)")
-        LogHelper.Info(message)
-        LogHelper.SummaryMessage(message)
+        LogHelper.Error(message)
 
         Helper.ThreadSleep(StepTimeout:Value() * 2)
         dt.gui.views.darkroom.display_image(image)

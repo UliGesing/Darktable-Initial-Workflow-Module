@@ -79,6 +79,7 @@ local moduleTestIgnoreSteps =
   StepResetModuleHistory,
   StepTimeout,
   StepRunSingleStepOnSettingsChange,
+  StepScriptLogMode,
   StepCreator
 }
 
@@ -123,7 +124,7 @@ local function CopyXmpFile(xmpFile, filePath, fileName, appendix, xmpModified)
   -- copy xmp file to test result folder
   local xmpFileCopy = filePath .. '/TEST/' .. fileName .. appendix .. '.xmp'
   local xmpCopyCommand = 'cp ' .. Helper.Quote(xmpFile) .. ' ' .. Helper.Quote(xmpFileCopy)
-  LogHelper.Info(xmpCopyCommand)
+  LogHelper.Verbose(xmpCopyCommand)
   local ok = os.execute(xmpCopyCommand)
 
   return xmpModifiedNew
@@ -184,8 +185,8 @@ function ModuleTests.ModuleTest()
   end
 
   -- prepare test execution
-  LogHelper.SummaryClear()
-  LogHelper.Info(_("module test started"))
+  LogHelper.ClearErrorMessages()
+  LogHelper.Verbose(_("module test started"))
 
   -- get current image information
   testImage = dt.gui.views.darkroom.display_image()
@@ -201,7 +202,7 @@ function ModuleTests.ModuleTest()
   testXmpModified = CopyXmpFile(testXmpFile, testImage.path, testImage.filename, '_0_Reset',
     testXmpModified)
 
-  -- disable "run single steps on change" during test run to prevent intermediate excecution
+  -- disable "apply changes directly after input" during test run to prevent intermediate excecution
   StepRunSingleStepOnSettingsChange.Widget.value = 1
 
   -- sleep for a short moment to give callback function a chance to run
@@ -288,7 +289,7 @@ function ModuleTests.ModuleTest()
   -- tests are done
   -- dump result messages
   LogSummary()
-  LogHelper.Info(_("module test finished"))
+  LogHelper.Verbose(_("module test finished"))
 end
 
 return ModuleTests

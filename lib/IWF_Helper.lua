@@ -93,9 +93,9 @@ end
 -- darktable -d lua > ~/keys.txt
 -- local function DumpPreferenceKeys()
 --   local keys = dt.preferences.get_keys()
---   LogHelper.Info(string.format(_.t("number of %d preference keys retrieved"), #keys))
+--   LogHelper.Verbose(string.format(_.t("number of %d preference keys retrieved"), #keys))
 --   for _, key in ipairs(keys) do
---     LogHelper.Info(key .. ' = ' .. dt.preferences.read('darktable', key, 'string'))
+--     LogHelper.Verbose(key .. ' = ' .. dt.preferences.read('darktable', key, 'string'))
 --   end
 -- end
 

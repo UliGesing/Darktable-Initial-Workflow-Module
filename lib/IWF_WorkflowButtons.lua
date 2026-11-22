@@ -63,10 +63,10 @@ end
 
 -- process all configured workflow steps
 local function ProcessWorkflowSteps()
-    LogHelper.Screen(_("start initial workflow"))
+    LogHelper.Major(_("start initial workflow"))
 
-    LogHelper.Info('==============================')
-    LogHelper.Info(_("process workflow steps"))
+    LogHelper.Verbose('==============================')
+    LogHelper.Verbose(_("process workflow steps"))
 
     -- create a progress bar
     local job = dt.gui.create_job("process workflow steps", true, stop_job)
@@ -75,7 +75,7 @@ local function ProcessWorkflowSteps()
     Helper.ThreadSleep(StepTimeout:Value())
 
     -- show active modules in darkroom view
-    LogHelper.Info(_dt("show only active modules"))
+    LogHelper.Verbose(_dt("show only active modules"))
     GuiAction.DoWithoutEvent('lib/modulegroups/active modules', 0, '', 'on', 1.0)
 
     GuiAction.ShowDarkroomModule("iop/colorout")
@@ -96,7 +96,7 @@ local function ProcessWorkflowSteps()
         -- stop workflow if the cancel button of the progress bar is pressed
         workflowCanceled = not job.valid
         if workflowCanceled then
-            LogHelper.SummaryMessage(_("workflow canceled"))
+            LogHelper.Error(_("workflow canceled"))
             break
         end
 
@@ -104,7 +104,7 @@ local function ProcessWorkflowSteps()
         if dt.control.ending then
             job.valid = false
             workflowCanceled = true
-            LogHelper.SummaryMessage(_("workflow canceled - darktable shutting down"))
+            LogHelper.Error(_("workflow canceled - darktable shutting down"))
             break
         end
 
@@ -126,20 +126,15 @@ end
 -- The summary collects some important (error) messages.
 -- This function is executed at the end of each script run.
 function LogSummary()
-    LogHelper.Info('==============================')
+    LogHelper.Verbose('==============================')
 
-    if (#LogHelper.SummaryMessages == 0) then
-        LogHelper.Info(_("OK - script run without errors"))
-        LogHelper.Screen(_("initial workflow done"))
+    if (#LogHelper.ErrorMessages == 0) then
+        LogHelper.Major(_("initial workflow done"))
     else
-        for index, message in ipairs(LogHelper.SummaryMessages) do
-            LogHelper.Info(message)
-            LogHelper.Screen(_(message))
-        end
+        LogHelper.DumpErrorMessages()
     end
 
-    LogHelper.Info(_("initial workflow done"))
-    LogHelper.Info('==============================')
+    LogHelper.Verbose('==============================')
 end
 
 -- process current image in darkroom view
@@ -148,7 +143,7 @@ local function ProcessImageInDarkroomView()
     LogHelper.MajorNr = 1
     LogHelper.CurrentStep = ''
 
-    LogHelper.SummaryClear()
+    LogHelper.ClearErrorMessages()
 
     ProcessWorkflowSteps()
 
@@ -161,10 +156,10 @@ local function ProcessSelectedImagesInLighttableView()
     LogHelper.MajorNr = 0
     LogHelper.CurrentStep = ''
 
-    LogHelper.SummaryClear()
+    LogHelper.ClearErrorMessages()
 
-    LogHelper.Info('==============================')
-    LogHelper.Info(_("process selected images"))
+    LogHelper.Verbose('==============================')
+    LogHelper.Verbose(_("process selected images"))
 
     -- check that there is an image selected to activate darkroom view
     local images = dt.gui.action_images
@@ -180,7 +175,7 @@ local function ProcessSelectedImagesInLighttableView()
     end
 
     -- switch to darkroom view
-    LogHelper.Info(_("switch to darkroom view"))
+    LogHelper.Verbose(_("switch to darkroom view"))
     EventHelper.WaitForPixelPipe:Do(function()
         dt.gui.current_view(dt.gui.views.darkroom)
     end)
@@ -194,12 +189,11 @@ local function ProcessSelectedImagesInLighttableView()
         local oldImage = dt.gui.views.darkroom.display_image()
 
         -- load selected image and show it in darkroom view
-        LogHelper.Info(string.format(_("load image number %s of %s"), index, #images))
-        LogHelper.Info(string.format(_("image file = %s"), newImage.filename))
+        LogHelper.Major(string.format(_("load image number %s of %s: %s"), index, #images, newImage.filename))
 
         if (oldImage ~= newImage) then
             EventHelper.WaitForPixelPipe:Do(function()
-                LogHelper.Info(_("load new image into darkroom view"))
+                LogHelper.Verbose(_("load new image into darkroom view"))
                 EventHelper.WaitForImageLoaded:Do(function()
                     dt.gui.views.darkroom.display_image(newImage)
                 end)
@@ -214,7 +208,7 @@ local function ProcessSelectedImagesInLighttableView()
     end
 
     -- switch to lighttable view
-    LogHelper.Info(_("switch to lighttable view"))
+    LogHelper.Verbose(_("switch to lighttable view"))
     dt.gui.current_view(dt.gui.views.lighttable)
     dt.gui.selection(images)
 
@@ -370,6 +364,7 @@ function WorkflowButtons.CreateWorkflowButtons()
     local ignoreModulesDuringReset = {
         StepTimeout,
         StepRunSingleStepOnSettingsChange,
+        StepScriptLogMode,
         StepCreator,
         StepCreativeCommonLicense
     }
@@ -377,12 +372,18 @@ function WorkflowButtons.CreateWorkflowButtons()
     -- select default basic configuration for each step
     -- called via module reset control
     local function SetAllDefaultModuleConfigurations()
+        -- do not excecute a single step, if all configurations are changing, prevent chaos
+        Workflow:DisableRunSingleStepOnSettingsChange()
+
         for i, step in ipairs(Workflow.ModuleSteps) do
             if (not Helper.Contains(ignoreModulesDuringReset, step)) then
                 step:EnableDefaultBasicConfiguation()
                 step:EnableDefaultStepConfiguation()
             end
         end
+
+        -- set default
+        Workflow:EnableRunSingleStepOnSettingsChange()
     end
 
     ---------------------------------------------------------------
@@ -446,7 +447,7 @@ function WorkflowButtons.CreateWorkflowButtons()
                                 return
                             end
 
-                            LogHelper.Info('Execute script ' .. Helper.Quote(fileName))
+                            LogHelper.Major('Execute script ' .. Helper.Quote(fileName))
                             dofile(fileName)
                         end
                     }
