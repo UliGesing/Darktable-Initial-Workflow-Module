@@ -175,15 +175,15 @@ local function GetWidgetOverallButtons(widgets)
     local buttonColumn3 = {}
 
     -- add overall function buttons, first column
-    table.insert(buttonColumn1, ButtonEnableRotateAndPerspective.Widget)
+    -- table.insert(buttonColumn1, ButtonEnableRotateAndPerspective.Widget)
     table.insert(buttonColumn1, ButtonRunSelectedSteps.Widget)
 
     -- ... second column
-    table.insert(buttonColumn2, ButtonEnableCrop.Widget)
+    -- table.insert(buttonColumn2, ButtonEnableCrop.Widget)
     table.insert(buttonColumn2, ButtonShowWidgetStackModules.Widget)
 
     -- ... third column
-    table.insert(buttonColumn3, ButtonMidToneExposure.Widget)
+    -- table.insert(buttonColumn3, ButtonMidToneExposure.Widget)
     table.insert(buttonColumn3, ButtonShowWidgetStackSettings.Widget)
 
     table.insert(widgets,

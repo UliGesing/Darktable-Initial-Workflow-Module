@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InitialWorkflowModule\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 17:16+0100\n"
+"POT-Creation-Date: 2026-11-28 07:28+0100\n"
 "PO-Revision-Date: 2023-05-18 14:20+0200\n"
 "Last-Translator: TheAuthor <TheAuthor@theauthor.com>\n"
 "Language-Team: English <>\n"
@@ -186,11 +186,11 @@ msgstr ""
 #: lib/IWF_WorkflowSteps.lua:1196 lib/IWF_WorkflowSteps.lua:1234
 #: lib/IWF_WorkflowSteps.lua:1255 lib/IWF_WorkflowSteps.lua:1294
 #: lib/IWF_WorkflowSteps.lua:1325 lib/IWF_WorkflowSteps.lua:1413
-#: lib/IWF_WorkflowSteps.lua:1434 lib/IWF_WorkflowSteps.lua:1502
-#: lib/IWF_WorkflowSteps.lua:1562 lib/IWF_WorkflowSteps.lua:1606
-#: lib/IWF_WorkflowSteps.lua:1636 lib/IWF_WorkflowSteps.lua:1680
-#: lib/IWF_WorkflowSteps.lua:1710 lib/IWF_WorkflowSteps.lua:1761
-#: lib/IWF_WorkflowSteps.lua:1881 lib/IWF_WorkflowSteps.lua:1937
+#: lib/IWF_WorkflowSteps.lua:1434 lib/IWF_WorkflowSteps.lua:1503
+#: lib/IWF_WorkflowSteps.lua:1563 lib/IWF_WorkflowSteps.lua:1607
+#: lib/IWF_WorkflowSteps.lua:1637 lib/IWF_WorkflowSteps.lua:1681
+#: lib/IWF_WorkflowSteps.lua:1711 lib/IWF_WorkflowSteps.lua:1762
+#: lib/IWF_WorkflowSteps.lua:1882 lib/IWF_WorkflowSteps.lua:1938
 msgid "unchanged"
 msgstr ""
 
@@ -272,7 +272,7 @@ msgid ""
 "the steps from bottom to top along the pixel pipeline."
 msgstr ""
 
-#: lib/IWF_WorkflowButtons.lua:250 lib/IWF_WorkflowSteps.lua:2033
+#: lib/IWF_WorkflowButtons.lua:250 lib/IWF_WorkflowSteps.lua:2034
 msgid "show modules"
 msgstr ""
 
@@ -482,81 +482,81 @@ msgid ""
 "disables the other."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1459
+#: lib/IWF_WorkflowSteps.lua:1460
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "illuminant. The type of illuminant assumed to have lit the scene. By default "
 "unchanged (same as whitebalance module)."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1511
+#: lib/IWF_WorkflowSteps.lua:1512
 #, lua-format
 msgid "color calibration adaption = %s"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1513
+#: lib/IWF_WorkflowSteps.lua:1514
 msgid "illuminant cannot be set"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1516
+#: lib/IWF_WorkflowSteps.lua:1517
 msgid "illuminant can be set"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1538
+#: lib/IWF_WorkflowSteps.lua:1539
 #, lua-format
 msgid "current illuminant = %s"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1542
+#: lib/IWF_WorkflowSteps.lua:1543
 #, lua-format
 msgid "nothing to do, illuminant already = %s"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1579
+#: lib/IWF_WorkflowSteps.lua:1580
 msgid ""
 "Perform color space corrections in color calibration module. Select the "
 "adaptation. The working color space in which the module will perform its "
 "chromatic adaptation transform and channel mixing."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1614
+#: lib/IWF_WorkflowSteps.lua:1615
 #, lua-format
 msgid "current adaptation = %s"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1618
+#: lib/IWF_WorkflowSteps.lua:1619
 #, lua-format
 msgid "nothing to do, adaptation already = %s"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1653
+#: lib/IWF_WorkflowSteps.lua:1654
 msgid ""
 "Reconstruct color information for clipped pixels. Select an appropriate "
 "reconstruction methods to reconstruct the missing data from unclipped "
 "channels and/or neighboring pixels."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1688 lib/IWF_WorkflowSteps.lua:1769
+#: lib/IWF_WorkflowSteps.lua:1689 lib/IWF_WorkflowSteps.lua:1770
 #, lua-format
 msgid "current value = %s"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1692 lib/IWF_WorkflowSteps.lua:1773
+#: lib/IWF_WorkflowSteps.lua:1693 lib/IWF_WorkflowSteps.lua:1774
 #, lua-format
 msgid "nothing to do, value already = %s"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1724
+#: lib/IWF_WorkflowSteps.lua:1725
 msgid "white balance"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1727
+#: lib/IWF_WorkflowSteps.lua:1728
 msgid ""
 "Adjust the white balance of the image by altering the temperature. By "
 "default unchanged."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1801
+#: lib/IWF_WorkflowSteps.lua:1802
 msgid ""
 "Creator of this image. Enter your name or contact address. Leave this field "
 "blank if you don't want to change the current value. After reloading your "
@@ -564,36 +564,36 @@ msgid ""
 "information module. This value is exported to jpg meta data."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1816
+#: lib/IWF_WorkflowSteps.lua:1817
 msgid "empty, tag keeps unchanged"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1900
+#: lib/IWF_WorkflowSteps.lua:1901
 msgid ""
 "Choose a creative common license. After reloading your image you can find "
 "this value as full text in metadata editor and image information module. "
 "This value is exported to jpg meta data."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1971
+#: lib/IWF_WorkflowSteps.lua:1972
 msgid "discard complete history"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:1973
+#: lib/IWF_WorkflowSteps.lua:1974
 msgid "Reset all modules of the whole pixelpipe and discard complete history."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:2036
+#: lib/IWF_WorkflowSteps.lua:2037
 msgid ""
 "Show darkroom modules for enabled workflow steps during execution of this "
 "initial workflow. This makes the changes easier to understand."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:2087
+#: lib/IWF_WorkflowSteps.lua:2088
 msgid "apply changes directly after input"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:2090
+#: lib/IWF_WorkflowSteps.lua:2091
 msgid ""
 "If a setting in this module is changed, the corresponding workflow step is "
 "executed directly. The associated individual module is configured. This "
@@ -601,11 +601,11 @@ msgid ""
 "run the entire workflow."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:2149
+#: lib/IWF_WorkflowSteps.lua:2150
 msgid "timeout value"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:2152
+#: lib/IWF_WorkflowSteps.lua:2153
 msgid ""
 "Some calculations take a certain amount of time. Depending on the hardware "
 "equipment also longer.This script waits and attempts to detect timeouts. If "
@@ -615,16 +615,16 @@ msgid ""
 "(loading an image) or a fraction (querying a status)."
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:2172
+#: lib/IWF_WorkflowSteps.lua:2173
 #, lua-format
 msgid "step timeout = %s ms"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:2211
+#: lib/IWF_WorkflowSteps.lua:2212
 msgid "script log mode"
 msgstr ""
 
-#: lib/IWF_WorkflowSteps.lua:2213
+#: lib/IWF_WorkflowSteps.lua:2215
 msgid ""
 "You can execute darktable with additional parameters '-d lua' to get some "
 "loggings. This is very helpful to see what is going on during script "
