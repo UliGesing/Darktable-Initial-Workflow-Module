@@ -1443,7 +1443,8 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("LED (LED light)"),
             _dt("Planckian (black body)"),
             _dt("custom"),
-            _dt("as shot in camera")
+            _dt("as shot in camera"),
+            _dt("from the white balance module")
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
@@ -1464,7 +1465,7 @@ function WorkflowSteps.CreateWorkflowSteps()
     -- depends on darktable preference settings
     function StepColorCalibrationIlluminant:EnableDefaultStepConfiguation()
         -- "unchanged: scene referred default"
-        self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 1 or 1
+        self.Widget.value = Helper.CheckDarktableModernWorkflowPreference() and 1 or 12
     end
 
     -- combobox values see darktable typedef enum dt_illuminant_t
@@ -1711,7 +1712,7 @@ function WorkflowSteps.CreateWorkflowSteps()
             _dt("as shot"),
             _dt("from image area"),
             _dt("user modified"),
-            _dt("camera reference")
+            _dt("camera reference"),
         }
 
         -- step configurationvalue array index, used if module settings are reset to "unchanged"
@@ -2210,7 +2211,8 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         self.Label = _("script log mode")
 
-        self.Tooltip = _("You can execute darktable with additional parameters '-d lua' to get some loggings. This is very helpful to see what is going on during script execution and to identify errors. This setting configures, how many messages are written.")
+        self.Tooltip = _(
+        "You can execute darktable with additional parameters '-d lua' to get some loggings. This is very helpful to see what is going on during script execution and to identify errors. This setting configures, how many messages are written.")
     end
 
     function StepScriptLogMode:Init()
@@ -2252,7 +2254,6 @@ function WorkflowSteps.CreateWorkflowSteps()
 
         return self.Widget.value == self.LogModeVerbose
     end
-
 end
 
 return WorkflowSteps

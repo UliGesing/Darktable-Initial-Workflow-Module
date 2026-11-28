@@ -362,8 +362,8 @@ msgstr "Modultest-Datei nicht gefunden: %s"
 
 #: lib/IWF_Workflow.lua:106
 #, lua-format
-msgid "selection = %s - %s"
-msgstr "Auswahl = %s - %s"
+msgid "%s - %s"
+msgstr "%s - %s"
 
 #: lib/IWF_Workflow.lua:143
 msgid ""

@@ -329,7 +329,7 @@ msgstr ""
 
 #: lib/IWF_Workflow.lua:106
 #, lua-format
-msgid "selection = %s - %s"
+msgid "%s - %s"
 msgstr ""
 
 #: lib/IWF_Workflow.lua:143

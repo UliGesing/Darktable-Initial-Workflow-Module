@@ -103,7 +103,7 @@ function Workflow.ModuleStep:LogStepMessage()
     end
 
     ---@diagnostic disable-next-line: undefined-field
-    LogHelper.Major(string.format(_("selection = %s - %s"), self.WidgetBasic.value, currentValue))
+    LogHelper.Major(string.format(_("%s - %s"), self.WidgetBasic.value, currentValue))
 end
 
 -- handle view changed event (lighttable / darkroom view)
